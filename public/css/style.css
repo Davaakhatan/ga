@@ -1,0 +1,35 @@
+/* styles.css */
+
+body {
+    color: white;
+    background-color: #1d2630;
+}
+
+.dropdowns {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.dropdown label {
+    display: block;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.dropdown select {
+    width: 100%;
+    padding: 8px; /* Reduce padding */
+    border-radius: 5px;
+    border: 1px solid #ced4da; /* Bootstrap default border color */
+    background-color: #fff;
+    color: #495057;
+    font-size: 14px; /* Reduce font size */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.dropdown select:hover,
+.dropdown select:focus {
+    border-color: #80bdff; /* Bootstrap default border color on hover/focus */
+}

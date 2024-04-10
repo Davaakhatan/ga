@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | GA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/script.js" defer></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="upload.html">Upload</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- <div class="text-center">
+            <h1 class="display-5 mb-5"><strong>CRUD | Front End</strong></h1>
+        </div> -->
+        <div class="main row justify-content-center">
+             <!-- Dropdowns -->
+             <div class="col-12 col-md-8 mb-4">
+                <div class="dropdowns">
+                    <div class="dropdown">
+                        <label for="course-catalog-dropdown">Select Course:</label>
+                        <select id="course-catalog-dropdown">
+                            <option value="computer-science">Computer Science</option>
+                            <option value="computer-science-software-engineering">Computer Science-Software
+                                Engineering</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                            <option value="software-engineering">Software Engineering</option>
+                        </select>
+                    </div>
+                    <div class="dropdown">
+                        <label for="student-year-dropdown">Select Year:</label>
+                        <select id="student-year-dropdown">
+                            <option value="freshman">Freshman</option>
+                            <option value="sophomore">Sophomore</option>
+                            <option value="junior">Junior</option>
+                            <option value="senior">Senior</option>
+                            <option value="senior">Graduate</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Catalog -->
+            <div class="col-12 col-md-8 mb-4" id="course-catalog"></div>
+            <!-- <form id="student-form" class="row justify-content-center mb-4" autocomplete="off">
+                <input type="hidden" name="id" id="userId">
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Name" required>
+                </div>
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="age">Age</label>
+                    <input type="text" name="age" class="form-control" id="age" placeholder="Enter Age" required>
+                </div>
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="country">Country</label>
+                    <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
+                </div>
+                <div class="col-10 col-md-8 mb" id="actions">
+                    <input type="submit" class="btn btn-success add-btn" value="Submit">
+                </div>
+            </form> -->
+            <!-- <div class="col-12 col-md-10">
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Country</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="student-list" id="usersList">
+
+                    </tbody>
+                </table>
+            </div> -->
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | CRUD</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/script.js" defer></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="display-5 mb-5"><strong>CRUD | Home</strong></h1>
+        </div>
+        <div class="main row justify-content-center">
+            <form id="student-form" class="row justify-content-center mb-4" autocomplete="off">
+                <input type="hidden" name="id" id="userId">
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Enter Name" required>
+                </div>
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="age">Age</label>
+                    <input type="text" name="age" class="form-control" id="age" placeholder="Enter Age" required>
+                </div>
+                <div class="col-10 col-md-8 mb-3">
+                    <label for="country">Country</label>
+                    <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
+                </div>
+                <div class="col-10 col-md-8 mb" id="actions">
+                    <input type="submit" class="btn btn-success add-btn" value="Submit">
+                </div>
+            </form>
+            <div class="col-12 col-md-10">
+                <table class="table table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Country</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="student-list" id="usersList">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html> -->

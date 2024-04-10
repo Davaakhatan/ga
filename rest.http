@@ -1,0 +1,89 @@
+https://qiita.com/____easy/items/4dcda6cc4f5e7de13d36
+
+
+sudo mongod --dbpath=/Users/davaakhatanzorigtbaatar/data/db
+sudo mongod --dbpath /var/lib/mongodb --logpath /var/log/mongodb.log
+
+http://localhost:3001/api/data?filename=CIS_CoursesEnrollment_XCRL%20Subject%20Select_LiveExcel_24FA_03062024_3pm_MATH_PHYS
+
+
+
+curl -X POST -H "Content-Type: application/json" -d '{ "name": "John Martin", "age": "33", "country": "USA"}' http://localhost:3000/api/users
+
+###Welcome
+GET http://localhost:3000
+
+###Get a list of all users
+GET http://localhost:3000/api/users
+
+### Create a users
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "Baskhuu Batpurev",
+  "age": "18",
+  "country": "Mongolia"
+}
+
+### GET a product by id
+GET http://localhost:3000/api/users/c6ec4eb5-0f85-4ec8-895c-8dfbdbf1a12b
+
+### Update a product by id
+PUT  http://localhost:3000/api/users/8e8e165b-caa3-4e67-9f89-bdb4114c451f
+Content-Type: application/json
+
+{
+  "name": "Heinrich",
+  "age": "55",
+  "country": "GER"
+}
+
+
+### Delete a product by id
+DELETE  http://localhost:3000/people/5df118b3c86e5826958b661a
+
+### 404 route Not Found
+GET http://localhost:3000/abc_xyz
+
+Please add some html tag to display easily to users data on browser
+app.get('/api/users', async(req, res) => {
+    try {
+        const users = await User.find({});
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#hrXWgw4Q127uqZJ3
