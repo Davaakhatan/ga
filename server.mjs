@@ -1,226 +1,300 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import cors from 'cors';
-import multer from 'multer';
-import xlsx from 'xlsx';
-import fs from 'fs';
-import mongoose from 'mongoose';
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import cors from "cors";
+import multer from "multer";
+import xlsx from "xlsx";
+import fs from "fs";
+import mongoose from "mongoose";
+import mammoth from "mammoth"; // Import mammoth library
 
 // Import your Mongoose model for the data you want to store
-import { Course } from './models/course.js';
-
+import { Course } from "./models/course.js";
+import { Catalog } from "./models/catalog.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
 
 // Define storage for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/') // Set upload directory
+    cb(null, "uploads/"); // Set upload directory
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname) // Use original filename
-  }
+    cb(null, file.originalname); // Use original filename
+  },
 });
 
 // Initialize multer with defined storage
 const upload = multer({ storage: storage });
 
+// const fs = require("fs");
+
+// Function to parse DOCX file data and save as JSON
+async function parseDOCXFile(filePath) {
+  try {
+    const { value } = await mammoth.extractRawText({ path: filePath });
+    const startIndex = value.indexOf("Computer Science Curriculum");
+    const startIndexAdjusted =
+      startIndex +
+      "Computer Science Curriculum\n(Numerals in front of courses indicate credits)\n"
+        .length;
+    const endIndex = value.indexOf("Total Credits: 129");
+
+    const relevantText = value.substring(startIndexAdjusted, endIndex);
+    console.log("Relevant text:", relevantText);
+
+    const lines = relevantText.split("\n").filter((line) => line.trim() !== "");
+
+    const catalog = {};
+
+    let currentYear = null;
+    let currentSemester = null;
+    let currentCourses = [];
+
+    for (const line of lines) {
+      if (
+        line.includes("FRESHMAN") ||
+        line.includes("SOPHOMORE") ||
+        line.includes("JUNIOR") ||
+        line.includes("SENIOR")
+      ) {
+        currentYear = line.trim();
+        catalog[currentYear] = { Fall: [], Spring: [] }; // Initialize each year with Fall and Spring terms
+      } else if (line.includes("Fall") || line.includes("Spring")) {
+        currentSemester = line.trim();
+        // Inside the else block where you parse individual course lines
+      } else {
+        const parts = line.split(/\t+/); // Split by one or more tabs
+        if (parts.length >= 2) {
+          const credits = parseInt(parts[0]);
+          const course = parts.slice(1).join(" ").trim();
+          if (!isNaN(credits) && course !== "") {
+            catalog[currentYear][currentSemester].push({ credits, course });
+          } else {
+            console.warn(`Skipping invalid course entry: ${line}`);
+          }
+        } else {
+          console.warn(`Skipping invalid line: ${line}`);
+        }
+      }
+
+      // If both year and semester are found and currentCourses is not empty, update the catalog
+      if (currentYear && currentSemester && currentCourses.length > 0) {
+        catalog[currentYear][currentSemester] = currentCourses;
+        currentCourses = []; // Reset currentCourses for the next semester
+      }
+    }
+
+    console.log("Catalog:", JSON.stringify(catalog, null, 2));
+    return catalog;
+  } catch (error) {
+    throw new Error("Error parsing DOCX file: " + error.message);
+  }
+}
+
+// Function to parse XLSX file data
+async function parseXLSXFile(filePath) {
+  try {
+    // Read the XLSX file
+    const workbook = xlsx.readFile(filePath);
+    // Get the first sheet of the workbook
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    // Convert the sheet data to JSON
+    const jsonData = xlsx.utils.sheet_to_json(sheet);
+    // Transform the JSON data as needed for your application
+    const transformedData = jsonData.map((item) => ({
+      COURSE_NUMBER: item["COURSE #"],
+      TITLE_START_DATE: item["TITLE/START DATE"],
+      ACADEMIC_LEVEL: item["Acad Level"],
+      CAPACITY: item["CAPACITY"],
+      NUMBER_OF_STUDENTS: item["# OF STUDENTS"],
+      STATUS: item["STATUS"],
+      INSTRUCTOR: item["INSTRUCTOR"],
+      START_TIME: item["Start Time"],
+      END_TIME: item["End Time"],
+      MEETING_DAYS: item["Meeting Days"],
+      BUILDING: item["Bldg"],
+      ROOM: item["Room"],
+      FEE: item["FEE"],
+      MIN_CREDITS: item["Min Cred"],
+      MAX_CREDITS: item["Max Cred"],
+      SECTION: item["Section"],
+      TERM: item["Term"],
+      SEQ_NO: item["Seq No"],
+      SCHOOLS: item["Schools"],
+      ACADEMIC_LEVEL_1: item["Acad Level_1"],
+    }));
+    return transformedData;
+  } catch (error) {
+    throw new Error("Error parsing XLSX file: " + error.message);
+  }
+}
+
 // Handle file upload endpoint
-app.post('/api/upload', upload.single('file'), async (req, res) => {
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
     // Check if file was uploaded
     if (!req.file) {
-      return res.status(400).json({ success: false, message: 'No file uploaded' });
+      return res
+        .status(400)
+        .json({ success: false, message: "No file uploaded" });
     }
 
-    // Read the uploaded file with multer
-    const workbook = xlsx.readFile(req.file.path);
+    // Check the file type
+    const fileType = req.file.originalname.split(".").pop().toLowerCase();
 
-    // Convert first sheet of workbook to JSON
-    const jsonData = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+    if (fileType === "docx") {
+      // Handle DOCX file upload
+      const catalogData = await parseDOCXFile(req.file.path);
 
-    // Transform JSON data to match Mongoose schema
-    const transformedData = jsonData.map(item => ({
-      COURSE_NUMBER: item['COURSE #'],
-      TITLE_START_DATE: item['TITLE/START DATE'],
-      ACADEMIC_LEVEL: item['Acad Level'],
-      CAPACITY: item['CAPACITY'],
-      NUMBER_OF_STUDENTS: item['# OF STUDENTS'],
-      STATUS: item['STATUS'],
-      INSTRUCTOR: item['INSTRUCTOR'],
-      START_TIME: item['Start Time'],
-      END_TIME: item['End Time'],
-      MEETING_DAYS: item['Meeting Days'],
-      BUILDING: item['Bldg'],
-      ROOM: item['Room'],
-      FEE: item['FEE'],
-      MIN_CREDITS: item['Min Cred'],
-      MAX_CREDITS: item['Max Cred'],
-      SECTION: item['Section'],
-      TERM: item['Term'],
-      SEQ_NO: item['Seq No'],
-      SCHOOLS: item['Schools'],
-      ACADEMIC_LEVEL_1: item['Acad Level_1']
-    }));
+      // Store data in MongoDB Catalog collection
+      try {
+        await Catalog.deleteMany({}); // Clear existing data
 
-    // Import JSON data into MongoDB
-    await Course.insertMany(transformedData);
+        // Create a single document to hold all academic levels and terms
+        const catalogEntry = {};
 
-    // Delete the XLSX file
-    fs.unlinkSync(req.file.path);
+        // Iterate over the catalog object and update the single document
+        for (const academicLevel in catalogData) {
+          const terms = catalogData[academicLevel];
+          catalogEntry[academicLevel] = {};
+          for (const term in terms) {
+            const courses = terms[term];
+            catalogEntry[academicLevel][term] = courses;
+          }
+        }
 
-    console.log('XLSX file deleted successfully');
+        // Save the single document to the database
+        await Catalog.create(catalogEntry);
 
-    // Respond with success message
-    return res.status(200).json({ success: true, message: 'File uploaded successfully' });
+        console.log("Data saved successfully");
+
+        // Generate JSON file from the catalog data
+        fs.writeFileSync("catalog.json", JSON.stringify(catalogData, null, 2));
+        console.log("Catalog data saved as JSON successfully.");
+
+        return res
+          .status(200)
+          .json({ success: true, message: "File uploaded successfully" });
+      } catch (error) {
+        console.error("Error saving data:", error);
+        return res
+          .status(500)
+          .json({ success: false, message: "Error saving data" });
+      }
+    } else if (fileType === "xlsx") {
+      // Handle XLSX file upload
+      const transformedData = await parseXLSXFile(req.file.path);
+      await Course.insertMany(transformedData);
+      fs.unlinkSync(req.file.path);
+      console.log("XLSX file deleted successfully");
+      return res
+        .status(200)
+        .json({ success: true, message: "File uploaded successfully" });
+    } else {
+      // Unsupported file type
+      return res
+        .status(400)
+        .json({ success: false, message: "Unsupported file type" });
+    }
   } catch (error) {
-    console.error('Error uploading file:', error);
-    return res.status(500).json({ success: false, message: 'An error occurred while uploading file' });
+    console.error("Error uploading file:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while uploading file",
+    });
   }
 });
 
-
-// // Handle file upload endpoint
-// app.post('/api/upload', upload.single('file'), async (req, res) => {
-//   try {
-//     // Check if file was uploaded
-//     if (!req.file) {
-//       return res.status(400).json({ success: false, message: 'No file uploaded' });
-//     }
-
-//     // Read the uploaded file with multer
-//     const workbook = xlsx.readFile(req.file.path);
-
-//     // Convert first sheet of workbook to JSON
-//     const jsonData = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-
-//     // Get the original filename without extension
-//     const originalFileName = path.parse(req.file.originalname).name;
-
-//     // Save JSON data to a file
-//     const jsonFilePath = path.join(__dirname, 'uploads', originalFileName + '.json');
-//     fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2));
-
-//     console.log('JSON file saved successfully:', jsonFilePath);
-
-//     // Import JSON data into MongoDB
-//     await Course.insertMany(jsonData);
-
-//     // Delete the XLSX file
-//     fs.unlinkSync(req.file.path);
-
-//     console.log('XLSX file deleted successfully');
-
-//     // Respond with success message
-//     return res.status(200).json({ success: true, message: 'File uploaded successfully', jsonFilePath });
-//   } catch (error) {
-//     console.error('Error uploading file:', error);
-//     return res.status(500).json({ success: false, message: 'An error occurred while uploading file' });
-//   }
-// });
-
-
-
-
-// Retrieve all data
-app.get('/api/data', (req, res) => {
+// Retrieve all courses
+app.get("/api/courses", async (req, res) => {
   try {
-    const filename = req.query.filename;
-    if (!filename) {
-      return res.status(400).json({ success: false, message: 'Filename parameter is required' });
-    }
-    const jsonFilePath = path.join(__dirname, 'uploads', `${filename}.json`);
-    const jsonData = fs.readFileSync(jsonFilePath);
-    const data = JSON.parse(jsonData);
-    res.json(data);
+    const courses = await Course.find();
+    res.json(courses);
   } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while retrieving data' });
+    console.error("Error retrieving courses:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving courses",
+    });
   }
 });
 
-// Retrieve data by ID
-app.get('/api/data/:id', (req, res) => {
+// Retrieve course by ID
+app.get("/api/courses/:id", async (req, res) => {
   try {
-    const filename = req.query.filename;
-    if (!filename) {
-      return res.status(400).json({ success: false, message: 'Filename parameter is required' });
+    const course = await Course.findById(req.params.id);
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course not found" });
     }
-    const jsonFilePath = path.join(__dirname, 'uploads', `${filename}.json`);
-    const jsonData = fs.readFileSync(jsonFilePath);
-    const data = JSON.parse(jsonData);
-    const id = req.params.id;
-    const item = data.find(item => item.id === id);
-    if (!item) {
-      return res.status(404).json({ success: false, message: 'Data not found' });
-    }
-    res.json(item);
+    res.json(course);
   } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while retrieving data' });
+    console.error("Error retrieving course:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving course",
+    });
   }
 });
 
-// Update data by ID
-app.put('/api/data/:id', (req, res) => {
+// Update course by ID
+app.put("/api/courses/:id", async (req, res) => {
   try {
-    const filename = req.query.filename;
-    if (!filename) {
-      return res.status(400).json({ success: false, message: 'Filename parameter is required' });
+    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course not found" });
     }
-    const jsonFilePath = path.join(__dirname, 'uploads', `${filename}.json`);
-    const jsonData = fs.readFileSync(jsonFilePath);
-    let data = JSON.parse(jsonData);
-    const id = req.params.id;
-    const newData = req.body;
-    const index = data.findIndex(item => item.id === id);
-    if (index === -1) {
-      return res.status(404).json({ success: false, message: 'Data not found' });
-    }
-    data[index] = { ...data[index], ...newData };
-    fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
-    res.json({ success: true, message: 'Data updated successfully' });
+    res.json({
+      success: true,
+      message: "Course updated successfully",
+      data: course,
+    });
   } catch (error) {
-    console.error('Error updating data:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while updating data' });
+    console.error("Error updating course:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating course",
+    });
   }
 });
 
-// Delete data by ID
-app.delete('/api/data/:id', (req, res) => {
+// Delete course by ID
+app.delete("/api/courses/:id", async (req, res) => {
   try {
-    const filename = req.query.filename;
-    if (!filename) {
-      return res.status(400).json({ success: false, message: 'Filename parameter is required' });
+    const course = await Course.findByIdAndDelete(req.params.id);
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course not found" });
     }
-    const jsonFilePath = path.join(__dirname, 'uploads', `${filename}.json`);
-    const jsonData = fs.readFileSync(jsonFilePath);
-    let data = JSON.parse(jsonData);
-    const id = req.params.id;
-    const index = data.findIndex(item => item.id === id);
-    if (index === -1) {
-      return res.status(404).json({ success: false, message: 'Data not found' });
-    }
-    data.splice(index, 1);
-    fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
-    res.json({ success: true, message: 'Data deleted successfully' });
+    res.json({
+      success: true,
+      message: "Course deleted successfully",
+      data: course,
+    });
   } catch (error) {
-    console.error('Error deleting data:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while deleting data' });
+    console.error("Error deleting course:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting course",
+    });
   }
 });
-
-
-
 
 const PORT = process.env.PORT || 3001;
 
@@ -228,50 +302,15 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/coursesDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017/coursesDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 const db = mongoose.connection;
 
-db.on('error', (error) => console.error('MongoDB connection error:', error));
-db.once('open', () => console.log('Connected to MongoDB'));
-
-
-
-
-
-
-// previous code
-// import express from 'express';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-// import { dirname } from 'path';
-// import cors from 'cors';
-// import multer from 'multer';
-// import xlsx from 'xlsx';
-// import fs from 'fs';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// const app = express();
-
-// app.use(express.static(path.join(__dirname, 'public')));
-// app.use(cors());
-// app.use(express.json());
-
-// // Define storage for multer
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/') // Set upload directory
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname) // Use original filename
-//   }
-// });
-
-// // Initialize multer with defined storage
-// const upload = multer({ storage: storage });
+db.on("error", (error) => console.error("MongoDB connection error:", error));
+db.once("open", () => console.log("Connected to MongoDB"));
 
 // // Handle file upload endpoint
 // app.post('/api/upload', upload.single('file'), async (req, res) => {
@@ -281,233 +320,91 @@ db.once('open', () => console.log('Connected to MongoDB'));
 //       return res.status(400).json({ success: false, message: 'No file uploaded' });
 //     }
 
-//     const originalFileName = req.file.originalname;
-//     const jsonFileName = path.parse(originalFileName).name + '.json';
-
 //     // Read the uploaded file with multer
 //     const workbook = xlsx.readFile(req.file.path);
 
 //     // Convert first sheet of workbook to JSON
 //     const jsonData = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-//     // Save JSON data to a file with the original file name
-//     const jsonFilePath = path.join(__dirname, 'uploads', jsonFileName);
-//     fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2));
+//     // Transform JSON data to match Mongoose schema
+//     const transformedData = jsonData.map(item => ({
+//       COURSE_NUMBER: item['COURSE #'],
+//       TITLE_START_DATE: item['TITLE/START DATE'],
+//       ACADEMIC_LEVEL: item['Acad Level'],
+//       CAPACITY: item['CAPACITY'],
+//       NUMBER_OF_STUDENTS: item['# OF STUDENTS'],
+//       STATUS: item['STATUS'],
+//       INSTRUCTOR: item['INSTRUCTOR'],
+//       START_TIME: item['Start Time'],
+//       END_TIME: item['End Time'],
+//       MEETING_DAYS: item['Meeting Days'],
+//       BUILDING: item['Bldg'],
+//       ROOM: item['Room'],
+//       FEE: item['FEE'],
+//       MIN_CREDITS: item['Min Cred'],
+//       MAX_CREDITS: item['Max Cred'],
+//       SECTION: item['Section'],
+//       TERM: item['Term'],
+//       SEQ_NO: item['Seq No'],
+//       SCHOOLS: item['Schools'],
+//       ACADEMIC_LEVEL_1: item['Acad Level_1']
+//     }));
 
-//     console.log('JSON file saved successfully:', jsonFilePath);
+//     // Import JSON data into MongoDB
+//     await Course.insertMany(transformedData);
+
+//     // Delete the XLSX file
+//     fs.unlinkSync(req.file.path);
+
+//     console.log('XLSX file deleted successfully');
 
 //     // Respond with success message
-//     return res.status(200).json({ success: true, message: 'File uploaded successfully', jsonFilePath });
+//     return res.status(200).json({ success: true, message: 'File uploaded successfully' });
 //   } catch (error) {
 //     console.error('Error uploading file:', error);
 //     return res.status(500).json({ success: false, message: 'An error occurred while uploading file' });
 //   }
 // });
 
-
-// // CRUD Routes
-
-// // Retrieve all data
-// app.get('/api/data', (req, res) => {
-//   try {
-//     const originalFileName = req.query.filename;
-//     const jsonFilePath = path.join(__dirname, 'uploads', originalFileName + '.json');
-//     const jsonData = fs.readFileSync(jsonFilePath);
-//     const data = JSON.parse(jsonData);
-//     res.json(data);
-//   } catch (error) {
-//     console.error('Error retrieving data:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred while retrieving data' });
+// {
+//   "FRESHMAN": {
+//     "Fall": [
+//       { "credits": 1, "course": "Intro to Engineering/ENG 102" },
+//       { "credits": 2, "course": "Problem Solv. and Computer Prog./ CIS 180" },
+//       { "credits": 1, "course": "Problem Solv. and Computer Prog. Lab/ CIS 181" },
+//       { "credits": 3, "course": "Quantitative Reasoning: Calculus 1/ MATH 140" },
+//       { "credits": 3, "course": "Intro. Networks/CIS 290" },
+//       { "credits": 3, "course": "Foundational English" },
+//       { "credits": 3, "course": "Foundations of Theology" },
+//       { "credits": 0, "course": "Gannon 101" }
+//     ],
+//     "Spring": [
+//       { "credits": 2, "course": "Object-Oriented Program./CIS 182" },
+//       { "credits": 1, "course": "Object-Oriented Program. Lab/CIS 183" },
+//       { "credits": 3, "course": "Calculus 2/MATH 141" },
+//       { "credits": 3, "course": "Integrative History" },
+//       { "credits": 3, "course": "Foundational Philosophy" },
+//       { "credits": 3, "course": "Fund. Physics 1: Mechanics/PHYS 210" },
+//       { "credits": 1, "course": "Fund. Physics 1 Mechanics Lab/ PHYS 211" }
+//     ]
+//   },
+//   "SOPHOMORE": {
+//     "Fall": [
+//       { "credits": 3, "course": "Data Structures and Algorithms/ CSC 220" },
+//       { "credits": 3, "course": "The User Experience/CIS 239" },
+//       { "credits": 3, "course": "Discrete Mathematics 1/MATH 222" },
+//       { "credits": 3, "course": "Mobile Application Devl./CIS 277" },
+//       { "credits": 1, "course": "Object-Oriented Design Lab/CIS 287" },
+//       { "credits": 3, "course": "Integrative Communication" }
+//     ],
+//     "Spring": [
+//       { "credits": 3, "course": "Database Management and Admin./ CIS 255" },
+//       { "credits": 1, "course": "Algorithm Development Lab/CSC 223" },
+//       { "credits": 3, "course": "Discrete Mathematics 2/MATH 223" },
+//       { "credits": 3, "course": "Numerical Analysis MATH 314" },
+//       { "credits": 3, "course": "Software Engineering/SOFT 210" },
+//       { "credits": 3, "course": "Physics 3: E&M/PHYS 214 or PHYS 212" },
+//       { "credits": 1, "course": "Physics 3: E&M Lab/PHYS 215 or PHYS 213" }
+//     ]
 //   }
-// });
-
-// // Retrieve data by ID
-// app.get('/api/data/:id', (req, res) => {
-//   try {
-//     const originalFileName = req.query.filename;
-//     const jsonFilePath = path.join(__dirname, 'uploads', originalFileName + '.json');
-//     const jsonData = fs.readFileSync(jsonFilePath);
-//     const data = JSON.parse(jsonData);
-//     const id = req.params.id;
-//     const item = data.find(item => item.id === id);
-//     if (!item) {
-//       return res.status(404).json({ success: false, message: 'Data not found' });
-//     }
-//     res.json(item);
-//   } catch (error) {
-//     console.error('Error retrieving data:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred while retrieving data' });
-//   }
-// });
-
-// // Update data by ID
-// app.put('/api/data/:id', (req, res) => {
-//   try {
-//     const originalFileName = req.query.filename;
-//     const jsonFilePath = path.join(__dirname, 'uploads', originalFileName + '.json');
-//     const jsonData = fs.readFileSync(jsonFilePath);
-//     let data = JSON.parse(jsonData);
-//     const id = req.params.id;
-//     const newData = req.body;
-//     const index = data.findIndex(item => item.id === id);
-//     if (index === -1) {
-//       return res.status(404).json({ success: false, message: 'Data not found' });
-//     }
-//     data[index] = { ...data[index], ...newData };
-//     fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
-//     res.json({ success: true, message: 'Data updated successfully' });
-//   } catch (error) {
-//     console.error('Error updating data:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred while updating data' });
-//   }
-// });
-
-// // Delete data by ID
-// app.delete('/api/data/:id', (req, res) => {
-//   try {
-//     const originalFileName = req.query.filename;
-//     const jsonFilePath = path.join(__dirname, 'uploads', originalFileName + '.json');
-//     const jsonData = fs.readFileSync(jsonFilePath);
-//     let data = JSON.parse(jsonData);
-//     const id = req.params.id;
-//     const index = data.findIndex(item => item.id === id);
-//     if (index === -1) {
-//       return res.status(404).json({ success: false, message: 'Data not found' });
-//     }
-//     data.splice(index, 1);
-//     fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
-//     res.json({ success: true, message: 'Data deleted successfully' });
-//   } catch (error) {
-//     console.error('Error deleting data:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred while deleting data' });
-//   }
-// });
-
-
-// const PORT = process.env.PORT || 3001;
-
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
-
-
-
-
-
-
-
-
-
-
-// import express from "express"
-// import cors from "cors"
-// import mongoose from "mongoose"
-// import User from "./models/user.js"
-// // import 'dotenv/config'
-// // import connection from './config/dbConnection.js'
-
-// const app = express()
-
-// app.use(cors())
-// app.use(express.json())
-// app.use(express.urlencoded({extended: false}))
-
-// app.use(express.static('public'))
-
-// //routes
-
-// app.get('/', (req, res) => {
-//     res.send('Hello Dave, NoSQL/RESTful API class')   
-// })
-
-// app.get('/blog', (req, res) => {
-//     res.send('Hello Blog, My name is Node-API')
-// })
-
-// app.get('/api/users', async(req, res) => {
-//     try {
-//         const users = await User.find({});
-//         //res.status(200).json(`<pre>${JSON.stringify(users, null, 2)}</pre>`);
-//         //let htmlResponse = '<ul>';
-//         //users.forEach(user => {
-//         //    htmlResponse += `<li>${JSON.stringify(user)}</li>`;
-//         //});
-//         //htmlResponse += '</ul>';
-//         res.status(200).json(users);
-//     } catch (error) {
-//         res.status(500).json({message: error.message})
-//     }
-// })
-
-// app.get('/api/users/:id', async(req, res) =>{
-//     try {
-//         const {id} = req.params;
-//         const user = await User.findById(id);
-//         //res.status(200).json(user);
-//         let htmlResponse = '<ul>';
-//         htmlResponse += `<li>${JSON.stringify(user)}</li>`;
-//         htmlResponse += '</ul>';
-//         res.status(200).send(htmlResponse);
-//     } catch (error) {
-//         res.status(500).json({message: error.message})
-//     }
-// })
-
-
-// app.post('/api/users', async(req, res) => {
-//     try {
-//         const user = await User.create(req.body)
-//         res.status(200).json(user);
-        
-//     } catch (error) {
-//         console.log(error.message);
-//         res.status(500).json({message: error.message})
-//     }
-// })
-
-// // update a product
-// app.put('/api/users/:id', async(req, res) => {
-//     try {
-//         const {id} = req.params;
-//         const user = await User.findByIdAndUpdate(id, req.body, { new: true });
-//         // we cannot find any product in database
-//         if(!user){
-//             return res.status(404).json({message: `cannot find any user with ID ${id}`})
-//         }
-//         const updatedUser = await User.findById(id);
-//         res.status(200).json(updatedUser);
-        
-//     } catch (error) {
-//         res.status(500).json({message: error.message})
-//     }
-// })
-
-// // delete a product
-
-// app.delete('/api/delete/:id', async(req, res) =>{
-//     try {
-//         const {id} = req.params;
-//         const user = await User.findByIdAndDelete(id);
-//         if(!user){
-//             return res.status(404).json({message: `cannot find any user with ID ${id}`})
-//         }
-//         res.status(200).json(user);
-        
-//     } catch (error) {
-//         res.status(500).json({message: error.message})
-//     }
-// })
-
-// mongoose.set("strictQuery", false)
-// mongoose.
-// //connect('mongodb://localhost:27017/usersDB?authSource=admin')
-// connect('mongodb://127.0.0.1:27017/usersDB?authSource=admin')
-// .then(() => {
-//     console.log('connected to MongoDB')
-//     app.listen(3001, ()=> {
-//         console.log(`Node API app is running on port 3001`)
-//     });
-// }).catch((error) => {
-//     console.log(error)
-// })
+// }

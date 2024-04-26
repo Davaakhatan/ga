@@ -1,0 +1,218 @@
+{
+  "FRESHMAN": {
+    "Fall": [
+      {
+        "credits": 1,
+        "course": "Problem Solv. and Computer Prog. Lab/ CIS 181"
+      },
+      {
+        "credits": 3,
+        "course": "Quantitative Reasoning: Calculus 1/ MATH 140"
+      },
+      {
+        "credits": 3,
+        "course": "Intro. Networks/CIS 290"
+      },
+      {
+        "credits": 3,
+        "course": "Foundational English"
+      },
+      {
+        "credits": 3,
+        "course": "Foundations of Theology"
+      },
+      {
+        "credits": 0,
+        "course": "Gannon 101"
+      }
+    ],
+    "Spring": [
+      {
+        "credits": 2,
+        "course": "Object-Oriented Program./CIS 182"
+      },
+      {
+        "credits": 1,
+        "course": "Object-Oriented Program. Lab/CIS 183"
+      },
+      {
+        "credits": 3,
+        "course": "Calculus 2/MATH 141"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative History"
+      },
+      {
+        "credits": 3,
+        "course": "Foundational Philosophy"
+      },
+      {
+        "credits": 3,
+        "course": "Fund. Physics 1: Mechanics/PHYS 210"
+      },
+      {
+        "credits": 1,
+        "course": "Fund. Physics 1 Mechanics Lab/ PHYS 211"
+      }
+    ]
+  },
+  "SOPHOMORE": {
+    "Fall": [
+      {
+        "credits": 3,
+        "course": "Data Structures and Algorithms/ CSC 220"
+      },
+      {
+        "credits": 3,
+        "course": "The User Experience/CIS 239"
+      },
+      {
+        "credits": 3,
+        "course": "Discrete Mathematics 1/MATH 222"
+      },
+      {
+        "credits": 3,
+        "course": "Mobile Application Devl./CIS 277"
+      },
+      {
+        "credits": 1,
+        "course": "Object-Oriented Design Lab/CIS 287"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative Communication"
+      }
+    ],
+    "Spring": [
+      {
+        "credits": 3,
+        "course": "Database Management and Admin./ CIS 255"
+      },
+      {
+        "credits": 1,
+        "course": "Algorithm Development Lab/CSC 223"
+      },
+      {
+        "credits": 3,
+        "course": "Discrete Mathematics 2/MATH 223"
+      },
+      {
+        "credits": 3,
+        "course": "Numerical Analysis MATH 314"
+      },
+      {
+        "credits": 3,
+        "course": "Software Engineering/SOFT 210"
+      },
+      {
+        "credits": 3,
+        "course": "Physics 3: E&M/PHYS 214 or PHYS 212"
+      },
+      {
+        "credits": 1,
+        "course": "Physics 3: E&M Lab/PHYS 215 or"
+      }
+    ]
+  },
+  "JUNIOR": {
+    "Fall": [
+      {
+        "credits": 3,
+        "course": "Web Programming and Impl./CIS 355"
+      },
+      {
+        "credits": 3,
+        "course": "Formal Methods in Software/CIS 326"
+      },
+      {
+        "credits": 3,
+        "course": "Linux Programming/CIS 219"
+      },
+      {
+        "credits": 3,
+        "course": "Applied Statistics MATH 213"
+      },
+      {
+        "credits": 3,
+        "course": "Professional Ethics/Leadership"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative Theology 18"
+      }
+    ],
+    "Spring": [
+      {
+        "credits": 1,
+        "course": "Professional Seminar/ENG 380"
+      },
+      {
+        "credits": 3,
+        "course": "Number Theory and Cryptogr./ MATH 310"
+      },
+      {
+        "credits": 3,
+        "course": "CIS Technical Elective"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative Philosophy"
+      },
+      {
+        "credits": 3,
+        "course": "Computer Architecture/ECE 337"
+      },
+      {
+        "credits": 3,
+        "course": "Professional Communication 16"
+      }
+    ]
+  },
+  "SENIOR": {
+    "Fall": [
+      {
+        "credits": 3,
+        "course": "Senior Design I/CIS 457"
+      },
+      {
+        "credits": 3,
+        "course": "Comparative Languages/CSC 360"
+      },
+      {
+        "credits": 3,
+        "course": "System and Network Security/CIS 387"
+      },
+      {
+        "credits": 3,
+        "course": "Global Citizenship"
+      },
+      {
+        "credits": 3,
+        "course": "Operating Systems/CSC 330 15"
+      }
+    ],
+    "Spring": [
+      {
+        "credits": 3,
+        "course": "Senior Design II Lab/CIS 458"
+      },
+      {
+        "credits": 3,
+        "course": "Distributed Programming/CIS 390"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative English"
+      },
+      {
+        "credits": 3,
+        "course": "Aesthetic Reasoning"
+      },
+      {
+        "credits": 3,
+        "course": "CIS Technical Elective 15"
+      }
+    ]
+  }
+}
