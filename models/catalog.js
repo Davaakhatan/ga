@@ -1,33 +1,25 @@
 import mongoose from 'mongoose';
 
-const courseSchema = new mongoose.Schema({
-  credits: {
-    type: Number,
-    required: true,
-  },
-  course: {
-    type: String,
-    required: true,
-  }
-});
-
 const catalogSchema = new mongoose.Schema({
+  curriculumType: { type: String, required: true },
   FRESHMAN: {
-    Fall: [courseSchema],
-    Spring: [courseSchema]
+    Fall: [{ credits: Number, course: String }],
+    Spring: [{ credits: Number, course: String }]
   },
   SOPHOMORE: {
-    Fall: [courseSchema],
-    Spring: [courseSchema]
+    Fall: [{ credits: Number, course: String }],
+    Spring: [{ credits: Number, course: String }]
   },
   JUNIOR: {
-    Fall: [courseSchema],
-    Spring: [courseSchema]
+    Fall: [{ credits: Number, course: String }],
+    Spring: [{ credits: Number, course: String }]
   },
   SENIOR: {
-    Fall: [courseSchema],
-    Spring: [courseSchema]
+    Fall: [{ credits: Number, course: String }],
+    Spring: [{ credits: Number, course: String }]
   }
-});
+}, { strict: false });
 
-export const Catalog = mongoose.model('Catalog', catalogSchema);
+const Catalog = mongoose.model('Catalog', catalogSchema);
+
+export { Catalog };

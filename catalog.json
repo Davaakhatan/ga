@@ -1,25 +1,34 @@
 {
+  "curriculumType": "Cybersecurity",
   "FRESHMAN": {
     "Fall": [
-      {
-        "credits": 1,
-        "course": "Problem Solv. and Computer Prog. Lab/ CIS 181"
-      },
-      {
-        "credits": 3,
-        "course": "Quantitative Reasoning: Calculus 1/ MATH 140"
-      },
-      {
-        "credits": 3,
-        "course": "Intro. Networks/CIS 290"
-      },
       {
         "credits": 3,
         "course": "Foundational English"
       },
       {
+        "credits": 2,
+        "course": "Prob Solving and Computer Prog./ CIS 180"
+      },
+      {
+        "credits": 1,
+        "course": "Prob Solving and Computer Prog. Lab/ CIS 181"
+      },
+      {
         "credits": 3,
-        "course": "Foundations of Theology"
+        "course": "Quantitative Reasoning – Trigonometry/ Math 112 or Calculus I/MATH 140"
+      },
+      {
+        "credits": 1,
+        "course": "Intro to Engineering and Computing/ ENG 102"
+      },
+      {
+        "credits": 3,
+        "course": "Intro to Networks/CIS 290"
+      },
+      {
+        "credits": 3,
+        "course": "Web Management and Design/CIS 240"
       },
       {
         "credits": 0,
@@ -28,20 +37,16 @@
     ],
     "Spring": [
       {
+        "credits": 3,
+        "course": "Integrative English"
+      },
+      {
         "credits": 2,
-        "course": "Object-Oriented Program./CIS 182"
+        "course": "Object-Oriented Programming/CIS 182"
       },
       {
         "credits": 1,
-        "course": "Object-Oriented Program. Lab/CIS 183"
-      },
-      {
-        "credits": 3,
-        "course": "Calculus 2/MATH 141"
-      },
-      {
-        "credits": 3,
-        "course": "Integrative History"
+        "course": "Object-Oriented Programming Lab/ CIS 183"
       },
       {
         "credits": 3,
@@ -49,11 +54,15 @@
       },
       {
         "credits": 3,
-        "course": "Fund. Physics 1: Mechanics/PHYS 210"
+        "course": "Database Mgmt and Adm/CIS 255"
+      },
+      {
+        "credits": 3,
+        "course": "Scientific Reasoning – College Physics I/ PHYS 105"
       },
       {
         "credits": 1,
-        "course": "Fund. Physics 1 Mechanics Lab/ PHYS 211"
+        "course": "Network Security Lab/CYSEC 101"
       }
     ]
   },
@@ -61,99 +70,33 @@
     "Fall": [
       {
         "credits": 3,
-        "course": "Data Structures and Algorithms/ CSC 220"
+        "course": "Discrete Math/Math 222"
       },
       {
         "credits": 3,
-        "course": "The User Experience/CIS 239"
+        "course": "Integrative History"
       },
       {
         "credits": 3,
-        "course": "Discrete Mathematics 1/MATH 222"
+        "course": "Data Structure and Algorithm/CSC 220"
       },
       {
         "credits": 3,
-        "course": "Mobile Application Devl./CIS 277"
-      },
-      {
-        "credits": 1,
-        "course": "Object-Oriented Design Lab/CIS 287"
+        "course": "Web Pgm and Implementation/CIS 355"
       },
       {
         "credits": 3,
-        "course": "Integrative Communication"
+        "course": "IT Security/CYSEC 210 15"
       }
     ],
     "Spring": [
-      {
-        "credits": 3,
-        "course": "Database Management and Admin./ CIS 255"
-      },
-      {
-        "credits": 1,
-        "course": "Algorithm Development Lab/CSC 223"
-      },
-      {
-        "credits": 3,
-        "course": "Discrete Mathematics 2/MATH 223"
-      },
-      {
-        "credits": 3,
-        "course": "Numerical Analysis MATH 314"
-      },
-      {
-        "credits": 3,
-        "course": "Software Engineering/SOFT 210"
-      },
-      {
-        "credits": 3,
-        "course": "Physics 3: E&M/PHYS 214 or PHYS 212"
-      },
-      {
-        "credits": 1,
-        "course": "Physics 3: E&M Lab/PHYS 215 or"
-      }
-    ]
-  },
-  "JUNIOR": {
-    "Fall": [
-      {
-        "credits": 3,
-        "course": "Web Programming and Impl./CIS 355"
-      },
-      {
-        "credits": 3,
-        "course": "Formal Methods in Software/CIS 326"
-      },
       {
         "credits": 3,
         "course": "Linux Programming/CIS 219"
       },
       {
         "credits": 3,
-        "course": "Applied Statistics MATH 213"
-      },
-      {
-        "credits": 3,
-        "course": "Professional Ethics/Leadership"
-      },
-      {
-        "credits": 3,
-        "course": "Integrative Theology 18"
-      }
-    ],
-    "Spring": [
-      {
-        "credits": 1,
-        "course": "Professional Seminar/ENG 380"
-      },
-      {
-        "credits": 3,
-        "course": "Number Theory and Cryptogr./ MATH 310"
-      },
-      {
-        "credits": 3,
-        "course": "CIS Technical Elective"
+        "course": "Mobile security and Implementation/ CYSEC 212"
       },
       {
         "credits": 3,
@@ -161,11 +104,65 @@
       },
       {
         "credits": 3,
-        "course": "Computer Architecture/ECE 337"
+        "course": "Foundational Theology"
       },
       {
         "credits": 3,
-        "course": "Professional Communication 16"
+        "course": "Server Management/CIS 375 15"
+      }
+    ]
+  },
+  "JUNIOR": {
+    "Fall": [
+      {
+        "credits": 3,
+        "course": "Ethical Hacking/CYSEC 301"
+      },
+      {
+        "credits": 3,
+        "course": "Information Assurance/CYSEC 306"
+      },
+      {
+        "credits": 3,
+        "course": "Integrative Communication"
+      },
+      {
+        "credits": 3,
+        "course": "Cyber Crime and Society/CRJS 241"
+      },
+      {
+        "credits": 3,
+        "course": "Applied Statistics/MATH 213"
+      },
+      {
+        "credits": 3,
+        "course": "Professional Ethics/Leadership 18"
+      }
+    ],
+    "Spring": [
+      {
+        "credits": 3,
+        "course": "Integrative Theology"
+      },
+      {
+        "credits": 3,
+        "course": "Number Theory/Cryptography/ MATH 310"
+      },
+      {
+        "credits": 1,
+        "course": "Professional Seminar/ENG 380"
+      },
+      {
+        "credits": 3,
+        "course": "Cyber Information Security/CYSEC 302"
+      },
+      {
+        "credits": 3,
+        "course": "Server Security/CYSEC 307"
+      },
+      {
+        "credits": 3,
+        "course": "Technical Elective 16"
       }
     ]
   },
@@ -173,37 +170,25 @@
     "Fall": [
       {
         "credits": 3,
+        "course": "Professional Communication"
+      },
+      {
+        "credits": 3,
+        "course": "Technical Elective"
+      },
+      {
+        "credits": 3,
+        "course": "Cyber Defense: Cloud Security/ CYSEC 308"
+      },
+      {
+        "credits": 3,
         "course": "Senior Design I/CIS 457"
-      },
-      {
-        "credits": 3,
-        "course": "Comparative Languages/CSC 360"
-      },
-      {
-        "credits": 3,
-        "course": "System and Network Security/CIS 387"
-      },
-      {
-        "credits": 3,
-        "course": "Global Citizenship"
-      },
-      {
-        "credits": 3,
-        "course": "Operating Systems/CSC 330 15"
       }
     ],
     "Spring": [
       {
         "credits": 3,
-        "course": "Senior Design II Lab/CIS 458"
-      },
-      {
-        "credits": 3,
-        "course": "Distributed Programming/CIS 390"
-      },
-      {
-        "credits": 3,
-        "course": "Integrative English"
+        "course": "Global Citizenship"
       },
       {
         "credits": 3,
@@ -211,7 +196,23 @@
       },
       {
         "credits": 3,
-        "course": "CIS Technical Elective 15"
+        "course": "Data Security/CYSEC 303"
+      },
+      {
+        "credits": 3,
+        "course": "Technical Elective"
+      },
+      {
+        "credits": 3,
+        "course": "Senior Design II Lab/CIS 458"
+      },
+      {
+        "credits": 3,
+        "course": "Digital Evidence/CRJS 345"
+      },
+      {
+        "credits": 15,
+        "course": "15"
       }
     ]
   }
