@@ -1,108 +1,100 @@
-// Function to fetch courses based on selected course and year
+
 // const fetchCourses = async () => {
 //     try {
 //         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
 //         const selectedYear = document.getElementById('student-year-dropdown').value;
-        
-//         // Check if the selected course is "Computer Science" and the selected year is "Freshman"
-//         if (selectedCourse === "computer-science" && selectedYear === "freshman") {
-//             const response = await fetch(`/api/courses`);
-//             if (!response.ok) {
-//                 throw new Error('Failed to fetch courses');
+//         const selectedSemester = document.getElementById('student-semester-dropdown').value;
+//         const courseCatalog = document.getElementById('course-catalog');
+
+//         // Clear previous courses
+//         courseCatalog.innerHTML = '';
+//         // Clear previous courses from the calendar
+//         clearCalendar();
+
+//         let url;
+//         if (selectedCourse === "computer-science" || selectedCourse === "computer-science-software-engineering") {
+//             if (selectedYear === "freshman") {
+//                 // Use the API endpoint that fetches CIS courses with specific fields
+//                 url = '/api/courses';
 //             }
-//             const courses = await response.json();
-//             displayCourses(courses); // Display the fetched courses
-//         } else if (selectedCourse === "computer-science-software-engineering" && selectedYear === "freshman") {
-//             const response = await fetch(`/api/courses`);
-//             if (!response.ok) {
-//                 throw new Error('Failed to fetch courses');
+//         } else if (selectedCourse === "cybersecurity") {
+//             if (selectedYear === "freshman") {
+//                 url = `/api/catalog/Cybersecurity`;
 //             }
-//             const courses = await response.json();
-//             displayCourses(courses); // Display the fetched courses
-//         } else if (selectedCourse === "cybersecurity" && selectedYear === "freshman") {
-//             const response = await fetch(`/api/courses`);
-//             if (!response.ok) {
-//                 throw new Error('Failed to fetch courses');
-//             }
-//             const courses = await response.json();
-//             displayCourses(courses); // Display the fetched courses
-//         }
-//         else  {
+//         } else {
 //             // Clear the course catalog if conditions are not met
-//             const courseCatalog = document.getElementById('course-catalog');
 //             courseCatalog.innerHTML = '';
+//             return;
+//         }
+
+//         if (url) {
+//             const response = await fetch(url);
+//             if (!response.ok) {
+//                 throw new Error(`Failed to fetch from ${url}`);
+//             }
+//             const data = await response.json();
+//             console.log('Fetched data:', data);
+//             displayCourses(data);
 //         }
 //     } catch (error) {
-//         console.error('Error fetching courses:', error);
+//         console.error('Error fetching data:', error);
 //     }
 // };
 
-// // Function to display courses below the dropdowns
-// const displayCourses = (courses) => {
-//     const courseCatalog = document.getElementById('course-catalog');
-//     // Clear previous courses
-//     courseCatalog.innerHTML = '';
-//     // Display fetched courses
-//     courses.forEach(course => {
-//         // Check if the course number matches the required pattern
-//         if (course.COURSE_NUMBER.startsWith('CIS_180') || course.COURSE_NUMBER.startsWith('CIS_181') || course.COURSE_NUMBER.startsWith('CIS_290')) {
-//             const option = document.createElement('option');
-            
-//             option.textContent = `${course.COURSE_NUMBER} - ${course.TITLE_START_DATE}`;
-//             courseCatalog.appendChild(option);
-//         }
-//     });
-// };
-
-// // Event listeners for dropdown changes
-// document.getElementById('course-catalog-dropdown').addEventListener('change', fetchCourses);
-// document.getElementById('student-year-dropdown').addEventListener('change', fetchCourses);
-
-// // Call fetchCourses initially when the page loads
-// fetchCourses();
-
-// Function to fetch courses based on selected course and year
 const fetchCourses = async () => {
     try {
         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
         const selectedYear = document.getElementById('student-year-dropdown').value;
-        const selectedSemester = document.getElementById('student-semester-dropdown').value;
         const courseCatalog = document.getElementById('course-catalog');
 
         // Clear previous courses
         courseCatalog.innerHTML = '';
-        // Clear previous courses from the calendar
         clearCalendar();
 
-        let url;
-        if (selectedCourse === "computer-science" || selectedCourse === "computer-science-software-engineering") {
+        let url = '';
+
+        // Construct the correct URL based on selectedCourse and selectedYear
+        if (selectedCourse === "computer-science") {
             if (selectedYear === "freshman") {
-                // Use the API endpoint that fetches CIS courses with specific fields
-                url = '/api/courses';
+                url = '/api/courses?year=freshman';
+            } else if (selectedYear === "sophomore") {
+                url = '/api/courses?year=sophomore';
+            } else if (selectedYear === "junior") {
+                url = '/api/courses?year=junior';
+            } else if (selectedYear === "senior") {
+                url = '/api/courses?year=senior';
             }
         } else if (selectedCourse === "cybersecurity") {
             if (selectedYear === "freshman") {
                 url = `/api/catalog/Cybersecurity`;
+            } else {
+                courseCatalog.innerHTML = 'No data for this selection';
+                return;
             }
         } else {
-            // Clear the course catalog if conditions are not met
-            courseCatalog.innerHTML = '';
+            courseCatalog.innerHTML = 'Please select a valid course and year';
             return;
         }
 
+        // Fetch courses only if a valid URL has been constructed
         if (url) {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Failed to fetch from ${url}`);
             }
+
             const data = await response.json();
             console.log('Fetched data:', data);
-            displayCourses(data);
+
+            // Display the filtered courses
+            displayCourses(data); 
         }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 };
+
+
 
 const clearCalendar = () => {
     const cells = document.querySelectorAll('td[data-day][data-time]');
@@ -111,60 +103,66 @@ const clearCalendar = () => {
     });
 };
 
-
 const displayCourses = (data) => {
     data.forEach(course => {
-        console.log('Processing course:', course);
+        const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
 
-        if (course.COURSE_NUMBER && course.COURSE_NUMBER.startsWith('CIS_')) {
-            const { TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
+        // Normalize and parse time if available
+        const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
+        const normalizedEndTime = END_TIME ? END_TIME.replace(/([AP]M)/, ' $1') : "N/A";
 
-            if (MEETING_DAYS) {
-                // Normalize time format
-                const normalizedStartTime = START_TIME.replace(/([AP]M)/, ' $1');
-                const normalizedEndTime = END_TIME.replace(/([AP]M)/, ' $1');
+        const parseTime = (time) => {
+            const [hourMin, period] = time.split(' ');
+            const [hour, minute] = hourMin.split(':');
+            return { hour: parseInt(hour), minute: parseInt(minute), period };
+        };
 
-                // Normalize MEETING_DAYS to match HTML attribute values
-                const days = MEETING_DAYS.split(' ').map(day => {
-                    switch(day) {
-                        case 'M': return 'M';
-                        case 'T': return 'T';
-                        case 'W': return 'W';
-                        case 'TH': return 'TH';
-                        case 'F': return 'F';
-                        default: return '';
-                    }
-                });
+        const startTime = parseTime(normalizedStartTime);
+        const endTime = parseTime(normalizedEndTime);
 
-                console.log('Meeting days:', days);
-
-                days.forEach(day => {
-                    console.log(`Trying to find cell for ${day} at ${normalizedStartTime}`);
-                    
-                    // Select the cell in the calendar corresponding to the day and time
-                    const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${normalizedStartTime}"]`);
-                    console.log(`Selector: td[data-day="${day}"][data-time="${normalizedStartTime}"]`, dayCell);
-
-                    if (dayCell) {
-                        console.log(`Found cell for ${day} at ${normalizedStartTime}`);
-                        const courseDiv = document.createElement('div');
-                        courseDiv.style.marginBottom = '8px';
-                        courseDiv.innerHTML = `
-                            <strong>${course.COURSE_NUMBER}</strong><br>
-                            ${TITLE_START_DATE ? TITLE_START_DATE : 'No Title'}<br>
-                            ${normalizedStartTime} - ${normalizedEndTime}
-                        `;
-                        dayCell.appendChild(courseDiv);
-                    } else {
-                        console.warn(`No cell found for ${day} at ${normalizedStartTime}`);
-                    }
-                });
-            } else {
-                console.error('MEETING_DAYS is undefined for course:', course.COURSE_NUMBER);
+        // Determine the appropriate row (round down to the nearest hour)
+        const getTimeSlot = (hour, minute, period) => {
+            if (minute !== 0) {
+                hour = hour === 12 ? 11 : hour; // Handle 12 PM cases
             }
+            return `${hour < 10 ? `0${hour}` : hour}:00 ${period}`;
+        };
+
+        const timeSlot = getTimeSlot(startTime.hour, startTime.minute, startTime.period);
+
+        // Normalize MEETING_DAYS to match HTML attribute values
+        if (MEETING_DAYS) {
+            const days = MEETING_DAYS.split(' ').map(day => {
+                switch(day) {
+                    case 'M': return 'M';
+                    case 'T': return 'T';
+                    case 'W': return 'W';
+                    case 'TH': return 'TH';
+                    case 'F': return 'F';
+                    default: return '';
+                }
+            });
+
+            days.forEach(day => {
+                // Select the cell in the calendar corresponding to the day and time slot
+                const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${timeSlot}"]`);
+                if (dayCell) {
+                    const courseDiv = document.createElement('div');
+                    courseDiv.style.marginBottom = '8px';
+                    courseDiv.innerHTML = `
+                        <strong>${COURSE_NUMBER}</strong><br>
+                        ${TITLE_START_DATE}<br>
+                        ${normalizedStartTime} - ${normalizedEndTime}
+                    `;
+                    dayCell.appendChild(courseDiv);
+                }
+            });
+        } else {
+            console.warn(`No meeting days available for course: ${COURSE_NUMBER}`);
         }
     });
 };
+
 
 
 document.getElementById('course-catalog-dropdown').addEventListener('change', fetchCourses);
@@ -173,6 +171,9 @@ document.getElementById('student-semester-dropdown').addEventListener('change', 
 
 // Call fetchCourses initially when the page loads
 fetchCourses();
+
+
+
 
 
 // const displayCourses = (data, source, selectedYear, selectedSemester) => {
@@ -205,3 +206,100 @@ fetchCourses();
 // };
 
 // const convertTo24HourFormat = (time) => {
+
+
+
+// const displayCourses = (data) => {
+//     data.forEach(course => {
+//         console.log('Processing course:', course);
+
+//         if (course.COURSE_NUMBER && course.COURSE_NUMBER.startsWith('CIS_')) {
+//             const { TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
+
+//             if (MEETING_DAYS) {
+//                 // Normalize time format
+//                 const normalizedStartTime = START_TIME.replace(/([AP]M)/, ' $1');
+//                 const normalizedEndTime = END_TIME.replace(/([AP]M)/, ' $1');
+
+//                 // Normalize MEETING_DAYS to match HTML attribute values
+//                 const days = MEETING_DAYS.split(' ').map(day => {
+//                     switch(day) {
+//                         case 'M': return 'M';
+//                         case 'T': return 'T';
+//                         case 'W': return 'W';
+//                         case 'TH': return 'TH';
+//                         case 'F': return 'F';
+//                         default: return '';
+//                     }
+//                 });
+
+//                 console.log('Meeting days:', days);
+
+//                 days.forEach(day => {
+//                     console.log(`Trying to find cell for ${day} at ${normalizedStartTime}`);
+                    
+//                     // Select the cell in the calendar corresponding to the day and time
+//                     const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${normalizedStartTime}"]`);
+//                     console.log(`Selector: td[data-day="${day}"][data-time="${normalizedStartTime}"]`, dayCell);
+
+//                     if (dayCell) {
+//                         console.log(`Found cell for ${day} at ${normalizedStartTime}`);
+//                         const courseDiv = document.createElement('div');
+//                         courseDiv.style.marginBottom = '8px';
+//                         courseDiv.innerHTML = `
+//                             <strong>${course.COURSE_NUMBER}</strong><br>
+//                             ${TITLE_START_DATE ? TITLE_START_DATE : 'No Title'}<br>
+//                             ${normalizedStartTime} - ${normalizedEndTime}
+//                         `;
+//                         dayCell.appendChild(courseDiv);
+//                     } else {
+//                         console.warn(`No cell found for ${day} at ${normalizedStartTime}`);
+//                     }
+//                 });s
+//             } else {
+//                 console.error('MEETING_DAYS is undefined for course:', course.COURSE_NUMBER);
+//             }
+//         }
+//     });
+// };
+
+// const displayCourses = (data) => {
+//     data.forEach(course => {
+//         const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
+
+//         // Normalize time if available
+//         const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
+//         const normalizedEndTime = END_TIME ? END_TIME.replace(/([AP]M)/, ' $1') : "N/A";
+
+//         // Normalize MEETING_DAYS to match HTML attribute values
+//         if (MEETING_DAYS) {
+//             const days = MEETING_DAYS.split(' ').map(day => {
+//                 switch(day) {
+//                     case 'M': return 'M';
+//                     case 'T': return 'T';
+//                     case 'W': return 'W';
+//                     case 'TH': return 'TH';
+//                     case 'F': return 'F';
+//                     default: return '';
+//                 }
+//             });
+
+//             days.forEach(day => {
+//                 // Select the cell in the calendar corresponding to the day and time
+//                 const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${normalizedStartTime}"]`);
+//                 if (dayCell) {
+//                     const courseDiv = document.createElement('div');
+//                     courseDiv.style.marginBottom = '8px';
+//                     courseDiv.innerHTML = `
+//                         <strong>${COURSE_NUMBER}</strong><br>
+//                         ${TITLE_START_DATE}<br>
+//                         ${normalizedStartTime} - ${normalizedEndTime}
+//                     `;
+//                     dayCell.appendChild(courseDiv);
+//                 }
+//             });
+//         } else {
+//             console.warn(`No meeting days available for course: ${COURSE_NUMBER}`);
+//         }
+//     });
+// };

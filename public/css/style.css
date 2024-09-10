@@ -1,8 +1,10 @@
 /* styles.css */
 
 body {
-    color: white;
-    background-color: #1d2630;
+    color: #e0e0e0;
+    background-color: #2c3e50;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
 }
 
 .dropdowns {
@@ -14,22 +16,66 @@ body {
 .dropdown label {
     display: block;
     margin-bottom: 5px;
-    color: white;
+    color: #e0e0e0;
+    font-weight: 500;
 }
 
 .dropdown select {
     width: 100%;
-    padding: 8px; /* Reduce padding */
-    border-radius: 5px;
-    border: 1px solid #ced4da; /* Bootstrap default border color */
-    background-color: #fff;
-    color: #495057;
-    font-size: 14px; /* Reduce font size */
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #34495e;
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-size: 14px;
     outline: none;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .dropdown select:hover,
 .dropdown select:focus {
-    border-color: #80bdff; /* Bootstrap default border color on hover/focus */
+    border-color: #3498db;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.calendar-table th,
+.calendar-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #34495e;
+}
+
+.calendar-table th {
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-weight: 600;
+}
+
+.calendar-table td {
+    background-color: #3b4c5c;
+    color: #ecf0f1;
+    transition: background-color 0.3s;
+}
+
+.calendar-table td:hover {
+    background-color: #1abc9c;
+    cursor: pointer;
+}
+
+.calendar-table .course-info {
+    background-color: #2980b9;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.calendar-table .course-info:hover {
+    background-color: #3498db;
 }

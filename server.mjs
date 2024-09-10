@@ -233,12 +233,24 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 });
 
 
-
-
-// Retrieve xlsx all courses
+// Retrieve filtered courses based on course number prefix and selected year
 app.get("/api/courses", async (req, res) => {
   try {
-    const courses = await Course.find();
+    const { courseNumberPrefix, year } = req.query;
+
+    // Filter based on the year and course number
+    let courseFilter = {};
+    
+    if (year === "freshman") {
+      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_180|CIS_290)/, $options: "i" } };
+    } else if (year === "sophomore") {
+      courseFilter = { COURSE_NUMBER: { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277)/, $options: "i" } };
+    } else if (year === 'junior') {
+      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_355|CIS_326|CIS_219)/, $options: "i"}} ;
+    } else if (year === 'senior') {
+      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i"}} ;
+    }
+    const courses = await Course.find(courseFilter);
     res.json(courses);
   } catch (error) {
     console.error("Error retrieving courses:", error);
@@ -248,6 +260,21 @@ app.get("/api/courses", async (req, res) => {
     });
   }
 });
+
+
+// Retrieve xlsx all courses
+// app.get("/api/courses", async (req, res) => {
+//   try {
+//     const courses = await Course.find();
+//     res.json(courses);
+//   } catch (error) {
+//     console.error("Error retrieving courses:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "An error occurred while retrieving courses",
+//     });
+//   }
+// });
 
 // Retrieve catalog data by curriculum type
 app.get("/api/catalog/:curriculumType", async (req, res) => {
