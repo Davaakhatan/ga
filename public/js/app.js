@@ -41,6 +41,19 @@
 //     }
 // };
 
+// document.addEventListener('DOMContentLoaded', () => {
+//     const courseDropdown = document.getElementById('course-catalog-dropdown');
+//     const yearDropdown = document.getElementById('student-year-dropdown');
+//     const termDropdown = document.getElementById('student-semester-dropdown');
+
+//     courseDropdown.addEventListener('change', () => fetchCourses());
+//     yearDropdown.addEventListener('change', () => fetchCourses());
+//     termDropdown.addEventListener('change', () => fetchCourses());
+
+//     // Initial fetch to populate courses based on default selections
+//     fetchCourses();
+// });
+
 const fetchCourses = async () => {
     try {
         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
@@ -105,7 +118,7 @@ const clearCalendar = () => {
 
 const displayCourses = (data) => {
     data.forEach(course => {
-        const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
+        const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS, BUILDING, ROOM } = course;
 
         // Normalize and parse time if available
         const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
@@ -152,7 +165,8 @@ const displayCourses = (data) => {
                     courseDiv.innerHTML = `
                         <strong>${COURSE_NUMBER}</strong><br>
                         ${TITLE_START_DATE}<br>
-                        ${normalizedStartTime} - ${normalizedEndTime}
+                         ${normalizedStartTime} - ${normalizedEndTime}<br>
+                        ${BUILDING} ${ROOM}
                     `;
                     dayCell.appendChild(courseDiv);
                 }

@@ -262,7 +262,7 @@ app.get("/api/courses", async (req, res) => {
 });
 
 
-// Retrieve xlsx all courses
+
 // app.get("/api/courses", async (req, res) => {
 //   try {
 //     const courses = await Course.find();
@@ -478,3 +478,4 @@ db.once("open", () => console.log("Connected to MongoDB"));
 //     ]
 //   }
 // }
+// Retrieve xlsx all courses
