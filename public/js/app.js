@@ -58,6 +58,7 @@ const fetchCourses = async () => {
     try {
         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
         const selectedYear = document.getElementById('student-year-dropdown').value;
+        const selectedSemester = document.getElementById('student-semester-dropdown').value; // Get selected semester
         const courseCatalog = document.getElementById('course-catalog');
 
         // Clear previous courses
@@ -66,20 +67,20 @@ const fetchCourses = async () => {
 
         let url = '';
 
-        // Construct the correct URL based on selectedCourse and selectedYear
+        // Construct the correct URL based on selectedCourse, selectedYear, and selectedSemester
         if (selectedCourse === "computer-science") {
             if (selectedYear === "freshman") {
-                url = '/api/courses?year=freshman';
+                url = `/api/courses?year=freshman&semester=${selectedSemester}`;
             } else if (selectedYear === "sophomore") {
-                url = '/api/courses?year=sophomore';
+                url = `/api/courses?year=sophomore&semester=${selectedSemester}`;
             } else if (selectedYear === "junior") {
-                url = '/api/courses?year=junior';
+                url = `/api/courses?year=junior&semester=${selectedSemester}`;
             } else if (selectedYear === "senior") {
-                url = '/api/courses?year=senior';
+                url = `/api/courses?year=senior&semester=${selectedSemester}`;
             }
         } else if (selectedCourse === "cybersecurity") {
             if (selectedYear === "freshman") {
-                url = `/api/catalog/Cybersecurity`;
+                url = `/api/catalog/Cybersecurity&semester=${selectedSemester}`;
             } else {
                 courseCatalog.innerHTML = 'No data for this selection';
                 return;
@@ -107,6 +108,11 @@ const fetchCourses = async () => {
     }
 };
 
+// Add event listener AFTER defining the function
+document.getElementById('student-semester-dropdown').addEventListener('change', fetchCourses);
+
+
+
 
 
 const clearCalendar = () => {
@@ -115,10 +121,13 @@ const clearCalendar = () => {
         cell.innerHTML = '';
     });
 };
-
 const displayCourses = (data) => {
+    // Clear previous courses (if applicable)
+    const courseCatalog = document.getElementById('course-catalog');
+    courseCatalog.innerHTML = '';
+
     data.forEach(course => {
-        const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS, BUILDING, ROOM } = course;
+        const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS, BUILDING, ROOM, _id } = course;
 
         // Normalize and parse time if available
         const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
@@ -165,8 +174,9 @@ const displayCourses = (data) => {
                     courseDiv.innerHTML = `
                         <strong>${COURSE_NUMBER}</strong><br>
                         ${TITLE_START_DATE}<br>
-                         ${normalizedStartTime} - ${normalizedEndTime}<br>
-                        ${BUILDING} ${ROOM}
+                        ${normalizedStartTime} - ${normalizedEndTime}<br>
+                        ${BUILDING} ${ROOM}<br>
+                        <button onclick="deleteCourse('${_id}')">Delete</button>
                     `;
                     dayCell.appendChild(courseDiv);
                 }
@@ -176,6 +186,30 @@ const displayCourses = (data) => {
         }
     });
 };
+
+// Function to delete a course
+const deleteCourse = async (courseId) => {
+    if (confirm("Are you sure you want to delete this course?")) {
+        try {
+            const response = await fetch(`/api/courses/${courseId}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message);
+                // Refresh the course list
+                fetchCourses();
+            } else {
+                alert("Failed to delete the course: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error deleting course:", error);
+            alert("An error occurred while deleting the course.");
+        }
+    }
+};
+
 
 
 

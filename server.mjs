@@ -233,23 +233,44 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 });
 
 
-// Retrieve filtered courses based on course number prefix and selected year
+// Retrieve filtered courses based on course number prefix, selected year, and term (semester)
 app.get("/api/courses", async (req, res) => {
   try {
-    const { courseNumberPrefix, year } = req.query;
+    const { year, semester } = req.query;
 
-    // Filter based on the year and course number
+    // Initialize filter based on the year and course number
     let courseFilter = {};
-    
-    if (year === "freshman") {
-      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_180|CIS_290)/, $options: "i" } };
-    } else if (year === "sophomore") {
-      courseFilter = { COURSE_NUMBER: { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277)/, $options: "i" } };
-    } else if (year === 'junior') {
-      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_355|CIS_326|CIS_219)/, $options: "i"}} ;
-    } else if (year === 'senior') {
-      courseFilter = { COURSE_NUMBER: { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i"}} ;
+
+    // Add TERM filtering based on the selected semester (fall or spring)
+    if (semester === 'fall') {
+      courseFilter.TERM = { $regex: /\/FA$/ };  // Matches terms ending with /FA
+
+      // Add course number filtering based on the selected year
+      if (year === "freshman") {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_180|CIS_290)/, $options: "i" };
+      } else if (year === "sophomore") {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277)/, $options: "i" };
+      } else if (year === 'junior') {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219)/, $options: "i"};
+      } else if (year === 'senior') {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i"};
+      }
+    } else if (semester === 'spring') {
+      courseFilter.TERM = { $regex: /\/SP$/ };  // Matches terms ending with /SP
+
+      // Add course number filtering based on the selected year
+      if (year === "freshman") {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_182|CIS_183)/, $options: "i" };
+      } else if (year === "sophomore") {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_255|CSC_223|SOFT_210)/, $options: "i" };
+      } else if (year === 'junior') {
+        courseFilter.COURSE_NUMBER = { $regex: /^(MATH_310|PHYS_212)/, $options: "i"};
+      } else if (year === 'senior') {
+        courseFilter.COURSE_NUMBER = { $regex: /^(CIS_458|CIS_390)/, $options: "i"};
+      }
     }
+
+    // Fetch the filtered courses
     const courses = await Course.find(courseFilter);
     res.json(courses);
   } catch (error) {
@@ -260,6 +281,7 @@ app.get("/api/courses", async (req, res) => {
     });
   }
 });
+
 
 
 
@@ -316,53 +338,48 @@ app.get("/api/courses/:id", async (req, res) => {
   }
 });
 
-// Update course by ID
+// Update course details
 app.put("/api/courses/:id", async (req, res) => {
   try {
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!course) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Course not found" });
-    }
-    res.json({
-      success: true,
-      message: "Course updated successfully",
-      data: course,
-    });
+      const { id } = req.params;
+      const updatedCourse = req.body;
+
+      const result = await Course.findByIdAndUpdate(id, updatedCourse, { new: true });
+
+      if (!result) {
+          return res.status(404).json({ success: false, message: "Course not found" });
+      }
+
+      res.json({ success: true, message: "Course updated successfully", data: result });
   } catch (error) {
-    console.error("Error updating course:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while updating course",
-    });
+      console.error("Error updating course:", error);
+      res.status(500).json({
+          success: false,
+          message: "An error occurred while updating the course",
+      });
   }
 });
 
-// Delete course by ID
+
+
+// Delete a course by ID
 app.delete("/api/courses/:id", async (req, res) => {
   try {
-    const course = await Course.findByIdAndDelete(req.params.id);
-    if (!course) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Course not found" });
+    const { id } = req.params;
+    const deletedCourse = await Course.findByIdAndDelete(id);
+    
+    if (!deletedCourse) {
+      return res.status(404).json({ success: false, message: "Course not found" });
     }
-    res.json({
-      success: true,
-      message: "Course deleted successfully",
-      data: course,
-    });
+
+    res.json({ success: true, message: "Course deleted successfully", deletedCourse });
   } catch (error) {
     console.error("Error deleting course:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while deleting course",
-    });
+    res.status(500).json({ success: false, message: "An error occurred while deleting the course" });
   }
 });
+
+
 
 const PORT = process.env.PORT || 3001;
 
@@ -381,101 +398,3 @@ db.on("error", (error) => console.error("MongoDB connection error:", error));
 db.once("open", () => console.log("Connected to MongoDB"));
 
 
-
-// // Handle file upload endpoint
-// app.post('/api/upload', upload.single('file'), async (req, res) => {
-//   try {
-//     // Check if file was uploaded
-//     if (!req.file) {
-//       return res.status(400).json({ success: false, message: 'No file uploaded' });
-//     }
-
-//     // Read the uploaded file with multer
-//     const workbook = xlsx.readFile(req.file.path);
-
-//     // Convert first sheet of workbook to JSON
-//     const jsonData = xlsx.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-
-//     // Transform JSON data to match Mongoose schema
-//     const transformedData = jsonData.map(item => ({
-//       COURSE_NUMBER: item['COURSE #'],
-//       TITLE_START_DATE: item['TITLE/START DATE'],
-//       ACADEMIC_LEVEL: item['Acad Level'],
-//       CAPACITY: item['CAPACITY'],
-//       NUMBER_OF_STUDENTS: item['# OF STUDENTS'],
-//       STATUS: item['STATUS'],
-//       INSTRUCTOR: item['INSTRUCTOR'],
-//       START_TIME: item['Start Time'],
-//       END_TIME: item['End Time'],
-//       MEETING_DAYS: item['Meeting Days'],
-//       BUILDING: item['Bldg'],
-//       ROOM: item['Room'],
-//       FEE: item['FEE'],
-//       MIN_CREDITS: item['Min Cred'],
-//       MAX_CREDITS: item['Max Cred'],
-//       SECTION: item['Section'],
-//       TERM: item['Term'],
-//       SEQ_NO: item['Seq No'],
-//       SCHOOLS: item['Schools'],
-//       ACADEMIC_LEVEL_1: item['Acad Level_1']
-//     }));
-
-//     // Import JSON data into MongoDB
-//     await Course.insertMany(transformedData);
-
-//     // Delete the XLSX file
-//     fs.unlinkSync(req.file.path);
-
-//     console.log('XLSX file deleted successfully');
-
-//     // Respond with success message
-//     return res.status(200).json({ success: true, message: 'File uploaded successfully' });
-//   } catch (error) {
-//     console.error('Error uploading file:', error);
-//     return res.status(500).json({ success: false, message: 'An error occurred while uploading file' });
-//   }
-// });
-
-// {
-//   "FRESHMAN": {
-//     "Fall": [
-//       { "credits": 1, "course": "Intro to Engineering/ENG 102" },
-//       { "credits": 2, "course": "Problem Solv. and Computer Prog./ CIS 180" },
-//       { "credits": 1, "course": "Problem Solv. and Computer Prog. Lab/ CIS 181" },
-//       { "credits": 3, "course": "Quantitative Reasoning: Calculus 1/ MATH 140" },
-//       { "credits": 3, "course": "Intro. Networks/CIS 290" },
-//       { "credits": 3, "course": "Foundational English" },
-//       { "credits": 3, "course": "Foundations of Theology" },
-//       { "credits": 0, "course": "Gannon 101" }
-//     ],
-//     "Spring": [
-//       { "credits": 2, "course": "Object-Oriented Program./CIS 182" },
-//       { "credits": 1, "course": "Object-Oriented Program. Lab/CIS 183" },
-//       { "credits": 3, "course": "Calculus 2/MATH 141" },
-//       { "credits": 3, "course": "Integrative History" },
-//       { "credits": 3, "course": "Foundational Philosophy" },
-//       { "credits": 3, "course": "Fund. Physics 1: Mechanics/PHYS 210" },
-//       { "credits": 1, "course": "Fund. Physics 1 Mechanics Lab/ PHYS 211" }
-//     ]
-//   },
-//   "SOPHOMORE": {
-//     "Fall": [
-//       { "credits": 3, "course": "Data Structures and Algorithms/ CSC 220" },
-//       { "credits": 3, "course": "The User Experience/CIS 239" },
-//       { "credits": 3, "course": "Discrete Mathematics 1/MATH 222" },
-//       { "credits": 3, "course": "Mobile Application Devl./CIS 277" },
-//       { "credits": 1, "course": "Object-Oriented Design Lab/CIS 287" },
-//       { "credits": 3, "course": "Integrative Communication" }
-//     ],
-//     "Spring": [
-//       { "credits": 3, "course": "Database Management and Admin./ CIS 255" },
-//       { "credits": 1, "course": "Algorithm Development Lab/CSC 223" },
-//       { "credits": 3, "course": "Discrete Mathematics 2/MATH 223" },
-//       { "credits": 3, "course": "Numerical Analysis MATH 314" },
-//       { "credits": 3, "course": "Software Engineering/SOFT 210" },
-//       { "credits": 3, "course": "Physics 3: E&M/PHYS 214 or PHYS 212" },
-//       { "credits": 1, "course": "Physics 3: E&M Lab/PHYS 215 or PHYS 213" }
-//     ]
-//   }
-// }
-// Retrieve xlsx all courses
