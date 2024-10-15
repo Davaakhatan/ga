@@ -80,7 +80,13 @@ const fetchCourses = async () => {
             }
         } else if (selectedCourse === "cybersecurity") {
             if (selectedYear === "freshman") {
-                url = `/api/catalog/Cybersecurity&semester=${selectedSemester}`;
+                url = `/api/courses?year=freshman&semester=${selectedSemester}`;
+            } else if (selectedYear === "sophomore") {
+                url = `/api/courses?year=sophomore&semester=${selectedSemester}`;
+            } else if (selectedYear === "junior") {
+                url = `/api/courses?year=junior&semester=${selectedSemester}`;
+            } else if (selectedYear === "senior") {
+                url = `/api/courses?year=senior&semester=${selectedSemester}`;
             } else {
                 courseCatalog.innerHTML = 'No data for this selection';
                 return;
