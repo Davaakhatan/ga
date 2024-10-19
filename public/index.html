@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | GA</title>
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="./js/app.js" defer></script>
 </head>
 
 <body>
@@ -66,121 +65,161 @@
 
             <!-- Course Catalog -->
             <div class="col-12 col-md-8 mb-4" id="course-catalog"></div>
-            <!-- Calendar -->
-            <div class="col-12 col-md-10">
-                <table class="table table-bordered text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Time</th>
-                            <th scope="col">Monday</th>
-                            <th scope="col">Tuesday</th>
-                            <th scope="col">Wednesday</th>
-                            <th scope="col">Thursday</th>
-                            <th scope="col">Friday</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">08:00 AM - 09:00 AM</th>
-                            <td data-day="M" data-time="08:00 AM"></td>
-                            <td data-day="T" data-time="08:00 AM"></td>
-                            <td data-day="W" data-time="08:00 AM"></td>
-                            <td data-day="TH" data-time="08:00 AM"></td>
-                            <td data-day="F" data-time="08:00 AM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">09:00 AM - 10:00 AM</th>
-                            <td data-day="M" data-time="09:00 AM"></td>
-                            <td data-day="T" data-time="09:00 AM"></td>
-                            <td data-day="W" data-time="09:00 AM"></td>
-                            <td data-day="TH" data-time="09:00 AM"></td>
-                            <td data-day="F" data-time="09:00 AM"></td>
-                        </tr>
-                        <!-- Repeat rows for each time slot -->
-                        <tr>
-                            <th scope="row">10:00 AM - 11:00 AM</th>
-                            <td data-day="M" data-time="10:00 AM"></td>
-                            <td data-day="T" data-time="10:00 AM"></td>
-                            <td data-day="W" data-time="10:00 AM"></td>
-                            <td data-day="TH" data-time="10:00 AM"></td>
-                            <td data-day="F" data-time="10:00 AM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">11:00 AM - 12:00 PM</th>
-                            <td data-day="M" data-time="11:00 AM"></td>
-                            <td data-day="T" data-time="11:00 AM"></td>
-                            <td data-day="W" data-time="11:00 AM"></td>
-                            <td data-day="TH" data-time="11:00 AM"></td>
-                            <td data-day="F" data-time="11:00 AM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">12:00 PM - 01:00 PM</th>
-                            <td data-day="M" data-time="12:00 PM"></td>
-                            <td data-day="T" data-time="12:00 PM"></td>
-                            <td data-day="W" data-time="12:00 PM"></td>
-                            <td data-day="TH" data-time="12:00 PM"></td>
-                            <td data-day="F" data-time="12:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">01:00 PM - 02:00 PM</th>
-                            <td data-day="M" data-time="01:00 PM"></td>
-                            <td data-day="T" data-time="01:00 PM"></td>
-                            <td data-day="W" data-time="01:00 PM"></td>
-                            <td data-day="TH" data-time="01:00 PM"></td>
-                            <td data-day="F" data-time="01:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">02:00 PM - 03:00 PM</th>
-                            <td data-day="M" data-time="02:00 PM"></td>
-                            <td data-day="T" data-time="02:00 PM"></td>
-                            <td data-day="W" data-time="02:00 PM"></td>
-                            <td data-day="TH" data-time="02:00 PM"></td>
-                            <td data-day="F" data-time="02:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">03:00 PM - 04:00 PM</th>
-                            <td data-day="M" data-time="03:00 PM"></td>
-                            <td data-day="T" data-time="03:00 PM"></td>
-                            <td data-day="W" data-time="03:00 PM"></td>
-                            <td data-day="TH" data-time="03:00 PM"></td>
-                            <td data-day="F" data-time="03:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">04:00 PM - 05:00 PM</th>
-                            <td data-day="M" data-time="04:00 PM"></td>
-                            <td data-day="T" data-time="04:00 PM"></td>
-                            <td data-day="W" data-time="04:00 PM"></td>
-                            <td data-day="TH" data-time="04:00 PM"></td>
-                            <td data-day="F" data-time="04:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">05:00 PM - 06:00 PM</th>
-                            <td data-day="M" data-time="05:00 PM"></td>
-                            <td data-day="T" data-time="05:00 PM"></td>
-                            <td data-day="W" data-time="05:00 PM"></td>
-                            <td data-day="TH" data-time="05:00 PM"></td>
-                            <td data-day="F" data-time="05:00 PM"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">06:00 PM - 07:00 PM</th>
-                            <td data-day="M" data-time="06:00 PM"></td>
-                            <td data-day="T" data-time="06:00 PM"></td>
-                            <td data-day="W" data-time="06:00 PM"></td>
-                            <td data-day="TH" data-time="06:00 PM"></td>
-                            <td data-day="F" data-time="06:00 PM"></td>
-                        </tr>
-                    </tbody>
-                    
-                </table>
-            </div>
+           <!-- Calendar -->
+           <div class="col-12 col-md-10">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Time</th>
+                        <th scope="col">Monday</th>
+                        <th scope="col">Tuesday</th>
+                        <th scope="col">Wednesday</th>
+                        <th scope="col">Thursday</th>
+                        <th scope="col">Friday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">08:00 AM - 09:00 AM</th>
+                        <td data-day="M" data-time="08:00 AM"></td>
+                        <td data-day="T" data-time="08:00 AM"></td>
+                        <td data-day="W" data-time="08:00 AM"></td>
+                        <td data-day="TH" data-time="08:00 AM"></td>
+                        <td data-day="F" data-time="08:00 AM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">09:00 AM - 10:00 AM</th>
+                        <td data-day="M" data-time="09:00 AM"></td>
+                        <td data-day="T" data-time="09:00 AM"></td>
+                        <td data-day="W" data-time="09:00 AM"></td>
+                        <td data-day="TH" data-time="09:00 AM"></td>
+                        <td data-day="F" data-time="09:00 AM"></td>
+                    </tr>
+                    <!-- Repeat rows for each time slot -->
+                    <tr>
+                        <th scope="row">10:00 AM - 11:00 AM</th>
+                        <td data-day="M" data-time="10:00 AM"></td>
+                        <td data-day="T" data-time="10:00 AM"></td>
+                        <td data-day="W" data-time="10:00 AM"></td>
+                        <td data-day="TH" data-time="10:00 AM"></td>
+                        <td data-day="F" data-time="10:00 AM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">11:00 AM - 12:00 PM</th>
+                        <td data-day="M" data-time="11:00 AM"></td>
+                        <td data-day="T" data-time="11:00 AM"></td>
+                        <td data-day="W" data-time="11:00 AM"></td>
+                        <td data-day="TH" data-time="11:00 AM"></td>
+                        <td data-day="F" data-time="11:00 AM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">12:00 PM - 01:00 PM</th>
+                        <td data-day="M" data-time="12:00 PM"></td>
+                        <td data-day="T" data-time="12:00 PM"></td>
+                        <td data-day="W" data-time="12:00 PM"></td>
+                        <td data-day="TH" data-time="12:00 PM"></td>
+                        <td data-day="F" data-time="12:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">01:00 PM - 02:00 PM</th>
+                        <td data-day="M" data-time="01:00 PM"></td>
+                        <td data-day="T" data-time="01:00 PM"></td>
+                        <td data-day="W" data-time="01:00 PM"></td>
+                        <td data-day="TH" data-time="01:00 PM"></td>
+                        <td data-day="F" data-time="01:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">02:00 PM - 03:00 PM</th>
+                        <td data-day="M" data-time="02:00 PM"></td>
+                        <td data-day="T" data-time="02:00 PM"></td>
+                        <td data-day="W" data-time="02:00 PM"></td>
+                        <td data-day="TH" data-time="02:00 PM"></td>
+                        <td data-day="F" data-time="02:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">03:00 PM - 04:00 PM</th>
+                        <td data-day="M" data-time="03:00 PM"></td>
+                        <td data-day="T" data-time="03:00 PM"></td>
+                        <td data-day="W" data-time="03:00 PM"></td>
+                        <td data-day="TH" data-time="03:00 PM"></td>
+                        <td data-day="F" data-time="03:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">04:00 PM - 05:00 PM</th>
+                        <td data-day="M" data-time="04:00 PM"></td>
+                        <td data-day="T" data-time="04:00 PM"></td>
+                        <td data-day="W" data-time="04:00 PM"></td>
+                        <td data-day="TH" data-time="04:00 PM"></td>
+                        <td data-day="F" data-time="04:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">05:00 PM - 06:00 PM</th>
+                        <td data-day="M" data-time="05:00 PM"></td>
+                        <td data-day="T" data-time="05:00 PM"></td>
+                        <td data-day="W" data-time="05:00 PM"></td>
+                        <td data-day="TH" data-time="05:00 PM"></td>
+                        <td data-day="F" data-time="05:00 PM"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">06:00 PM - 07:00 PM</th>
+                        <td data-day="M" data-time="06:00 PM"></td>
+                        <td data-day="T" data-time="06:00 PM"></td>
+                        <td data-day="W" data-time="06:00 PM"></td>
+                        <td data-day="TH" data-time="06:00 PM"></td>
+                        <td data-day="F" data-time="06:00 PM"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-            
+
+    </div>
+        <!-- Modal HTML -->
+        <div id="editCourseModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editCourseForm">
+                            <div class="mb-3">
+                                <label for="courseNumber" class="form-label">Course Number</label>
+                                <input type="text" class="form-control" id="courseNumber" name="courseNumber" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="courseTitle" class="form-label">Course Title</label>
+                                <input type="text" class="form-control" id="courseTitle" name="courseTitle">
+                            </div>
+                            <div class="mb-3">
+                                <label for="startTime" class="form-label">Start Time</label>
+                                <input type="text" class="form-control" id="startTime" name="startTime">
+                            </div>
+                            <div class="mb-3">
+                                <label for="endTime" class="form-label">End Time</label>
+                                <input type="text" class="form-control" id="endTime" name="endTime">
+                            </div>
+                            <div class="mb-3">
+                                <label for="building" class="form-label">Building</label>
+                                <input type="text" class="form-control" id="building" name="building">
+                            </div>
+                            <div class="mb-3">
+                                <label for="room" class="form-label">Room</label>
+                                <input type="text" class="form-control" id="room" name="room">
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="saveCourseChanges()">Save changes</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </div>
+        </div>        
+          
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-qFNV5yB0UG0Q3zzn1V6iX8h/1v5IjoF8hY9dZ76cDB9xOjtjNpyZPzX/Txyn1p1jZ" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-qErkQnl7PUaAqkRH2V5gnQJ5Qo2+4zI1gRrJ95QdX7Lw0g+8Ue5HZrTwpzgjT1jZ" crossorigin="anonymous"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/app.js" defer></script>
 </body>
 
 </html>

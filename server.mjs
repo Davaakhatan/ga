@@ -309,23 +309,6 @@ app.get("/api/courses", async (req, res) => {
   }
 });
 
-
-
-
-
-// app.get("/api/courses", async (req, res) => {
-//   try {
-//     const courses = await Course.find();
-//     res.json(courses);
-//   } catch (error) {
-//     console.error("Error retrieving courses:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "An error occurred while retrieving courses",
-//     });
-//   }
-// });
-
 // Retrieve catalog data by curriculum type
 app.get("/api/catalog/:curriculumType", async (req, res) => {
   try {

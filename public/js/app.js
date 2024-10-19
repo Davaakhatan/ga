@@ -1,141 +1,55 @@
+let coursesData = [];  // Declare this variable globally to store fetched courses
+let currentEditingCourseId = null;  // Store the course ID being edited
 
-// const fetchCourses = async () => {
-//     try {
-//         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
-//         const selectedYear = document.getElementById('student-year-dropdown').value;
-//         const selectedSemester = document.getElementById('student-semester-dropdown').value;
-//         const courseCatalog = document.getElementById('course-catalog');
-
-//         // Clear previous courses
-//         courseCatalog.innerHTML = '';
-//         // Clear previous courses from the calendar
-//         clearCalendar();
-
-//         let url;
-//         if (selectedCourse === "computer-science" || selectedCourse === "computer-science-software-engineering") {
-//             if (selectedYear === "freshman") {
-//                 // Use the API endpoint that fetches CIS courses with specific fields
-//                 url = '/api/courses';
-//             }
-//         } else if (selectedCourse === "cybersecurity") {
-//             if (selectedYear === "freshman") {
-//                 url = `/api/catalog/Cybersecurity`;
-//             }
-//         } else {
-//             // Clear the course catalog if conditions are not met
-//             courseCatalog.innerHTML = '';
-//             return;
-//         }
-
-//         if (url) {
-//             const response = await fetch(url);
-//             if (!response.ok) {
-//                 throw new Error(`Failed to fetch from ${url}`);
-//             }
-//             const data = await response.json();
-//             console.log('Fetched data:', data);
-//             displayCourses(data);
-//         }
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//     }
-// };
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     const courseDropdown = document.getElementById('course-catalog-dropdown');
-//     const yearDropdown = document.getElementById('student-year-dropdown');
-//     const termDropdown = document.getElementById('student-semester-dropdown');
-
-//     courseDropdown.addEventListener('change', () => fetchCourses());
-//     yearDropdown.addEventListener('change', () => fetchCourses());
-//     termDropdown.addEventListener('change', () => fetchCourses());
-
-//     // Initial fetch to populate courses based on default selections
-//     fetchCourses();
-// });
-
+// Fetch courses based on selected filters
 const fetchCourses = async () => {
     try {
         const selectedCourse = document.getElementById('course-catalog-dropdown').value;
         const selectedYear = document.getElementById('student-year-dropdown').value;
-        const selectedSemester = document.getElementById('student-semester-dropdown').value; // Get selected semester
+        const selectedSemester = document.getElementById('student-semester-dropdown').value;
         const courseCatalog = document.getElementById('course-catalog');
 
         // Clear previous courses
         courseCatalog.innerHTML = '';
         clearCalendar();
 
-        let url = '';
+        let url = `/api/courses?year=${selectedYear}&semester=${selectedSemester}&course=${selectedCourse}`;
 
-        // Construct the correct URL based on selectedCourse, selectedYear, and selectedSemester
-        if (selectedCourse === "computer-science") {
-            if (selectedYear === "freshman") {
-                url = `/api/courses?year=freshman&semester=${selectedSemester}`;
-            } else if (selectedYear === "sophomore") {
-                url = `/api/courses?year=sophomore&semester=${selectedSemester}`;
-            } else if (selectedYear === "junior") {
-                url = `/api/courses?year=junior&semester=${selectedSemester}`;
-            } else if (selectedYear === "senior") {
-                url = `/api/courses?year=senior&semester=${selectedSemester}`;
-            }
-        } else if (selectedCourse === "cybersecurity") {
-            if (selectedYear === "freshman") {
-                url = `/api/courses?year=freshman&semester=${selectedSemester}`;
-            } else if (selectedYear === "sophomore") {
-                url = `/api/courses?year=sophomore&semester=${selectedSemester}`;
-            } else if (selectedYear === "junior") {
-                url = `/api/courses?year=junior&semester=${selectedSemester}`;
-            } else if (selectedYear === "senior") {
-                url = `/api/courses?year=senior&semester=${selectedSemester}`;
-            } else {
-                courseCatalog.innerHTML = 'No data for this selection';
-                return;
-            }
-        } else {
-            courseCatalog.innerHTML = 'Please select a valid course and year';
-            return;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from ${url}`);
         }
 
-        // Fetch courses only if a valid URL has been constructed
-        if (url) {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch from ${url}`);
-            }
+        const data = await response.json();
+        coursesData = data;  // Store fetched data globally
 
-            const data = await response.json();
-            console.log('Fetched data:', data);
-
-            // Display the filtered courses
-            displayCourses(data); 
+        if (data.length === 0) {
+            courseCatalog.innerHTML = 'No courses found for this selection.';
+        } else {
+            displayCourses(data);
         }
     } catch (error) {
         console.error('Error fetching data:', error);
+        document.getElementById('course-catalog').innerHTML = '<div class="alert alert-danger">Error fetching courses. Please try again later.</div>';
     }
 };
 
-// Add event listener AFTER defining the function
-document.getElementById('student-semester-dropdown').addEventListener('change', fetchCourses);
-
-
-
-
-
+// Function to clear the calendar cells
 const clearCalendar = () => {
     const cells = document.querySelectorAll('td[data-day][data-time]');
     cells.forEach(cell => {
         cell.innerHTML = '';
     });
 };
+
+// Function to display courses in the calendar
 const displayCourses = (data) => {
-    // Clear previous courses (if applicable)
     const courseCatalog = document.getElementById('course-catalog');
     courseCatalog.innerHTML = '';
 
     data.forEach(course => {
         const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS, BUILDING, ROOM, _id } = course;
 
-        // Normalize and parse time if available
         const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
         const normalizedEndTime = END_TIME ? END_TIME.replace(/([AP]M)/, ' $1') : "N/A";
 
@@ -148,17 +62,15 @@ const displayCourses = (data) => {
         const startTime = parseTime(normalizedStartTime);
         const endTime = parseTime(normalizedEndTime);
 
-        // Determine the appropriate row (round down to the nearest hour)
         const getTimeSlot = (hour, minute, period) => {
             if (minute !== 0) {
-                hour = hour === 12 ? 11 : hour; // Handle 12 PM cases
+                hour = hour === 12 ? 11 : hour;
             }
             return `${hour < 10 ? `0${hour}` : hour}:00 ${period}`;
         };
 
         const timeSlot = getTimeSlot(startTime.hour, startTime.minute, startTime.period);
 
-        // Normalize MEETING_DAYS to match HTML attribute values
         if (MEETING_DAYS) {
             const days = MEETING_DAYS.split(' ').map(day => {
                 switch(day) {
@@ -172,7 +84,6 @@ const displayCourses = (data) => {
             });
 
             days.forEach(day => {
-                // Select the cell in the calendar corresponding to the day and time slot
                 const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${timeSlot}"]`);
                 if (dayCell) {
                     const courseDiv = document.createElement('div');
@@ -182,8 +93,11 @@ const displayCourses = (data) => {
                         ${TITLE_START_DATE}<br>
                         ${normalizedStartTime} - ${normalizedEndTime}<br>
                         ${BUILDING} ${ROOM}<br>
-                        <button onclick="deleteCourse('${_id}')">Delete</button>
-                    `;
+                        <span class="icon-buttons">
+                            <i class="material-icons edit-icon" style="cursor: pointer;" onclick="editCourse('${_id}')">edit</i>
+                            <i class="material-icons delete-icon" style="cursor: pointer;" onclick="deleteCourse('${_id}')">delete</i>
+                        </span>
+                    `;                
                     dayCell.appendChild(courseDiv);
                 }
             });
@@ -216,144 +130,85 @@ const deleteCourse = async (courseId) => {
     }
 };
 
+// Show the modal and ensure it closes on click outside
+const editCourse = (courseId) => {
+    const course = coursesData.find(c => c._id === courseId); 
+
+    // Populate the form fields with the course's current data
+    document.getElementById('courseNumber').value = course.COURSE_NUMBER;
+    document.getElementById('courseTitle').value = course.TITLE_START_DATE;
+    document.getElementById('startTime').value = course.START_TIME;
+    document.getElementById('endTime').value = course.END_TIME;
+    document.getElementById('building').value = course.BUILDING;
+    document.getElementById('room').value = course.ROOM;
+
+    // Show the modal using Bootstrap's modal method
+    const modal = new bootstrap.Modal(document.getElementById('editCourseModal'));
+    modal.show();  // Show the modal
+};
 
 
 
+// Function to save course changes
+const saveCourseChanges = async () => {
+    console.log("Save changes clicked");
+    const courseId = currentEditingCourseId;  // Make sure this is set when opening the modal
+
+    const updatedCourse = {
+        COURSE_NUMBER: document.getElementById('courseNumber').value,
+        TITLE_START_DATE: document.getElementById('courseTitle').value,
+        START_TIME: document.getElementById('startTime').value,
+        END_TIME: document.getElementById('endTime').value,
+        BUILDING: document.getElementById('building').value,
+        ROOM: document.getElementById('room').value,
+    };
+
+    try {
+        const response = await fetch(`/api/courses/${courseId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedCourse),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert('Course updated successfully');
+            closeModal();
+            fetchCourses();  // Reload updated courses
+        } else {
+            alert('Failed to update the course');
+        }
+    } catch (error) {
+        console.error('Error saving course changes:', error);
+        alert('An error occurred while saving the course');
+    }
+};
+
+
+// Function to close the modal
+const closeModal = () => {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
+    if (modal) {
+        modal.hide(); // Hide the modal properly
+    }
+};
+
+document.addEventListener('keydown', function(event) {
+    const modalElement = document.getElementById('editCourseModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    
+    if (event.key === 'Escape' && modalInstance) {
+        modalInstance.hide();  // Hide the modal on 'ESC' press
+    }
+});
+
+
+// Event listeners for dropdown changes
 document.getElementById('course-catalog-dropdown').addEventListener('change', fetchCourses);
 document.getElementById('student-year-dropdown').addEventListener('change', fetchCourses);
 document.getElementById('student-semester-dropdown').addEventListener('change', fetchCourses);
 
 // Call fetchCourses initially when the page loads
 fetchCourses();
-
-
-
-
-
-// const displayCourses = (data, source, selectedYear, selectedSemester) => {
-//     const courseCatalog = document.getElementById('course-catalog');
-//     courseCatalog.innerHTML = ''; // Clear previous content
-
-//     if (source.includes('courses')) {
-//         // Display only CIS courses with specific fields
-//         data.forEach(course => {
-//             const courseElement = document.createElement('div');
-//             courseElement.className = 'course-item';
-//             courseElement.innerHTML = `
-//                 <strong>${course.COURSE_NUMBER} - ${course.TITLE_START_DATE}</strong><br>
-//                 Time: ${course.START_TIME} - ${course.END_TIME}<br>
-//                 Days: ${course.MEETING_DAYS}
-//             `;
-//             courseCatalog.appendChild(courseElement);
-//         });
-//     } else if (source.includes('catalog')) {
-//         // Display catalog data
-//         const yearData = data[selectedYear] || {};
-//         const termData = yearData[selectedSemester] || [];
-
-//         termData.forEach(course => {
-//             const option = document.createElement('option');
-//             option.textContent = `${course.course} - ${course.credits} credits`;
-//             courseCatalog.appendChild(option);
-//         });
-//     }
-// };
-
-// const convertTo24HourFormat = (time) => {
-
-
-
-// const displayCourses = (data) => {
-//     data.forEach(course => {
-//         console.log('Processing course:', course);
-
-//         if (course.COURSE_NUMBER && course.COURSE_NUMBER.startsWith('CIS_')) {
-//             const { TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
-
-//             if (MEETING_DAYS) {
-//                 // Normalize time format
-//                 const normalizedStartTime = START_TIME.replace(/([AP]M)/, ' $1');
-//                 const normalizedEndTime = END_TIME.replace(/([AP]M)/, ' $1');
-
-//                 // Normalize MEETING_DAYS to match HTML attribute values
-//                 const days = MEETING_DAYS.split(' ').map(day => {
-//                     switch(day) {
-//                         case 'M': return 'M';
-//                         case 'T': return 'T';
-//                         case 'W': return 'W';
-//                         case 'TH': return 'TH';
-//                         case 'F': return 'F';
-//                         default: return '';
-//                     }
-//                 });
-
-//                 console.log('Meeting days:', days);
-
-//                 days.forEach(day => {
-//                     console.log(`Trying to find cell for ${day} at ${normalizedStartTime}`);
-                    
-//                     // Select the cell in the calendar corresponding to the day and time
-//                     const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${normalizedStartTime}"]`);
-//                     console.log(`Selector: td[data-day="${day}"][data-time="${normalizedStartTime}"]`, dayCell);
-
-//                     if (dayCell) {
-//                         console.log(`Found cell for ${day} at ${normalizedStartTime}`);
-//                         const courseDiv = document.createElement('div');
-//                         courseDiv.style.marginBottom = '8px';
-//                         courseDiv.innerHTML = `
-//                             <strong>${course.COURSE_NUMBER}</strong><br>
-//                             ${TITLE_START_DATE ? TITLE_START_DATE : 'No Title'}<br>
-//                             ${normalizedStartTime} - ${normalizedEndTime}
-//                         `;
-//                         dayCell.appendChild(courseDiv);
-//                     } else {
-//                         console.warn(`No cell found for ${day} at ${normalizedStartTime}`);
-//                     }
-//                 });s
-//             } else {
-//                 console.error('MEETING_DAYS is undefined for course:', course.COURSE_NUMBER);
-//             }
-//         }
-//     });
-// };
-
-// const displayCourses = (data) => {
-//     data.forEach(course => {
-//         const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS } = course;
-
-//         // Normalize time if available
-//         const normalizedStartTime = START_TIME ? START_TIME.replace(/([AP]M)/, ' $1') : "N/A";
-//         const normalizedEndTime = END_TIME ? END_TIME.replace(/([AP]M)/, ' $1') : "N/A";
-
-//         // Normalize MEETING_DAYS to match HTML attribute values
-//         if (MEETING_DAYS) {
-//             const days = MEETING_DAYS.split(' ').map(day => {
-//                 switch(day) {
-//                     case 'M': return 'M';
-//                     case 'T': return 'T';
-//                     case 'W': return 'W';
-//                     case 'TH': return 'TH';
-//                     case 'F': return 'F';
-//                     default: return '';
-//                 }
-//             });
-
-//             days.forEach(day => {
-//                 // Select the cell in the calendar corresponding to the day and time
-//                 const dayCell = document.querySelector(`td[data-day="${day}"][data-time="${normalizedStartTime}"]`);
-//                 if (dayCell) {
-//                     const courseDiv = document.createElement('div');
-//                     courseDiv.style.marginBottom = '8px';
-//                     courseDiv.innerHTML = `
-//                         <strong>${COURSE_NUMBER}</strong><br>
-//                         ${TITLE_START_DATE}<br>
-//                         ${normalizedStartTime} - ${normalizedEndTime}
-//                     `;
-//                     dayCell.appendChild(courseDiv);
-//                 }
-//             });
-//         } else {
-//             console.warn(`No meeting days available for course: ${COURSE_NUMBER}`);
-//         }
-//     });
-// };
