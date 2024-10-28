@@ -1,6 +1,8 @@
 let coursesData = [];  // Declare this variable globally to store fetched courses
 let currentEditingCourseId = null;  // Store the course ID being edited
 
+console.log("app.js loaded");
+
 // Fetch courses based on selected filters
 const fetchCourses = async () => {
     try {
@@ -130,11 +132,26 @@ const deleteCourse = async (courseId) => {
     }
 };
 
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded and parsed");
+
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.addEventListener('click', saveCourseChanges);
+        console.log("Save button listener added");
+    } else {
+        console.error("Save button not found");
+    }
+});
+
 // Show the modal and ensure it closes on click outside
 const editCourse = (courseId) => {
-    const course = coursesData.find(c => c._id === courseId); 
+    console.log('Edit course triggered for ID:', courseId);
 
-    // Populate the form fields with the course's current data
+    const course = coursesData.find(c => c._id === courseId); 
+    if (!course) return;
+
+    currentEditingCourseId = courseId;
     document.getElementById('courseNumber').value = course.COURSE_NUMBER;
     document.getElementById('courseTitle').value = course.TITLE_START_DATE;
     document.getElementById('startTime').value = course.START_TIME;
@@ -142,17 +159,20 @@ const editCourse = (courseId) => {
     document.getElementById('building').value = course.BUILDING;
     document.getElementById('room').value = course.ROOM;
 
-    // Show the modal using Bootstrap's modal method
-    const modal = new bootstrap.Modal(document.getElementById('editCourseModal'));
-    modal.show();  // Show the modal
+    // Initialize the Bootstrap modal programmatically
+    const modalElement = document.getElementById('editCourseModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
 };
-
 
 
 // Function to save course changes
 const saveCourseChanges = async () => {
-    console.log("Save changes clicked");
-    const courseId = currentEditingCourseId;  // Make sure this is set when opening the modal
+    console.log("saveCourseChanges function called");
+    if (!currentEditingCourseId) {
+        alert('No course is being edited');
+        return;
+    }
 
     const updatedCourse = {
         COURSE_NUMBER: document.getElementById('courseNumber').value,
@@ -164,7 +184,7 @@ const saveCourseChanges = async () => {
     };
 
     try {
-        const response = await fetch(`/api/courses/${courseId}`, {
+        const response = await fetch(`/api/courses/${currentEditingCourseId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -176,7 +196,7 @@ const saveCourseChanges = async () => {
         if (result.success) {
             alert('Course updated successfully');
             closeModal();
-            fetchCourses();  // Reload updated courses
+            fetchCourses();
         } else {
             alert('Failed to update the course');
         }
@@ -186,14 +206,14 @@ const saveCourseChanges = async () => {
     }
 };
 
-
 // Function to close the modal
 const closeModal = () => {
     const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
     if (modal) {
-        modal.hide(); // Hide the modal properly
+        modal.hide();
     }
 };
+
 
 document.addEventListener('keydown', function(event) {
     const modalElement = document.getElementById('editCourseModal');
@@ -209,6 +229,7 @@ document.addEventListener('keydown', function(event) {
 document.getElementById('course-catalog-dropdown').addEventListener('change', fetchCourses);
 document.getElementById('student-year-dropdown').addEventListener('change', fetchCourses);
 document.getElementById('student-semester-dropdown').addEventListener('change', fetchCourses);
+
 
 // Call fetchCourses initially when the page loads
 fetchCourses();

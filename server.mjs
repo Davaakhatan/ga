@@ -9,6 +9,7 @@ import fs from "fs";
 import mongoose from "mongoose";
 import mammoth from "mammoth"; // Import mammoth library
 
+
 // Import your Mongoose model for the data you want to store
 import { Course } from "./models/course.js";
 import { Catalog } from "./models/catalog.js";
@@ -248,11 +249,11 @@ app.get("/api/courses", async (req, res) => {
       // Filter by course and year
       if (course === 'computer-science') {
         if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_180|CIS_290)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_180|CIS_290|MATH_140)/, $options: "i" };
         } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277|MATH_222)/, $options: "i" };
         } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213|MATH_312)/, $options: "i" };
         } else if (year === 'senior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i" };
         }
@@ -275,9 +276,9 @@ app.get("/api/courses", async (req, res) => {
       // Filter by course and year for the spring term
       if (course === 'computer-science') {
         if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_182|CIS_183)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210|PHYS_211)/, $options: "i" };
         } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_255|CSC_223|SOFT_210)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_255|CSC_223|SOFT_210|MATH_223|MATH_314|PHYS_214|PHYS_212|PHYS_215|PHYS_213)/, $options: "i" };
         } else if (year === 'junior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(MATH_310|PHYS_212)/, $options: "i" };
         } else if (year === 'senior') {
