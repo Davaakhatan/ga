@@ -8,7 +8,6 @@ import xlsx from "xlsx";
 import fs from "fs";
 import mongoose from "mongoose";
 import mammoth from "mammoth"; // Import mammoth library
-import PdfParse from "pdf-parse";
 
 // Import your Mongoose model for the data you want to store
 import { Course } from "./models/course.js";
@@ -170,37 +169,6 @@ async function parseXLSXFile(filePath) {
   }
 }
 
-
-// Function to parse Math course data from a PDF file
-async function parsePDFFile(filePath) {
-  try {
-    const pdfData = await pdfParse(fs.readFileSync(filePath));
-    const text = pdfData.text;
-
-    // Logic to extract relevant course details from the PDF text
-    // Adjust this regex and parsing according to your PDF structure
-    const courses = [];
-    const courseRegex = /(\w+ \d+)(\s+\w+ \d+)*\s+([\w\s]+)\s+([\d:]+)\s+([\d:]+)\s+([MTWRF]+)/g;
-    let match;
-
-    while ((match = courseRegex.exec(text)) !== null) {
-      courses.push({
-        COURSE_NUMBER: match[1],
-        SECTION: match[2]?.trim(),
-        SHORT_TITLE: match[3].trim(),
-        START_TIME: match[4].trim(),
-        END_TIME: match[5].trim(),
-        MEETING_DAYS: match[6].trim(),
-      });
-    }
-
-    return courses;
-  } catch (error) {
-    throw new Error("Error parsing PDF file: " + error.message);
-  }
-}
-
-
 // Handle file upload endpoint
 app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
@@ -249,11 +217,6 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       return res
         .status(200)
         .json({ success: true, message: "File uploaded successfully" });
-    } else if (fileType === "pdf") {
-        const mathCourses = await parsePDFFile(req.file.path);
-        await Course.insertMany(mathCourses);
-        fs.unlinkSync(req.file.path); // Delete the uploaded file
-      return res.status(200).json({ success: true, message: "PDF file uploaded and parsed successfully" });
     } else {
       // Unsupported file type
       return res
@@ -289,9 +252,12 @@ app.get("/api/courses", async (req, res) => {
         } else if (year === "sophomore") {
           courseFilter.COURSE_NUMBER = { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277|MATH_222)/, $options: "i" };
         } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213|MATH_312)/, $options: "i" };
+          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213|)/, $options: "i" };
         } else if (year === 'senior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i" };
+        } else if (year === "graduate") {
+          // Ensure no data returns if Graduate has no courses
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
         }
       } else if (course === 'cybersecurity') {
         // Add cybersecurity course filters
@@ -303,6 +269,9 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER = { $regex: /^(CYB_301|CYB_302)/, $options: "i" };
         } else if (year === 'senior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(CYB_401|CYB_402)/, $options: "i" };
+        } else if (year === "graduate") {
+          // Ensure no data returns if Graduate has no courses
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
         }
       }
       // Add more course categories if needed
@@ -319,6 +288,9 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER = { $regex: /^(MATH_310|PHYS_212)/, $options: "i" };
         } else if (year === 'senior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(CIS_458|CIS_390)/, $options: "i" };
+        } else if (year === "graduate") {
+          // Ensure no data returns if Graduate has no courses
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
         }
       } else if (course === 'cybersecurity') {
         // Add cybersecurity course filters for the spring term
@@ -330,6 +302,9 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER = { $regex: /^(CYB_303|CYB_304)/, $options: "i" };
         } else if (year === 'senior') {
           courseFilter.COURSE_NUMBER = { $regex: /^(CYB_403|CYB_404)/, $options: "i" };
+        } else if (year === "graduate") {
+          // Ensure no data returns if Graduate has no courses
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
         }
       }
     }
