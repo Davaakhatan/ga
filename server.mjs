@@ -238,78 +238,77 @@ app.get("/api/courses", async (req, res) => {
   try {
     const { year, semester, course } = req.query; // Add course to the query params
 
-    // Initialize filter based on year, course, and course number
+    // Initialize filter based on the selected semester (fall or spring)
     let courseFilter = {};
 
-    // Add TERM filtering based on the selected semester (fall or spring)
-    if (semester === 'fall') {
-      courseFilter.TERM = { $regex: /\/FA$/ };  // Matches terms ending with /FA
+    // Set TERM filtering for fall or spring
+    courseFilter.TERM = semester === 'fall' ? { $regex: /\/FA$/ } : { $regex: /\/SP$/ };
 
-      // Filter by course and year
-      if (course === 'computer-science') {
-        if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_180|CIS_290|MATH_140)/, $options: "i" };
-        } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277|MATH_222)/, $options: "i" };
-        } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213|)/, $options: "i" };
-        } else if (year === 'senior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i" };
-        } else if (year === "graduate") {
-          // Ensure no data returns if Graduate has no courses
-          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
-        }
-      } else if (course === 'cybersecurity') {
-        // Add cybersecurity course filters
-        if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_180|CIS_181|CIS_290|CIS_240|MATH_112|MATH_140)/, $options: "i" };
-        } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_201|CYB_202)/, $options: "i" };
-        } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_301|CYB_302)/, $options: "i" };
-        } else if (year === 'senior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_401|CYB_402)/, $options: "i" };
-        } else if (year === "graduate") {
-          // Ensure no data returns if Graduate has no courses
-          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
-        }
+    // Filter by course type and year, and set COURSE_NUMBER regex based on the semester
+    if (course === 'computer-science') {
+      switch (year) {
+        case 'freshman':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CIS_180|CIS_290|MATH_140)/, $options: "i" }
+            : { $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210|PHYS_211)/, $options: "i" };
+          break;
+        case 'sophomore':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277|MATH_222)/, $options: "i" }
+            : { $regex: /^(CIS_255|CSC_223|SOFT_210|MATH_223|MATH_314|PHYS_214|PHYS_212|PHYS_215|PHYS_213)/, $options: "i" };
+          break;
+        case 'junior':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213)/, $options: "i" }
+            : { $regex: /^(MATH_310|PHYS_212)/, $options: "i" };
+          break;
+        case 'senior':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CIS_457|CSC_360|CIS_387|CSC_330)/, $options: "i" }
+            : { $regex: /^(CIS_458|CIS_390)/, $options: "i" };
+          break;
+        case 'graduate':
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // No courses for Graduate
+          break;
+        default:
+          return res.status(400).json({ success: false, message: "Invalid year selected" });
       }
-      // Add more course categories if needed
-    } else if (semester === 'spring') {
-      courseFilter.TERM = { $regex: /\/SP$/ };  // Matches terms ending with /SP
-
-      // Filter by course and year for the spring term
-      if (course === 'computer-science') {
-        if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210|PHYS_211)/, $options: "i" };
-        } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_255|CSC_223|SOFT_210|MATH_223|MATH_314|PHYS_214|PHYS_212|PHYS_215|PHYS_213)/, $options: "i" };
-        } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(MATH_310|PHYS_212)/, $options: "i" };
-        } else if (year === 'senior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CIS_458|CIS_390)/, $options: "i" };
-        } else if (year === "graduate") {
-          // Ensure no data returns if Graduate has no courses
-          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
-        }
-      } else if (course === 'cybersecurity') {
-        // Add cybersecurity course filters for the spring term
-        if (year === "freshman") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_103|CYB_104)/, $options: "i" };
-        } else if (year === "sophomore") {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_203|CYB_204)/, $options: "i" };
-        } else if (year === 'junior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_303|CYB_304)/, $options: "i" };
-        } else if (year === 'senior') {
-          courseFilter.COURSE_NUMBER = { $regex: /^(CYB_403|CYB_404)/, $options: "i" };
-        } else if (year === "graduate") {
-          // Ensure no data returns if Graduate has no courses
-          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // Use an impossible regex to filter out all results
-        }
+    } else if (course === 'cybersecurity') {
+      switch (year) {
+        case 'freshman':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CIS_180|CIS_181|CIS_290|CIS_240|MATH_112|MATH_140)/, $options: "i" }
+            : { $regex: /^(CYB_103|CYB_104)/, $options: "i" };
+          break;
+        case 'sophomore':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CYB_201|CYB_202)/, $options: "i" }
+            : { $regex: /^(CYB_203|CYB_204)/, $options: "i" };
+          break;
+        case 'junior':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CYB_301|CYB_302)/, $options: "i" }
+            : { $regex: /^(CYB_303|CYB_304)/, $options: "i" };
+          break;
+        case 'senior':
+          courseFilter.COURSE_NUMBER = semester === 'fall'
+            ? { $regex: /^(CYB_401|CYB_402)/, $options: "i" }
+            : { $regex: /^(CYB_403|CYB_404)/, $options: "i" };
+          break;
+        case 'graduate':
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ }; // No courses for Graduate
+          break;
+        default:
+          return res.status(400).json({ success: false, message: "Invalid year selected" });
       }
+    } else {
+      return res.status(400).json({ success: false, message: "Invalid course type selected" });
     }
 
-    // Fetch the filtered courses
+    // Log the filter for debugging purposes
+    console.log("Generated course filter:", JSON.stringify(courseFilter, null, 2));
+
+    // Fetch the filtered courses from the database
     const courses = await Course.find(courseFilter);
     res.json(courses);
   } catch (error) {
@@ -320,6 +319,9 @@ app.get("/api/courses", async (req, res) => {
     });
   }
 });
+
+
+
 
 // Retrieve catalog data by curriculum type
 app.get("/api/catalog/:curriculumType", async (req, res) => {
