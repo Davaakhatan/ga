@@ -144,12 +144,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Show the modal and ensure it closes on click outside
+// Show the modal and populate with course data
 const editCourse = (courseId) => {
     console.log('Edit course triggered for ID:', courseId);
 
     const course = coursesData.find(c => c._id === courseId); 
-    if (!course) return;
+    if (!course) {
+        alert("Course not found.");
+        return;
+    }
 
     currentEditingCourseId = courseId;
     document.getElementById('courseNumber').value = course.COURSE_NUMBER;
@@ -159,16 +162,15 @@ const editCourse = (courseId) => {
     document.getElementById('building').value = course.BUILDING;
     document.getElementById('room').value = course.ROOM;
 
-    // Initialize the Bootstrap modal programmatically
     const modalElement = document.getElementById('editCourseModal');
-    const modal = new bootstrap.Modal(modalElement);
+    const modal = new bootstrap.Modal(modalElement, { backdrop: 'static' });
     modal.show();
 };
 
 
+
 // Function to save course changes
 const saveCourseChanges = async () => {
-    console.log("saveCourseChanges function called");
     if (!currentEditingCourseId) {
         alert('No course is being edited');
         return;
@@ -186,17 +188,16 @@ const saveCourseChanges = async () => {
     try {
         const response = await fetch(`/api/courses/${currentEditingCourseId}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedCourse),
         });
 
         const result = await response.json();
         if (result.success) {
             alert('Course updated successfully');
-            closeModal();
-            fetchCourses();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
+            modal.hide();  // Hide modal on successful save
+            fetchCourses(); // Refresh courses
         } else {
             alert('Failed to update the course');
         }
@@ -205,6 +206,7 @@ const saveCourseChanges = async () => {
         alert('An error occurred while saving the course');
     }
 };
+
 
 // Function to close the modal
 const closeModal = () => {
