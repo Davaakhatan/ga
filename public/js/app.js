@@ -132,12 +132,14 @@ const displayCourses = (data) => {
                     `;
           dayCell.appendChild(courseDiv);
 
-          // Apply custom color for MATH courses to courseDiv only
-          if (COURSE_NUMBER.includes("MATH")) {
-            courseDiv.style.backgroundColor = "#FFD700"; // Set custom background color for MATH courses
-            courseDiv.style.padding = "5px"; // Add padding for better appearance
-            courseDiv.style.borderRadius = "5px"; // Add slight rounding for visual appeal
+           // Apply custom color for MATH and PHYS courses only
+           if (COURSE_NUMBER.includes("MATH")) {
+            courseDiv.style.backgroundColor = "#FFD700"; // Yellow for MATH courses
+          } else if (COURSE_NUMBER.includes("PHYS")) {
+            courseDiv.style.backgroundColor = "#ADD8E6"; // Light blue for PHYS courses
           }
+          courseDiv.style.padding = "5px"; // Add padding for better appearance
+          courseDiv.style.borderRadius = "5px"; // Add slight rounding for visual appeal
         }
       });
     } else {
