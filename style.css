@@ -41,7 +41,6 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: white; /* Table's default background */
 }
 
 .calendar-table th,
@@ -50,36 +49,45 @@ body {
     text-align: center;
     border: 1px solid #ccc;
     vertical-align: top;
-    background-color: white !important; /* Default white background */
+    background-color: white !important; /* Default white background for all cells */
     color: #333; /* Text color */
 }
 
-/* Ensure all empty cells have a white background */
+/* Hidden Cells for Rowspan */
+.calendar-table td[style*="visibility: hidden"] {
+    height: 0;
+    padding: 0;
+    border: none;
+    background-color: white !important; /* Ensure hidden cells are also white */
+}
+
+/* Hide empty cells with no data */
 td:empty {
-    background-color: white !important; /* White background for truly empty cells */
-    border: 1px solid #ccc; /* Match the border style */
-    height: auto; /* Allow auto height */
-    visibility: visible; /* Ensure visibility for styling */
+    background-color: white !important; /* White background for empty cells */
+    border: none !important; /* Remove any borders */
+    padding: 0 !important; /* Remove padding */
+    margin: 0 !important; /* Remove margin */
+    height: 0 !important; /* Collapse the height */
+    visibility: hidden; /* Hide the cell completely */
 }
 
-/* Hidden cells with no content */
-td[style*="display: none"],
+/* Completely hide rows that are marked as empty */
+tr[style*="display: none"] {
+    height: 0 !important;
+    visibility: collapse !important; /* Collapses the row completely */
+    display: none !important;
+}
+
+/* Ensure unused cells are hidden and collapsed */
 td[data-day=""][data-time=""] {
-    display: none !important;
-    height: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background-color: white !important;
+    display: none !important; /* Ensures empty cells are hidden */
+    height: 0 !important; /* Collapses height of extra rows */
+    padding: 0 !important; /* Removes padding */
+    border: none !important; /* Removes any borders */
+    background-color: white !important; /* Ensures background is consistent */
 }
 
-/* Fully hide rows that are completely empty */
-.calendar-table tr[style*="display: none"] {
-    height: 0 !important;
-    visibility: collapse !important;
-    display: none !important;
-}
-
-/* Multi-hour courses styling */
+/* Cells with Rowspan (Multi-hour courses) */
 .calendar-table td[rowspan] {
     vertical-align: top; /* Align content to the top */
 }
@@ -92,12 +100,11 @@ td[data-day=""][data-time=""] {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-/* Hover Effect for courses */
+/* Hover Effect */
 .calendar-table .course-info:hover {
     background-color: #f0f0f0;
     cursor: pointer;
 }
-
 
 /* Icon Buttons */
 .icon-buttons {

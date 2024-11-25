@@ -136,11 +136,10 @@ async function parseXLSXFile(filePath) {
     // Read the XLSX file
     const workbook = xlsx.readFile(filePath);
     // Get the first sheet of the workbook
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
     // Convert the sheet data to JSON
     const jsonData = xlsx.utils.sheet_to_json(sheet);
-    // Transform the JSON data as needed for your application
+    // Transform the JSON data 
     const transformedData = jsonData.map((item) => ({
       COURSE_NUMBER: item["COURSE #"],
       TITLE_START_DATE: item["TITLE/START DATE"],
@@ -170,67 +169,167 @@ async function parseXLSXFile(filePath) {
 }
 
 // Handle file upload endpoint
-app.post("/api/upload", upload.single("file"), async (req, res) => {
+// app.post("/api/upload", upload.single("file"), async (req, res) => {
+//   try {
+//     // Check if file was uploaded
+//     if (!req.file) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "No file uploaded" });
+//     }
+
+//     // Check the file type
+//     const fileType = req.file.originalname.split(".").pop().toLowerCase();
+
+//     if (fileType === "docx") {
+//       // Handle DOCX file upload
+//       const catalogData = await parseDOCXFile(req.file.path);
+
+//       // Store data in MongoDB Catalog collection
+//       try {
+//         await Catalog.deleteMany({ curriculumType: catalogData.curriculumType }); // Clear existing data for the specific curriculum type
+
+//         // Save the catalog data to the database
+//         await Catalog.create(catalogData);
+
+//         console.log("Data saved successfully");
+
+//         // Generate JSON file from the catalog data
+//         fs.writeFileSync("catalog.json", JSON.stringify(catalogData, null, 2));
+//         console.log("Catalog data saved as JSON successfully.");
+
+//         return res
+//           .status(200)
+//           .json({ success: true, message: "File uploaded successfully" });
+//       } catch (error) {
+//         console.error("Error saving data:", error);
+//         return res
+//           .status(500)
+//           .json({ success: false, message: "Error saving data" });
+//       }
+//     } else if (fileType === "xlsx") {
+//       // Handle XLSX file upload
+//       const transformedData = await parseXLSXFile(req.file.path);
+//       await Course.insertMany(transformedData);
+//       fs.unlinkSync(req.file.path);
+//       console.log("XLSX file deleted successfully");
+//       return res
+//         .status(200)
+//         .json({ success: true, message: "File uploaded successfully" });
+//     } else {
+//       // Unsupported file type
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Unsupported file type" });
+//     }
+//   } catch (error) {
+//     console.error("Error uploading file:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "An error occurred while uploading file",
+//     });
+//   }
+// });
+
+// app.post("/api/upload/:term", upload.single("file"), async (req, res) => {
+//   const { term } = req.params;
+//   console.log("Received term:", term); // For debugging
+//   try {
+//     if (req.file.originalname.endsWith(".docx")) {
+//       const catalogData = await parseDOCXFile(req.file.path);
+//       await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
+//       await Catalog.create(catalogData);
+//       fs.unlinkSync(req.file.path);
+//       return res.status(200).json({ success: true, message: "DOCX file processed and saved successfully" });
+//     } else if (req.file.originalname.endsWith(".xlsx")) {
+//       const transformedData = await parseXLSXFile(req.file.path);
+//       console.log("Parsed XLSX data:", transformedData); // Log parsed data for inspection
+
+//       // Sanitize data to ensure uniformity and handle undefined fields
+//       const sanitizedData = transformedData.map(course => ({
+//         ...course,
+//         COURSE_NUMBER: course.COURSE_NUMBER ? course.COURSE_NUMBER.trim().toUpperCase() : '',
+//         TERM: term ? term.trim().toUpperCase() : '',
+//         ROOM: course.ROOM ? course.ROOM.trim().toUpperCase() : '',
+//         MEETING_DAYS: course.MEETING_DAYS ? course.MEETING_DAYS.trim().toUpperCase() : ''
+//       }));
+
+//       // Prepare bulk operations for upserting
+//       const bulkOperations = sanitizedData.map((course) => ({
+//         updateOne: {
+//           filter: { 
+//             COURSE_NUMBER: course.COURSE_NUMBER, 
+//             TERM: course.TERM, 
+//             ROOM: course.ROOM, 
+//             MEETING_DAYS: course.MEETING_DAYS 
+//           },
+//           update: { $set: course },
+//           upsert: true  // This ensures an insert if the document does not exist
+//         }
+//       }));
+
+//       console.log("Prepared bulk operations:", bulkOperations); // Log operations for inspection
+
+//       // Execute the bulkWrite operation with enhanced error handling
+//       try {
+//         const result = await Course.bulkWrite(bulkOperations);
+//         console.log("Bulk write result:", result); // Log bulkWrite result for inspection
+//       } catch (bulkError) {
+//         console.error("Bulk write error:", bulkError); // Log any error from bulkWrite
+
+//         // Handle duplicate key errors by logging affected entries
+//         if (bulkError.code === 11000) {
+//           console.error("Duplicate key error:", bulkError.writeErrors);
+//         }
+
+//         throw new Error("Bulk write operation failed: " + bulkError.message);
+//       }
+
+//       // Remove the file after processing
+//       fs.unlinkSync(req.file.path);
+
+//       return res.status(200).json({ success: true, message: "XLSX file processed and data upserted successfully" });
+//     } else {
+//       return res.status(400).json({ success: false, message: "Unsupported file type" });
+//     }
+//   } catch (error) {
+//     console.error("Error processing file:", error); // Detailed error logging
+//     res.status(500).json({ success: false, message: "An error occurred during upload", error: error.message });
+//   }
+// });
+
+app.post("/api/upload/:term", upload.single("file"), async (req, res) => {
+  const { term } = req.params;
+  console.log("Received term:", term); // For debugging
   try {
-    // Check if file was uploaded
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No file uploaded" });
-    }
-
-    // Check the file type
-    const fileType = req.file.originalname.split(".").pop().toLowerCase();
-
-    if (fileType === "docx") {
-      // Handle DOCX file upload
+    if (req.file.originalname.endsWith(".docx")) {
       const catalogData = await parseDOCXFile(req.file.path);
-
-      // Store data in MongoDB Catalog collection
-      try {
-        await Catalog.deleteMany({ curriculumType: catalogData.curriculumType }); // Clear existing data for the specific curriculum type
-
-        // Save the catalog data to the database
-        await Catalog.create(catalogData);
-
-        console.log("Data saved successfully");
-
-        // Generate JSON file from the catalog data
-        fs.writeFileSync("catalog.json", JSON.stringify(catalogData, null, 2));
-        console.log("Catalog data saved as JSON successfully.");
-
-        return res
-          .status(200)
-          .json({ success: true, message: "File uploaded successfully" });
-      } catch (error) {
-        console.error("Error saving data:", error);
-        return res
-          .status(500)
-          .json({ success: false, message: "Error saving data" });
-      }
-    } else if (fileType === "xlsx") {
-      // Handle XLSX file upload
-      const transformedData = await parseXLSXFile(req.file.path);
-      await Course.insertMany(transformedData);
+      await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
+      await Catalog.create(catalogData);
       fs.unlinkSync(req.file.path);
-      console.log("XLSX file deleted successfully");
-      return res
-        .status(200)
-        .json({ success: true, message: "File uploaded successfully" });
+      return res.status(200).json({ success: true, message: "DOCX file processed and saved successfully" });
+    } else if (req.file.originalname.endsWith(".xlsx")) {
+      const transformedData = await parseXLSXFile(req.file.path);
+      await Promise.all(
+        transformedData.map((course) =>
+          Course.findOneAndUpdate(
+            { COURSE_NUMBER: course.COURSE_NUMBER, TERM: term },
+            course,
+            { upsert: true, new: true }
+          )
+        )
+      );
+      fs.unlinkSync(req.file.path);
+      return res.status(200).json({ success: true, message: "XLSX file processed and saved successfully" });
     } else {
-      // Unsupported file type
-      return res
-        .status(400)
-        .json({ success: false, message: "Unsupported file type" });
+      return res.status(400).json({ success: false, message: "Unsupported file type" });
     }
   } catch (error) {
-    console.error("Error uploading file:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while uploading file",
-    });
+    console.error("Error processing file:", error);
+    res.status(500).json({ success: false, message: "An error occurred during upload" });
   }
 });
+
 
 
 // Retrieve filtered courses based on course number prefix, selected year, and term (semester)

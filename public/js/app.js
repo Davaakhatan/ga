@@ -49,10 +49,92 @@ const clearCalendar = () => {
   });
 };
 
-// Function to display courses in the calendar
+const clearExtraRows = () => {
+  const rows = document.querySelectorAll(".calendar-table tbody tr");
+  rows.forEach((row) => {
+    const cells = Array.from(row.children);
+    const allCellsEmpty = cells.every(
+      (cell) => cell.innerHTML.trim() === "" || cell.style.display === "none"
+    );
+
+    if (allCellsEmpty) {
+      row.style.display = "none"; // Hide the row completely
+    }
+  });
+};
+
+
 const displayCourses = (data) => {
-  const courseCatalog = document.getElementById("course-catalog");
-  courseCatalog.innerHTML = "";
+  console.clear();
+  console.log("Loaded courses:", data);
+
+  const conflictColor = "#ffcccc"; // Highlight conflicts
+  const defaultColor = "#ffffff"; // Default cell color
+
+  const parseTime = (time) => {
+    const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+    if (!match) {
+      console.error(`Invalid time format: "${time}"`);
+      return null;
+    }
+    let [, hour, minute, period] = match;
+    hour = parseInt(hour, 10);
+    minute = parseInt(minute, 10);
+
+    if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+    if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
+
+    return { hour, minute };
+  };
+
+  const timeToMinutes = (time) => {
+    const parsedTime = parseTime(time);
+    return parsedTime ? parsedTime.hour * 60 + parsedTime.minute : NaN;
+  };
+
+  const roundTimeToSlot = (time) => {
+    const parsedTime = parseTime(time);
+    if (!parsedTime) return null;
+
+    let { hour, minute } = parsedTime;
+    minute = minute >= 30 ? 30 : 0; // Round to the nearest 30 minutes
+    return `${hour % 12 || 12}:${minute.toString().padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;
+  };
+
+  const calculateRowspan = (startMinutes, endMinutes) => {
+    return Math.ceil((endMinutes - startMinutes) / 30); // Each row = 30 minutes
+  };
+
+  const parseMeetingDays = (days) => {
+    const regex = /\bTH\b|[MTWF]/g;
+    const matchedDays = days.match(regex) || [];
+
+    return matchedDays.map((day) => {
+      switch (day) {
+        case "M":
+        case "T":
+        case "W":
+        case "TH":
+        case "F":
+          return day;
+        default:
+          console.warn(`Unexpected day code: "${day}"`);
+          return null;
+      }
+    }).filter(Boolean);
+  };
+
+  const clearCalendar = () => {
+    const cells = document.querySelectorAll("td[data-day][data-time]");
+    cells.forEach((cell) => {
+      cell.innerHTML = "";
+      cell.style.display = "";
+      cell.rowSpan = 1; // Reset rowSpan
+      cell.style.backgroundColor = "";
+    });
+  };
+
+  clearCalendar(); // Reset calendar before rendering
 
   data.forEach((course) => {
     const {
@@ -66,89 +148,66 @@ const displayCourses = (data) => {
       _id,
     } = course;
 
-    const normalizedStartTime = START_TIME
-      ? START_TIME.replace(/([AP]M)/, " $1")
-      : "N/A";
-    const normalizedEndTime = END_TIME
-      ? END_TIME.replace(/([AP]M)/, " $1")
-      : "N/A";
-
-    const parseTime = (time) => {
-      const [hourMin, period] = time.split(" ");
-      const [hour, minute] = hourMin.split(":");
-      return { hour: parseInt(hour), minute: parseInt(minute), period };
-    };
-
-    const startTime = parseTime(normalizedStartTime);
-    const endTime = parseTime(normalizedEndTime);
-
-    const getTimeSlot = (hour, minute, period) => {
-      if (minute !== 0) {
-        hour = hour === 12 ? 11 : hour;
-      }
-      return `${hour < 10 ? `0${hour}` : hour}:00 ${period}`;
-    };
-
-    const timeSlot = getTimeSlot(
-      startTime.hour,
-      startTime.minute,
-      startTime.period
-    );
-
-    if (MEETING_DAYS) {
-      const days = MEETING_DAYS.split(" ").map((day) => {
-        switch (day) {
-          case "M":
-            return "M";
-          case "T":
-            return "T";
-          case "W":
-            return "W";
-          case "TH":
-            return "TH";
-          case "F":
-            return "F";
-          default:
-            return "";
-        }
-      });
-
-      days.forEach((day) => {
-        const dayCell = document.querySelector(
-          `td[data-day="${day}"][data-time="${timeSlot}"]`
-        );
-        if (dayCell) {
-          const courseDiv = document.createElement("div");
-          courseDiv.style.marginBottom = "8px";
-          courseDiv.innerHTML = `
-                        <strong>${COURSE_NUMBER}</strong><br>
-                        ${TITLE_START_DATE}<br>
-                        ${normalizedStartTime} - ${normalizedEndTime}<br>
-                        ${BUILDING} ${ROOM}<br>
-                        <span class="icon-buttons">
-                            <i class="material-icons edit-icon" style="cursor: pointer;" onclick="editCourse('${_id}')">edit</i>
-                            <i class="material-icons delete-icon" style="cursor: pointer;" onclick="deleteCourse('${_id}')">delete</i>
-                        </span>
-                    `;
-          dayCell.appendChild(courseDiv);
-
-           // Apply custom color for MATH and PHYS courses only
-           if (COURSE_NUMBER.includes("MATH")) {
-            courseDiv.style.backgroundColor = "#FFD700"; // Yellow for MATH courses
-          } else if (COURSE_NUMBER.includes("PHYS")) {
-            courseDiv.style.backgroundColor = "#ADD8E6"; // Light blue for PHYS courses
-          }
-          courseDiv.style.padding = "5px"; // Add padding for better appearance
-          courseDiv.style.borderRadius = "5px"; // Add slight rounding for visual appeal
-        }
-      });
-    } else {
-      console.warn(`No meeting days available for course: ${COURSE_NUMBER}`);
+    if (!START_TIME || !END_TIME || !MEETING_DAYS) {
+      console.warn(`Invalid course data: ${JSON.stringify(course)}`);
+      return;
     }
+
+    const roundedStartTime = roundTimeToSlot(START_TIME);
+    const roundedEndTime = roundTimeToSlot(END_TIME);
+    const startMinutes = timeToMinutes(roundedStartTime);
+    const endMinutes = timeToMinutes(roundedEndTime);
+    const rowSpan = calculateRowspan(startMinutes, endMinutes);
+    const days = parseMeetingDays(MEETING_DAYS);
+
+    console.log(`Course "${COURSE_NUMBER}" spans ${rowSpan} rows from ${roundedStartTime} to ${roundedEndTime} on ${days.join(", ")}`);
+
+    days.forEach((day) => {
+      console.log(`Processing ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+
+      const cell = document.querySelector(`td[data-day="${day}"][data-time="${roundedStartTime}"]`);
+
+      if (!cell) {
+        console.warn(`No matching cell for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+        return;
+      }
+
+      if (cell.innerHTML.trim() !== "") {
+        console.warn(`Conflict detected for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+        cell.style.backgroundColor = conflictColor;
+        cell.innerHTML += `<div style="color: red;">Conflict!</div>`;
+        return;
+      }
+
+      cell.rowSpan = rowSpan;
+      cell.style.backgroundColor = defaultColor;
+      cell.innerHTML = `
+        <strong>${COURSE_NUMBER}</strong><br>
+        ${TITLE_START_DATE}<br>
+        ${START_TIME} - ${END_TIME}<br>
+        ${BUILDING} ${ROOM}<br>
+        <span class="icon-buttons">
+          <i class="material-icons edit-icon" onclick="editCourse('${_id}')">edit</i>
+          <i class="material-icons delete-icon" onclick="deleteCourse('${_id}')">delete</i>
+        </span>
+      `;
+
+      // Hide cells beneath the spanned row
+      let nextRow = cell.parentNode.nextSibling;
+      for (let i = 1; i < rowSpan && nextRow; i++) {
+        if (nextRow && nextRow.nodeType === 1) {
+          const extraCell = nextRow.querySelector(`td[data-day="${day}"]`);
+          if (extraCell) {
+            extraCell.style.display = "none";
+          }
+        }
+        nextRow = nextRow.nextSibling;
+      }
+    });
   });
 };
 
-// Function to delete a course
+
 const deleteCourse = async (courseId) => {
   if (confirm("Are you sure you want to delete this course?")) {
     try {
@@ -275,6 +334,10 @@ document
 document
   .getElementById("student-semester-dropdown")
   .addEventListener("change", fetchCourses);
+
+// document.querySelectorAll("tr").forEach((row, index) => {
+//   console.log(`Row ${index}:`, row.innerHTML);
+// });
 
 // Call fetchCourses initially when the page loads
 fetchCourses();

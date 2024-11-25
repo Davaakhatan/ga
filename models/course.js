@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema({
   COURSE_NUMBER: String,
@@ -23,6 +23,8 @@ const courseSchema = new mongoose.Schema({
   ACADEMIC_LEVEL_1: String
 });
 
-export const Course = mongoose.model('Course', courseSchema);
+// Add a unique compound index to enforce uniqueness
+courseSchema.index({ COURSE_NUMBER: 1, TERM: 1, ROOM: 1, MEETING_DAYS: 1 }, { unique: true });
 
+export const Course = mongoose.model('Course', courseSchema);
 
