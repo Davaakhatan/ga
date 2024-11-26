@@ -63,6 +63,162 @@ const clearExtraRows = () => {
   });
 };
 
+// const displayCourses = (data) => {
+//   console.clear();
+//   console.log("Loaded courses:", data);
+
+//   const conflictColor = "#ffcccc"; // Highlight conflicts
+//   const defaultColor = "#ffffff"; // Default cell color
+//   const validDays = ["M", "T", "W", "TH", "F"]; // Valid days for the calendar
+
+//   const parseTime = (time) => {
+//     const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+//     if (!match) {
+//       console.error(`Invalid time format: "${time}"`);
+//       return null;
+//     }
+//     let [, hour, minute, period] = match;
+//     hour = parseInt(hour, 10);
+//     minute = parseInt(minute, 10);
+
+//     if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+//     if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
+
+//     return { hour, minute };
+//   };
+
+//   const timeToMinutes = (time) => {
+//     const parsedTime = parseTime(time);
+//     return parsedTime ? parsedTime.hour * 60 + parsedTime.minute : NaN;
+//   };
+
+//   const roundTimeToSlot = (time) => {
+//     const parsedTime = parseTime(time);
+//     if (!parsedTime) return null;
+
+//     let { hour, minute } = parsedTime;
+//     minute = minute >= 30 ? 30 : 0; // Round to the nearest 30 minutes
+//     return `${hour % 12 || 12}:${minute.toString().padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;
+//   };
+
+//   const calculateRowspan = (startMinutes, endMinutes) => {
+//     return Math.ceil((endMinutes - startMinutes) / 30); // Each row = 30 minutes
+//   };
+
+//   const parseMeetingDays = (days) => {
+//     const regex = /\bTH\b|[MTWF]/g;
+//     const matchedDays = days.match(regex) || [];
+
+//     return matchedDays.map((day) => {
+//       switch (day) {
+//         case "M":
+//         case "T":
+//         case "W":
+//         case "TH":
+//         case "F":
+//           return day;
+//         default:
+//           console.warn(`Unexpected day code: "${day}"`);
+//           return null;
+//       }
+//     }).filter(Boolean);
+//   };
+
+//   const clearCalendar = () => {
+//     const cells = document.querySelectorAll("td[data-day][data-time]");
+//     cells.forEach((cell) => {
+//       cell.innerHTML = "";
+//       cell.style.display = "";
+//       cell.rowSpan = 1; // Reset rowSpan
+//       cell.style.backgroundColor = "";
+//     });
+//   };
+
+//   clearCalendar(); // Reset calendar before rendering
+
+//   data.forEach((course) => {
+//     const {
+//       COURSE_NUMBER,
+//       TITLE_START_DATE,
+//       START_TIME,
+//       END_TIME,
+//       MEETING_DAYS,
+//       BUILDING,
+//       ROOM,
+//       _id,
+//     } = course;
+
+//     if (!START_TIME || !END_TIME || !MEETING_DAYS) {
+//       console.warn(`Invalid course data: ${JSON.stringify(course)}`);
+//       return;
+//     }
+
+//     const roundedStartTime = roundTimeToSlot(START_TIME);
+//     const roundedEndTime = roundTimeToSlot(END_TIME);
+//     const startMinutes = timeToMinutes(roundedStartTime);
+//     const endMinutes = timeToMinutes(roundedEndTime);
+//     const rowSpan = calculateRowspan(startMinutes, endMinutes);
+//     const days = parseMeetingDays(MEETING_DAYS);
+
+//     console.log(`Course "${COURSE_NUMBER}" spans ${rowSpan} rows from ${roundedStartTime} to ${roundedEndTime} on ${days.join(", ")}`);
+
+//     days.forEach((day) => {
+//       // Skip invalid days
+//       if (!validDays.includes(day)) {
+//         console.warn(`Skipping invalid day: "${day}" for course "${COURSE_NUMBER}"`);
+//         return;
+//       }
+
+//       const cell = document.querySelector(`td[data-day="${day}"][data-time="${roundedStartTime}"]`);
+
+//       if (!cell) {
+//         console.warn(`No matching cell for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+//         return;
+//       }
+
+//       if (cell.innerHTML.trim() !== "") {
+//         console.warn(`Conflict detected for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+//         cell.style.backgroundColor = conflictColor;
+//         cell.innerHTML += `<div style="color: red;">Conflict!</div>`;
+//         return;
+//       }
+
+//       // Populate and span rows
+//       console.log(`Placing ${COURSE_NUMBER} in cell for day "${day}" at time "${roundedStartTime}"`);
+//       cell.rowSpan = rowSpan;
+//       cell.style.backgroundColor = defaultColor;
+//       cell.innerHTML = `
+//         <strong>${COURSE_NUMBER}</strong><br>
+//         ${TITLE_START_DATE}<br>
+//         ${START_TIME} - ${END_TIME}<br>
+//         ${BUILDING} ${ROOM}<br>
+//         <span class="icon-buttons">
+//           <i class="material-icons edit-icon" onclick="editCourse('${_id}')">edit</i>
+//           <i class="material-icons delete-icon" onclick="deleteCourse('${_id}')">delete</i>
+//         </span>
+//       `;
+
+//       // Hide cells beneath the spanned row
+//       let nextRow = cell.parentNode.nextSibling;
+//       for (let i = 1; i < rowSpan && nextRow; i++) {
+//         if (nextRow.nodeType === 1) {
+//           const extraCell = nextRow.querySelector(`td[data-day="${day}"]`);
+//           if (extraCell) {
+//             extraCell.style.display = "none";
+//           }
+//         }
+//         nextRow = nextRow.nextSibling;
+//       }
+//     });
+//   });
+
+//   // Final cleanup: Ensure no cells appear after Friday
+//   document.querySelectorAll("td").forEach((cell) => {
+//     if (!validDays.includes(cell.dataset.day)) {
+//       cell.style.display = "none"; // Hide invalid cells
+//     }
+//   });
+// };
 
 const displayCourses = (data) => {
   console.clear();
@@ -70,6 +226,7 @@ const displayCourses = (data) => {
 
   const conflictColor = "#ffcccc"; // Highlight conflicts
   const defaultColor = "#ffffff"; // Default cell color
+  const validDays = ["M", "T", "W", "TH", "F"]; // Valid days for the calendar
 
   const parseTime = (time) => {
     const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
@@ -163,7 +320,11 @@ const displayCourses = (data) => {
     console.log(`Course "${COURSE_NUMBER}" spans ${rowSpan} rows from ${roundedStartTime} to ${roundedEndTime} on ${days.join(", ")}`);
 
     days.forEach((day) => {
-      console.log(`Processing ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+      // Skip invalid days
+      if (!validDays.includes(day)) {
+        console.warn(`Skipping invalid day: "${day}" for course "${COURSE_NUMBER}"`);
+        return;
+      }
 
       const cell = document.querySelector(`td[data-day="${day}"][data-time="${roundedStartTime}"]`);
 
@@ -179,6 +340,8 @@ const displayCourses = (data) => {
         return;
       }
 
+      // Populate and span rows
+      console.log(`Placing ${COURSE_NUMBER} in cell for day "${day}" at time "${roundedStartTime}"`);
       cell.rowSpan = rowSpan;
       cell.style.backgroundColor = defaultColor;
       cell.innerHTML = `
@@ -193,19 +356,171 @@ const displayCourses = (data) => {
       `;
 
       // Hide cells beneath the spanned row
-      let nextRow = cell.parentNode.nextSibling;
+      let nextRow = cell.parentNode.nextElementSibling;
       for (let i = 1; i < rowSpan && nextRow; i++) {
-        if (nextRow && nextRow.nodeType === 1) {
+        if (nextRow.nodeType === 1) {
           const extraCell = nextRow.querySelector(`td[data-day="${day}"]`);
           if (extraCell) {
             extraCell.style.display = "none";
+            extraCell.rowSpan = 1; // Reset rowSpan
           }
         }
-        nextRow = nextRow.nextSibling;
+        nextRow = nextRow.nextElementSibling;
       }
     });
   });
+
+  // Final cleanup: Ensure no cells appear after Friday
+  document.querySelectorAll("td").forEach((cell) => {
+    if (!validDays.includes(cell.dataset.day)) {
+      cell.style.display = "none"; // Hide invalid cells
+    }
+  });
 };
+
+
+// const displayCourses = (data) => {
+//   console.clear();
+//   console.log("Loaded courses:", data);
+
+//   const conflictColor = "#ffcccc"; // Highlight conflicts
+//   const defaultColor = "#ffffff"; // Default cell color
+
+//   const parseTime = (time) => {
+//     const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+//     if (!match) {
+//       console.error(`Invalid time format: "${time}"`);
+//       return null;
+//     }
+//     let [, hour, minute, period] = match;
+//     hour = parseInt(hour, 10);
+//     minute = parseInt(minute, 10);
+
+//     if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+//     if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
+
+//     return { hour, minute };
+//   };
+
+//   const timeToMinutes = (time) => {
+//     const parsedTime = parseTime(time);
+//     return parsedTime ? parsedTime.hour * 60 + parsedTime.minute : NaN;
+//   };
+
+//   const roundTimeToSlot = (time) => {
+//     const parsedTime = parseTime(time);
+//     if (!parsedTime) return null;
+
+//     let { hour, minute } = parsedTime;
+//     minute = minute >= 30 ? 30 : 0; // Round to the nearest 30 minutes
+//     return `${hour % 12 || 12}:${minute.toString().padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;
+//   };
+
+//   const calculateRowspan = (startMinutes, endMinutes) => {
+//     return Math.ceil((endMinutes - startMinutes) / 30); // Each row = 30 minutes
+//   };
+
+//   const parseMeetingDays = (days) => {
+//     const regex = /\bTH\b|[MTWF]/g;
+//     const matchedDays = days.match(regex) || [];
+
+//     return matchedDays.map((day) => {
+//       switch (day) {
+//         case "M":
+//         case "T":
+//         case "W":
+//         case "TH":
+//         case "F":
+//           return day;
+//         default:
+//           console.warn(`Unexpected day code: "${day}"`);
+//           return null;
+//       }
+//     }).filter(Boolean);
+//   };
+
+//   const clearCalendar = () => {
+//     const cells = document.querySelectorAll("td[data-day][data-time]");
+//     cells.forEach((cell) => {
+//       cell.innerHTML = "";
+//       cell.style.display = "";
+//       cell.rowSpan = 1; // Reset rowSpan
+//       cell.style.backgroundColor = "";
+//     });
+//   };
+
+//   clearCalendar(); // Reset calendar before rendering
+
+//   data.forEach((course) => {
+//     const {
+//       COURSE_NUMBER,
+//       TITLE_START_DATE,
+//       START_TIME,
+//       END_TIME,
+//       MEETING_DAYS,
+//       BUILDING,
+//       ROOM,
+//       _id,
+//     } = course;
+
+//     if (!START_TIME || !END_TIME || !MEETING_DAYS) {
+//       console.warn(`Invalid course data: ${JSON.stringify(course)}`);
+//       return;
+//     }
+
+//     const roundedStartTime = roundTimeToSlot(START_TIME);
+//     const roundedEndTime = roundTimeToSlot(END_TIME);
+//     const startMinutes = timeToMinutes(roundedStartTime);
+//     const endMinutes = timeToMinutes(roundedEndTime);
+//     const rowSpan = calculateRowspan(startMinutes, endMinutes);
+//     const days = parseMeetingDays(MEETING_DAYS);
+
+//     console.log(`Course "${COURSE_NUMBER}" spans ${rowSpan} rows from ${roundedStartTime} to ${roundedEndTime} on ${days.join(", ")}`);
+
+//     days.forEach((day) => {
+//       console.log(`Processing ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+
+//       const cell = document.querySelector(`td[data-day="${day}"][data-time="${roundedStartTime}"]`);
+
+//       if (!cell) {
+//         console.warn(`No matching cell for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+//         return;
+//       }
+
+//       if (cell.innerHTML.trim() !== "") {
+//         console.warn(`Conflict detected for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+//         cell.style.backgroundColor = conflictColor;
+//         cell.innerHTML += `<div style="color: red;">Conflict!</div>`;
+//         return;
+//       }
+
+//       cell.rowSpan = rowSpan;
+//       cell.style.backgroundColor = defaultColor;
+//       cell.innerHTML = `
+//         <strong>${COURSE_NUMBER}</strong><br>
+//         ${TITLE_START_DATE}<br>
+//         ${START_TIME} - ${END_TIME}<br>
+//         ${BUILDING} ${ROOM}<br>
+//         <span class="icon-buttons">
+//           <i class="material-icons edit-icon" onclick="editCourse('${_id}')">edit</i>
+//           <i class="material-icons delete-icon" onclick="deleteCourse('${_id}')">delete</i>
+//         </span>
+//       `;
+
+//       // Hide cells beneath the spanned row
+//       let nextRow = cell.parentNode.nextSibling;
+//       for (let i = 1; i < rowSpan && nextRow; i++) {
+//         if (nextRow && nextRow.nodeType === 1) {
+//           const extraCell = nextRow.querySelector(`td[data-day="${day}"]`);
+//           if (extraCell) {
+//             extraCell.style.display = "none";
+//           }
+//         }
+//         nextRow = nextRow.nextSibling;
+//       }
+//     });
+//   });
+// };
 
 
 const deleteCourse = async (courseId) => {
