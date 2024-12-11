@@ -493,6 +493,37 @@ const displayCourses = (data) => {
         return;
       }
 
+      // if (cell.innerHTML.trim() !== "") {
+      //   console.warn(`Conflict detected for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
+        
+      //   // Extract the existing course details from the cell
+      //   const existingCourse = cell.querySelector("div");
+      //   const existingCourseText = existingCourse ? existingCourse.innerHTML : "Unknown Course";
+      
+      //   // Create a new conflict div
+      //   const conflictDiv = document.createElement("div");
+      //   conflictDiv.style.backgroundColor = conflictColor; // Highlight conflict
+      //   conflictDiv.style.padding = "5px";
+      //   conflictDiv.style.borderRadius = "5px";
+      //   conflictDiv.style.color = "black";
+      
+      //   conflictDiv.innerHTML = `
+      //     <strong>Conflict!</strong><br>
+      //     <strong>${COURSE_NUMBER}</strong><br>
+      //     ${TITLE_START_DATE}<br>
+      //     ${START_TIME} - ${END_TIME}<br>
+      //     ${BUILDING || "undefined"} ${ROOM || "undefined"}
+      //     <hr>
+      //     <small>Existing: ${existingCourseText}</small>
+      //   `;
+      
+      //   // Replace existing content with the conflict details
+      //   cell.innerHTML = ""; // Clear current content
+      //   cell.appendChild(conflictDiv);
+      
+      //   return;
+      // }
+      
       if (cell.innerHTML.trim() !== "") {
         console.warn(`Conflict detected for ${COURSE_NUMBER} on day "${day}" at time "${roundedStartTime}"`);
         
@@ -500,8 +531,16 @@ const displayCourses = (data) => {
         const existingCourse = cell.querySelector("div");
         const existingCourseText = existingCourse ? existingCourse.innerHTML : "Unknown Course";
       
+        // Check if the conflict is already handled to avoid duplication
+        const isConflictAlreadyHandled = cell.querySelector(".conflict-container");
+        if (isConflictAlreadyHandled) {
+          console.warn(`Conflict already handled for ${COURSE_NUMBER} at this cell`);
+          return; // Skip reprocessing this conflict
+        }
+      
         // Create a new conflict div
         const conflictDiv = document.createElement("div");
+        conflictDiv.classList.add("conflict-container"); // Add a class to identify conflict divs
         conflictDiv.style.backgroundColor = conflictColor; // Highlight conflict
         conflictDiv.style.padding = "5px";
         conflictDiv.style.borderRadius = "5px";
@@ -510,19 +549,20 @@ const displayCourses = (data) => {
         conflictDiv.innerHTML = `
           <strong>Conflict!</strong><br>
           <strong>${COURSE_NUMBER}</strong><br>
-          ${TITLE_START_DATE}<br>
-          ${START_TIME} - ${END_TIME}<br>
+          ${TITLE_START_DATE || "undefined"}<br>
+          ${START_TIME || "undefined"} - ${END_TIME || "undefined"}<br>
           ${BUILDING || "undefined"} ${ROOM || "undefined"}
           <hr>
           <small>Existing: ${existingCourseText}</small>
         `;
       
-        // Replace existing content with the conflict details
+        // Clear current content and append conflict details
         cell.innerHTML = ""; // Clear current content
         cell.appendChild(conflictDiv);
       
         return;
       }
+      
       
 
       // Create a div to wrap course details
