@@ -1,0 +1,126 @@
+/* General Body Styling */
+body {
+    color: #e0e0e0;
+    background-color: #2c3e50; /* Dark background */
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Upload Container */
+  .upload-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* File Input */
+  .upload-container input[type="file"] {
+    width: auto; /* Fit to content */
+    background-color: #34495e; /* Match dropdown styles */
+    color: #ecf0f1;
+    border: 1px solid #34495e;
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  
+  .upload-container input[type="file"]::-webkit-file-upload-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .upload-container input[type="file"]::-webkit-file-upload-button:hover {
+    background: #2980b9;
+  }
+  
+  /* Upload Buttons */
+  .upload-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Space between buttons */
+  }
+  
+  .upload-buttons button {
+    padding: 8px 12px; /* Adjust padding for compact buttons */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white; /* Ensure text is readable */
+  }
+  
+  /* Button Colors */
+  .upload-buttons .btn-primary {
+    background-color: #3498db;
+  }
+  
+  .upload-buttons .btn-primary:hover {
+    background-color: #2980b9;
+  }
+  
+  .upload-buttons .btn-warning {
+    background-color: #f1c40f;
+    color: #2c3e50;
+  }
+  
+  .upload-buttons .btn-warning:hover {
+    background-color: #d4ac0d;
+  }
+  
+  .upload-buttons .btn-info {
+    background-color: #1abc9c;
+  }
+  
+  .upload-buttons .btn-info:hover {
+    background-color: #16a085;
+  }
+  
+  .upload-buttons .btn-success {
+    background-color: #2ecc71;
+  }
+  
+  .upload-buttons .btn-success:hover {
+    background-color: #27ae60;
+  }
+  
+  /* Back to Home Button */
+  .text-center a.btn-secondary {
+    display: inline-block;
+    padding: 8px 12px; /* Adjust padding */
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    width: auto; /* Fit to text */
+  }
+  
+  .text-center a.btn-secondary:hover {
+    background-color: #95a5a6;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .upload-container {
+      gap: 15px;
+    }
+  
+    .upload-buttons {
+      flex-direction: column; /* Stack buttons vertically */
+      gap: 10px;
+    }
+  }
+  

@@ -1,130 +1,86 @@
+/* General Body Styling */
 body {
-    color: #e0e0e0;
-    background-color: #2c3e50;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-}
-
-.dropdowns {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  /* Container Styling */
+  .container {
+    max-width: 95%;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  /* Dropdown Styling */
+  .dropdowns {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
-}
-
-.dropdown label {
+  }
+  
+  .dropdown {
+    margin: 0 10px;
+    text-align: left;
+  }
+  
+  .dropdown label {
     display: block;
+    font-weight: bold;
     margin-bottom: 5px;
-    color: #e0e0e0;
-    font-weight: 500;
-}
-
-.dropdown select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #34495e;
-    background-color: #34495e;
-    color: #ecf0f1;
+  }
+  
+  .dropdown select {
+    width: 200px;
+    padding: 5px 10px;
     font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.dropdown select:hover,
-.dropdown select:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
-}
-
-/* General Table Styling */
-.calendar-table {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    color: #333;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .dropdown select:hover,
+  .dropdown select:focus {
+    border-color: #007bff;
+  }
+  
+  /* Calendar Styling */
+  .calendar-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    background-color: white; /* Table's default background */
-}
-
-.calendar-table th,
-.calendar-table td {
-    padding: 10px;
+    table-layout: fixed;
+  }
+  
+  .calendar-table th,
+  .calendar-table td {
+    border: 1px solid #ddd;
+    height: 80px;
     text-align: center;
-    border: 1px solid #ccc;
-    vertical-align: top;
-    background-color: white !important; /* Default white background */
-    color: #333; /* Text color */
-}
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+  }
+  
+  .calendar-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  .calendar-table th.time-column {
+    width: 10%;
+    background-color: #e9ecef;
+    font-weight: normal;
+    text-align: right;
+    padding-right: 10px;
+  }
+  
+  .calendar-table td.day-column {
+    width: 18%;
+  }
 
-/* Ensure all empty cells have a white background */
-td:empty {
-    background-color: white !important; /* White background for truly empty cells */
-    border: 1px solid #ccc; /* Match the border style */
-    height: auto; /* Allow auto height */
-    visibility: visible; /* Ensure visibility for styling */
-}
-
-/* Hidden cells with no content */
-td[style*="display: none"],
-td[data-day=""][data-time=""] {
-    display: none !important;
-    height: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background-color: white !important;
-}
-
-/* Fully hide rows that are completely empty */
-.calendar-table tr[style*="display: none"] {
-    height: 0 !important;
-    visibility: collapse !important;
-    display: none !important;
-}
-
-/* Multi-hour courses styling */
-.calendar-table td[rowspan] {
-    vertical-align: top; /* Align content to the top */
-}
-
-/* Course Info Styling */
-.calendar-table .course-info {
-    background-color: #f9f9f9; /* Light background for course info */
-    padding: 8px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Hover Effect for courses */
-.calendar-table .course-info:hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
-}
-
-
-/* Icon Buttons */
-.icon-buttons {
-    display: inline-flex; /* Keep icons aligned in a row */
-    gap: 10px; /* Adjust the spacing between the icons */
-    margin-top: 5px;
-}
-
-.icon-buttons i {
-    font-size: 20px; /* Adjust size for the icons */
-    padding: 8px; /* Add some padding around the icons */
-    border-radius: 50%;
-    background-color: #f0f0f0; /* Background circle around icons */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-buttons i:hover {
-    background-color: #e0e0e0; /* Slightly darker background on hover */
-}
-
-.icon-buttons .delete-icon {
-    color: #dc3545; /* Red color for delete */
-}
-
-/* Modal Styling */
+  /* Modal Styling */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -144,27 +100,3 @@ td[data-day=""][data-time=""] {
     justify-content: flex-end;
     padding: 10px;
 }
-
-
-
-
-/* Let Bootstrap handle modal visibility */
-/*.modal {
-    position: fixed;
-    z-index: 1050;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Overlay background */
-    /* z-index: 1050 !important;   */
-/* }  */
-
-/* .modal-dialog {
-    margin: 10% auto;
-    width: 80%;
-    max-width: 500px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px; Add slight rounding */
-/* } */
