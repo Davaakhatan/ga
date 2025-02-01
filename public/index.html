@@ -43,8 +43,9 @@
       <!-- Dropdowns -->
       <div class="dropdowns d-flex justify-content-center mt-3">
         <div class="dropdown">
-          <label for="course-catalog-dropdown">Select Course:</label>
+          <label for="course-catalog-dropdown">Select a Program:</label>
           <select id="course-catalog-dropdown" class="form-select">
+            <!-- <option value=""></option> -->
             <option value="computer-science">Computer Science</option>
             <option value="cybersecurity">Cybersecurity</option>
             <option value="software-engineering">Software Engineering</option>
@@ -53,6 +54,7 @@
         <div class="dropdown">
           <label for="student-year-dropdown">Select Year:</label>
           <select id="student-year-dropdown" class="form-select">
+            <!-- <option value=""></option> -->
             <option value="freshman">Freshman</option>
             <option value="sophomore">Sophomore</option>
             <option value="junior">Junior</option>
@@ -62,8 +64,15 @@
         <div class="dropdown">
           <label for="semester-dropdown">Select Term:</label>
           <select id="semester-dropdown" class="form-select">
+            <!-- <option value=""></option> -->
             <option value="fall">Fall</option>
             <option value="spring">Spring</option>
+          </select>
+        </div>
+        <div class="dropdown">
+          <label for="room-dropdown">Select Room:</label>
+          <select id="room-dropdown" class="form-select">
+            <option value="">Loading rooms...</option>
           </select>
         </div>
       </div>
@@ -84,12 +93,18 @@
           <script>
             const startHour = 8; // 8:00 AM
             const endHour = 21; // 9:00 PM
-            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+            const days = [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+            ];
             const calendarBody = document.getElementById("calendar-body");
-      
+
             for (let hour = startHour; hour < endHour; hour++) {
               const row = document.createElement("tr");
-      
+
               // Time cell
               const timeCell = document.createElement("th");
               timeCell.textContent = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
@@ -97,26 +112,28 @@
               }`;
               timeCell.classList.add("time-column");
               row.appendChild(timeCell);
-      
+
               // Day cells
               days.forEach((day) => {
                 const dayCell = document.createElement("td");
                 dayCell.classList.add("day-column");
                 dayCell.setAttribute("data-day", day);
-                dayCell.setAttribute("data-time", `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
-                  hour < 12 ? "AM" : "PM"
-                }`);
+                dayCell.setAttribute(
+                  "data-time",
+                  `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
+                    hour < 12 ? "AM" : "PM"
+                  }`
+                );
                 row.appendChild(dayCell);
               });
-      
+
               calendarBody.appendChild(row);
             }
           </script>
         </tbody>
       </table>
-      
 
-      <!-- Modal -->
+      <!-- Edit Course Modal -->
       <div
         id="editCourseModal"
         class="modal fade"
@@ -138,11 +155,15 @@
             <div class="modal-body">
               <form id="editCourseForm">
                 <div class="mb-3">
-                  <label for="courseNumber" class="form-label">Course Number</label>
+                  <label for="courseNumber" class="form-label"
+                    >Course Number</label
+                  >
                   <input type="text" class="form-control" id="courseNumber" />
                 </div>
                 <div class="mb-3">
-                  <label for="courseTitle" class="form-label">Course Title</label>
+                  <label for="courseTitle" class="form-label"
+                    >Course Title</label
+                  >
                   <input type="text" class="form-control" id="courseTitle" />
                 </div>
                 <div class="mb-3">
@@ -153,11 +174,22 @@
                   <label for="endTime" class="form-label">End Time</label>
                   <input type="text" class="form-control" id="endTime" />
                 </div>
+                <div class="mb-3">
+                  <label for="roomInput" class="form-label">Room</label>
+                  <!-- Make sure ID matches JS -->
+                  <input type="text" class="form-control" id="roomInput" />
+                </div>
               </form>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save Changes</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="button" class="btn btn-primary" id="saveCourseChanges">Save Changes</button>
             </div>
           </div>
         </div>
