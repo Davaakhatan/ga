@@ -280,7 +280,7 @@ app.get("/api/courses", async (req, res) => {
         case "freshman":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CIS_180|CIS_290|MATH_140)/i }
+              ? { $regex: /^(CIS_180|CIS_181|CIS_290|MATH_140)/i }
               : {
                   // For Spring Freshman, match CIS_182, CIS_183, MATH_141,
                   // and only PHYS_210 and PHYS_211 (with optional trailing suffixes).
@@ -290,7 +290,7 @@ app.get("/api/courses", async (req, res) => {
         case "sophomore":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CSC_220|CIS_239|CIS_287|CIS_277|MATH_222)/i }
+              ? { $regex: /^(CSC_220|CIS_239|CIS_277|CIS_287|MATH_222)/i }
               : {
                   // For Spring Sophomore, match courses:
                   // CIS_255, CSC_223, SOFT_210, MATH_223, MATH_314,
@@ -301,8 +301,8 @@ app.get("/api/courses", async (req, res) => {
         case "junior":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213)/i }
-              : { $regex: /^(MATH_310|PHYS_212(_\d+)?)/i };
+              ? { $regex: /^(CIS_355|CIS_326|CIS_219|MATH_213|MATH_212)/i }
+              : { $regex: /^(MATH_310)/i };
           break;
         case "senior":
           courseFilter.COURSE_NUMBER =

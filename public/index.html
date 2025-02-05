@@ -262,6 +262,7 @@
           const result = await response.json();
           alert("Upload successful!");
           console.log("Server response:", result);
+          window.location.reload();
         } catch (error) {
           console.error(error);
           alert("An error occurred during upload.");
