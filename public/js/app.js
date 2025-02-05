@@ -44,30 +44,36 @@ const fetchCourses = async () => {
     clearCalendar();
     uniqueRooms.clear();
 
-    let url = `/api/courses?year=${selectedYear}&semester=${selectedSemester}&course=${selectedCourse}`;
-    
-    // Apply room filter only if a specific room is selected
+    // Always fetch courses without the room filter to populate the full set of rooms.
+    const baseUrl = `/api/courses?year=${selectedYear}&semester=${selectedSemester}&course=${selectedCourse}`;
+    const baseResponse = await fetch(baseUrl);
+    if (!baseResponse.ok) throw new Error(`Failed to fetch from ${baseUrl}`);
+    const allCourses = await baseResponse.json();
+
+    // Populate the uniqueRooms set from all fetched courses.
+    allCourses.forEach((course) => {
+      if (course.ROOM) {
+        uniqueRooms.add(course.ROOM);
+      }
+    });
+    populateRoomDropdown();
+
+    // Now filter the courses client-side if a specific room is selected.
+    let coursesToDisplay = allCourses;
     if (selectedRoom && selectedRoom !== "") {
-      url += `&room=${selectedRoom}`;
+      coursesToDisplay = allCourses.filter((course) => course.ROOM === selectedRoom);
     }
-
-    const response = await fetch(url);
-
-    if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
-
-    const data = await response.json();
-    coursesData = data;
-
-    if (data.length === 0) {
+    coursesData = coursesToDisplay;
+    if (coursesToDisplay.length === 0) {
       console.log("No courses found for this selection.");
     } else {
-      displayCourses(data);
-      populateRoomDropdown();
+      displayCourses(coursesToDisplay);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
+
 
 
 
