@@ -147,18 +147,36 @@ const parseMeetingDays = (days) => {
 // Display courses
 const displayCourses = (courses) => {
   courses.forEach((course) => {
-    const { COURSE_NUMBER, TITLE_START_DATE, START_TIME, END_TIME, MEETING_DAYS, ROOM, _id } = course;
+    const {
+      COURSE_NUMBER,
+      TITLE_START_DATE,
+      START_TIME,
+      END_TIME,
+      MEETING_DAYS,
+      ROOM,
+      _id,
+    } = course;
 
+    // If any critical field is missing, log a warning and skip the course.
     if (!START_TIME || !END_TIME || !MEETING_DAYS) {
-      console.warn(`Invalid course data: ${JSON.stringify(course)}`);
+      console.warn(`Incomplete course data for ${COURSE_NUMBER}: ${JSON.stringify(course)}`);
       return;
     }
 
+    // Add room to the unique set
     uniqueRooms.add(ROOM);
 
+    // Parse meeting days and times
     const days = parseMeetingDays(MEETING_DAYS);
     const start = parseTime(START_TIME);
     const end = parseTime(END_TIME);
+    
+    // If time parsing fails, log a warning and skip the course.
+    if (!start || !end) {
+      console.warn(`Time parsing failed for course: ${COURSE_NUMBER}`);
+      return;
+    }
+    
     const startMinutes = start.hour * 60 + start.minute;
     const endMinutes = end.hour * 60 + end.minute;
     const rowSpan = calculateRowspan(startMinutes, endMinutes);
@@ -168,10 +186,13 @@ const displayCourses = (courses) => {
       const cell = document.querySelector(`td[data-day="${day}"][data-time="${startHour}"]`);
       if (!cell) return;
 
-      // Determine course color
+      // Determine background color based on course subject
       let backgroundColor = "";
-      if (COURSE_NUMBER.includes("MATH")) backgroundColor = "#FFD700";
-      else if (COURSE_NUMBER.includes("PHYS")) backgroundColor = "#ADD8E6";
+      if (COURSE_NUMBER.includes("MATH")) {
+        backgroundColor = "#FFD700";
+      } else if (COURSE_NUMBER.includes("PHYS")) {
+        backgroundColor = "#ADD8E6";
+      }
 
       const courseHTML = `
         <div class="course-box" style="background-color: ${backgroundColor}; padding: 5px; border-radius: 5px;">
@@ -186,8 +207,8 @@ const displayCourses = (courses) => {
         </div>
       `;
 
+      // If the cell already has content, display a conflict container.
       if (cell.innerHTML.trim() !== "") {
-        // Conflict display with light red background
         cell.innerHTML = `
           <div class="conflict-container" style="display: flex; gap: 5px; background-color: #FFB6C1; padding: 5px; border-radius: 5px;">
             ${cell.innerHTML} | ${courseHTML}
@@ -197,6 +218,7 @@ const displayCourses = (courses) => {
         cell.innerHTML = courseHTML;
         cell.rowSpan = rowSpan;
 
+        // Hide cells in subsequent rows that are covered by this course's row span.
         let nextRow = cell.parentElement.nextElementSibling;
         for (let i = 1; i < rowSpan; i++) {
           const extraCell = nextRow?.querySelector(`td[data-day="${day}"]`);
@@ -207,6 +229,7 @@ const displayCourses = (courses) => {
     });
   });
 };
+
 
 const editCourse = (courseId) => {
   const course = coursesData.find((c) => c._id === courseId);
