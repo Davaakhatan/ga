@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Home | GA</title>
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
@@ -31,54 +31,73 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="upload.html">Upload</a>
-            </li>
+            <!-- Removed the Upload link -->
           </ul>
         </div>
       </div>
     </nav>
 
     <div class="container">
-      <!-- Dropdowns -->
+      <!-- Dropdowns + Upload in the same row -->
       <div class="dropdowns d-flex justify-content-center mt-3">
-        <div class="dropdown">
-          <label for="course-catalog-dropdown">Select a Program:</label>
+        <!-- Program Dropdown -->
+        <div class="dropdown me-3">
+          <label for="course-catalog-dropdown" class="form-label">Select a Program:</label>
           <select id="course-catalog-dropdown" class="form-select">
-            <!-- <option value=""></option> -->
             <option value="computer-science">Computer Science</option>
             <option value="cybersecurity">Cybersecurity</option>
             <option value="software-engineering">Software Engineering</option>
           </select>
         </div>
-        <div class="dropdown">
-          <label for="student-year-dropdown">Select Year:</label>
+
+        <!-- Year Dropdown -->
+        <div class="dropdown me-3">
+          <label for="student-year-dropdown" class="form-label">Select Year:</label>
           <select id="student-year-dropdown" class="form-select">
-            <!-- <option value=""></option> -->
             <option value="freshman">Freshman</option>
             <option value="sophomore">Sophomore</option>
             <option value="junior">Junior</option>
             <option value="senior">Senior</option>
+            <option value="graduate">Graduate</option>
           </select>
         </div>
-        <div class="dropdown">
-          <label for="semester-dropdown">Select Term:</label>
+
+        <!-- Term Dropdown -->
+        <div class="dropdown me-3">
+          <label for="semester-dropdown" class="form-label">Select Term:</label>
           <select id="semester-dropdown" class="form-select">
-            <!-- <option value=""></option> -->
             <option value="fall">Fall</option>
             <option value="spring">Spring</option>
           </select>
         </div>
-        <div class="dropdown">
-          <label for="room-dropdown">Select Room:</label>
+
+        <!-- Room Dropdown -->
+        <div class="dropdown me-3">
+          <label for="room-dropdown" class="form-label">Select Room:</label>
           <select id="room-dropdown" class="form-select">
-            <option value="">Loading rooms...</option>
+            <option value="">Select a Room</option>
           </select>
+        </div>
+
+        <!-- File Upload directly next to the Room dropdown -->
+        <div class="d-flex align-items-end">
+          <input
+            type="file"
+            class="form-control w-auto"
+            id="file-input"
+            required
+          />
+          <button
+            class="btn btn-primary ms-2"
+            onclick="handleUpload()"
+          >
+            Upload
+          </button>
         </div>
       </div>
 
       <!-- Calendar Table -->
-      <table class="calendar-table">
+      <table class="calendar-table mt-4">
         <thead>
           <tr>
             <th class="time-column">Time</th>
@@ -92,24 +111,16 @@
         <tbody id="calendar-body">
           <script>
             const startHour = 8; // 8:00 AM
-            const endHour = 21; // 9:00 PM
-            const days = [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-            ];
+            const endHour = 21;  // 9:00 PM
+            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
             const calendarBody = document.getElementById("calendar-body");
 
             for (let hour = startHour; hour < endHour; hour++) {
               const row = document.createElement("tr");
-
               // Time cell
               const timeCell = document.createElement("th");
-              timeCell.textContent = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
-                hour < 12 ? "AM" : "PM"
-              }`;
+              timeCell.textContent =
+                `${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 ? "AM" : "PM"}`;
               timeCell.classList.add("time-column");
               row.appendChild(timeCell);
 
@@ -155,15 +166,11 @@
             <div class="modal-body">
               <form id="editCourseForm">
                 <div class="mb-3">
-                  <label for="courseNumber" class="form-label"
-                    >Course Number</label
-                  >
+                  <label for="courseNumber" class="form-label">Course Number</label>
                   <input type="text" class="form-control" id="courseNumber" />
                 </div>
                 <div class="mb-3">
-                  <label for="courseTitle" class="form-label"
-                    >Course Title</label
-                  >
+                  <label for="courseTitle" class="form-label">Course Title</label>
                   <input type="text" class="form-control" id="courseTitle" />
                 </div>
                 <div class="mb-3">
@@ -176,7 +183,6 @@
                 </div>
                 <div class="mb-3">
                   <label for="roomInput" class="form-label">Room</label>
-                  <!-- Make sure ID matches JS -->
                   <input type="text" class="form-control" id="roomInput" />
                 </div>
               </form>
@@ -189,14 +195,49 @@
               >
                 Close
               </button>
-              <button type="button" class="btn btn-primary" id="saveCourseChanges">Save Changes</button>
+              <button type="button" class="btn btn-primary" id="saveCourseChanges">
+                Save Changes
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Bootstrap Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Your JS -->
     <script src="./js/app.js" defer></script>
+
+    <script>
+      async function handleUpload() {
+        const fileInput = document.getElementById("file-input");
+        if (!fileInput.files.length) {
+          alert("Please select a file first.");
+          return;
+        }
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        try {
+          // Replace with your real endpoint:
+          const response = await fetch("http://localhost:3001/api/upload/cis-fall", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            alert("Upload failed.");
+            return;
+          }
+
+          alert("Upload successful!");
+        } catch (error) {
+          console.error(error);
+          alert("An error occurred during upload.");
+        }
+      }
+    </script>
   </body>
 </html>
