@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home | GA</title>
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
@@ -42,7 +42,9 @@
       <div class="dropdowns d-flex justify-content-center mt-3">
         <!-- Program Dropdown -->
         <div class="dropdown me-3">
-          <label for="course-catalog-dropdown" class="form-label">Select a Program:</label>
+          <label for="course-catalog-dropdown" class="form-label"
+            >Select a Program:</label
+          >
           <select id="course-catalog-dropdown" class="form-select">
             <option value="computer-science">Computer Science</option>
             <option value="cybersecurity">Cybersecurity</option>
@@ -52,7 +54,9 @@
 
         <!-- Year Dropdown -->
         <div class="dropdown me-3">
-          <label for="student-year-dropdown" class="form-label">Select Year:</label>
+          <label for="student-year-dropdown" class="form-label"
+            >Select Year:</label
+          >
           <select id="student-year-dropdown" class="form-select">
             <option value="freshman">Freshman</option>
             <option value="sophomore">Sophomore</option>
@@ -87,10 +91,7 @@
             id="file-input"
             required
           />
-          <button
-            class="btn btn-primary ms-2"
-            onclick="handleUpload()"
-          >
+          <button class="btn btn-primary ms-2" onclick="handleUpload()">
             Upload
           </button>
         </div>
@@ -111,16 +112,23 @@
         <tbody id="calendar-body">
           <script>
             const startHour = 8; // 8:00 AM
-            const endHour = 21;  // 9:00 PM
-            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+            const endHour = 21; // 9:00 PM
+            const days = [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+            ];
             const calendarBody = document.getElementById("calendar-body");
 
             for (let hour = startHour; hour < endHour; hour++) {
               const row = document.createElement("tr");
               // Time cell
               const timeCell = document.createElement("th");
-              timeCell.textContent =
-                `${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 ? "AM" : "PM"}`;
+              timeCell.textContent = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
+                hour < 12 ? "AM" : "PM"
+              }`;
               timeCell.classList.add("time-column");
               row.appendChild(timeCell);
 
@@ -166,11 +174,15 @@
             <div class="modal-body">
               <form id="editCourseForm">
                 <div class="mb-3">
-                  <label for="courseNumber" class="form-label">Course Number</label>
+                  <label for="courseNumber" class="form-label"
+                    >Course Number</label
+                  >
                   <input type="text" class="form-control" id="courseNumber" />
                 </div>
                 <div class="mb-3">
-                  <label for="courseTitle" class="form-label">Course Title</label>
+                  <label for="courseTitle" class="form-label"
+                    >Course Title</label
+                  >
                   <input type="text" class="form-control" id="courseTitle" />
                 </div>
                 <div class="mb-3">
@@ -195,7 +207,11 @@
               >
                 Close
               </button>
-              <button type="button" class="btn btn-primary" id="saveCourseChanges">
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="saveCourseChanges"
+              >
                 Save Changes
               </button>
             </div>
@@ -217,22 +233,35 @@
           alert("Please select a file first.");
           return;
         }
+        const file = fileInput.files[0];
         const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
+        formData.append("file", file);
+
+        // Append additional fields from the dropdowns
+        formData.append(
+          "curriculumType",
+          document.getElementById("course-catalog-dropdown").value
+        );
+        formData.append(
+          "term",
+          document.getElementById("semester-dropdown").value
+        );
 
         try {
-          // Replace with your real endpoint:
-          const response = await fetch("http://localhost:3001/api/upload/cis-fall", {
+          const response = await fetch("http://localhost:3000/api/upload", {
             method: "POST",
             body: formData,
           });
 
           if (!response.ok) {
-            alert("Upload failed.");
+            const errorData = await response.json();
+            alert(`Upload failed: ${errorData.message}`);
             return;
           }
 
+          const result = await response.json();
           alert("Upload successful!");
+          console.log("Server response:", result);
         } catch (error) {
           console.error(error);
           alert("An error occurred during upload.");
