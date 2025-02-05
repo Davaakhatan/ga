@@ -268,12 +268,16 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 // Retrieve filtered courses based on course number prefix, year, and term
 app.get("/api/courses", async (req, res) => {
   try {
-    const { year, semester, course } = req.query;
+    const { year, semester, course, room } = req.query;
     let courseFilter = {};
 
-    // Expect the TERM field to end with '/FA' for fall or '/SP' for spring.
-    courseFilter.TERM =
-      semester === "fall" ? { $regex: /\/FA$/ } : { $regex: /\/SP$/ };
+    // Filter TERM based on semester
+    courseFilter.TERM = semester === "fall" ? { $regex: /\/FA$/ } : { $regex: /\/SP$/ };
+
+    // Add room filter if provided
+    if (room && room.trim() !== "") {
+      courseFilter.ROOM = room;
+    }
 
     if (course === "computer-science") {
       switch (year) {
@@ -281,22 +285,13 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER =
             semester === "fall"
               ? { $regex: /^(CIS_180|CIS_181|CIS_290|MATH_140)/i }
-              : {
-                  // For Spring Freshman, match CIS_182, CIS_183, MATH_141,
-                  // and only PHYS_210 and PHYS_211 (with optional trailing suffixes).
-                  $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210(_\d+)?|PHYS_211(_\d+)?)/i,
-                };
+              : { $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210(_\d+)?|PHYS_211(_\d+)?)/i };
           break;
         case "sophomore":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
               ? { $regex: /^(CSC_220|CIS_239|CIS_277|CIS_287|MATH_222)/i }
-              : {
-                  // For Spring Sophomore, match courses:
-                  // CIS_255, CSC_223, SOFT_210, MATH_223, MATH_314,
-                  // and PHYS courses PHYS_214, PHYS_212, PHYS_213, PHYS_215 (with optional suffixes).
-                  $regex: /^(CIS_255|CSC_223|SOFT_210|MATH_223|MATH_314|PHYS_214(_\d+)?|PHYS_212(_\d+)?|PHYS_213(_\d+)?|PHYS_215(_\d+)?)/i,
-                };
+              : { $regex: /^(CIS_255|CSC_223|SOFT_210|MATH_223|MATH_314|PHYS_214(_\d+)?|PHYS_212(_\d+)?|PHYS_213(_\d+)?|PHYS_215(_\d+)?)/i };
           break;
         case "junior":
           courseFilter.COURSE_NUMBER =
@@ -361,10 +356,7 @@ app.get("/api/courses", async (req, res) => {
       });
     }
 
-    console.log(
-      "Generated course filter:",
-      JSON.stringify(courseFilter, null, 2)
-    );
+    console.log("Generated course filter:", JSON.stringify(courseFilter, null, 2));
     const courses = await Course.find(courseFilter);
     res.json(courses);
   } catch (error) {
@@ -375,6 +367,7 @@ app.get("/api/courses", async (req, res) => {
     });
   }
 });
+
 
 
 // Retrieve catalog data by curriculum type
