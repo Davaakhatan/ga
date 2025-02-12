@@ -4,6 +4,17 @@ Arguments:
 PATH: 
   /usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Users/davaakhatanzorigtbaatar/mongodb-macos-x86_64-7.0.7/bin:/Users/davaakhatanzorigtbaatar/mongodb-macos-x86_64-7.0.7/bin
 
+Make changes on upload file part when run on the server:
+        
+          const response = await fetch(
+            "https://gannon.edutrack.lol/api/upload",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+
 Yarn version: 
   1.22.19
 
