@@ -145,41 +145,74 @@ async function parseDOCXFile(filePath) {
 // =============================================================================
 // New PHYS DOCX Parsing Function
 // =============================================================================
-async function parsePHYSDOCXFile(filePath) {
+async function parsePHYSDOCXFile(filePath, termFromBody, academicYear) {
   try {
     const { value } = await mammoth.extractRawText({ path: filePath });
-    // Split lines and filter empty lines
-    const lines = value.split("\n").map(line => line.trim()).filter(line => line !== "");
-    
-    // Expecting blocks of 4 lines per course
+    // Split and clean up the lines from the DOCX file
+    const lines = value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line !== "");
+
     if (lines.length % 4 !== 0) {
       console.warn("Unexpected number of lines in PHYS DOCX file. Some courses may be incomplete.");
     }
     
+    // Determine term suffix based on termFromBody (e.g., "fall" or "spring")
+    const termSuffix = termFromBody && termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
+    // Construct TERM as "<academicYear>/<termSuffix>" (e.g., "24/FA")
+    const TERM = `${academicYear}/${termSuffix}`;
+    
     const courses = [];
     for (let i = 0; i < lines.length; i += 4) {
-      const courseCode = lines[i];      // e.g., "PHYS 101"
-      const section = lines[i + 1];       // e.g., "01"
-      const title = lines[i + 2];         // e.g., "Concepts in Physics"
-      const meetingLine = lines[i + 3];   // e.g., "TTh 9:30-10:50"
+      let courseCode = lines[i];         // e.g., "PHYS 101"
+      const section = lines[i + 1];        // e.g., "01"
+      const title = lines[i + 2];          // e.g., "Concepts in Physics"
+      const meetingLine = lines[i + 3];    // e.g., "TTh 9:30-10:50"
       
-      // Split the meeting line into days and time range
+      // Normalize course code (e.g., "PHYS 101" becomes "PHYS_101")
+      courseCode = courseCode.replace(/\s+/g, '_');
+      // Build COURSE_NUMBER as "PHYS_101_01"
+      const COURSE_NUMBER = `${courseCode}_${section}`;
+      
+      // Parse meeting details
       const meetingParts = meetingLine.split(" ");
-      const meetingDays = meetingParts[0] || "";
+      const meetingDaysRaw = meetingParts[0] || "";
+      // Optionally normalize days (e.g., "TTh" becomes "T TH")
+      const meetingDays = meetingDaysRaw.replace(/TTh/, "T TH");
+      
       const timeRange = meetingParts[1] || "";
       const timeParts = timeRange.split("-");
-      const startTime = timeParts[0] ? timeParts[0].trim() : "";
-      const endTime = timeParts[1] ? timeParts[1].trim() : "";
+      let startTime = timeParts[0] ? timeParts[0].trim() : "";
+      let endTime = timeParts[1] ? timeParts[1].trim() : "";
       
-      // Create a course object. Combine course code and section to create a unique COURSE_NUMBER.
+      // Append "AM" if missing so it matches your time parser
+      if (startTime && !/AM|PM/i.test(startTime)) {
+        startTime = startTime + "AM";
+      }
+      if (endTime && !/AM|PM/i.test(endTime)) {
+        endTime = endTime + "AM";
+      }
+      
       courses.push({
-        COURSE_NUMBER: `${courseCode}_${section}`,
+        COURSE_NUMBER,
         TITLE_START_DATE: title,
-        START_TIME: startTime,    // You may need to append AM/PM if required
-        END_TIME: endTime,        // Likewise, adjust if needed
+        START_TIME: startTime,
+        END_TIME: endTime,
         MEETING_DAYS: meetingDays,
-        ROOM: "",                 // Room not provided in the DOCX
-        TERM: "PHYS",             // Use a default term value for PHYS courses
+        ROOM: "",
+        TERM,
+        ACADEMIC_LEVEL: "UG",
+        ACADEMIC_LEVEL_1: "GR",
+        CAPACITY: 0,
+        INSTRUCTOR: "",
+        MAX_CREDITS: 0,
+        MIN_CREDITS: 0,
+        NUMBER_OF_STUDENTS: 0,
+        SCHOOLS: "",
+        SECTION: section,
+        SEQ_NO: i / 4 + 1,
+        STATUS: "Open"
       });
     }
     console.log("Parsed PHYS courses:", courses);
@@ -188,6 +221,8 @@ async function parsePHYSDOCXFile(filePath) {
     throw new Error("Error parsing PHYS DOCX file: " + error.message);
   }
 }
+
+
 
 // =============================================================================
 // XLSX Parsing Function
@@ -229,7 +264,7 @@ async function parseXLSXFile(filePath) {
 // File Upload Endpoint
 // =============================================================================
 app.post("/api/upload", upload.single("file"), async (req, res) => {
-  const termFromBody = req.body.term; // expected to be 'fall' or 'spring'
+  const termFromBody = req.body.term; // e.g., 'fall' or 'spring'
   console.log("Received term:", termFromBody);
 
   try {
@@ -237,12 +272,10 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       return res.status(400).json({ success: false, message: "No file uploaded" });
     }
 
-    // For DOCX files, check if it's a PHYS file based on the filename (or you could inspect its content)
     if (req.file.originalname.toLowerCase().endsWith(".docx")) {
       if (req.file.originalname.toLowerCase().includes("phys")) {
-        // Use the PHYS DOCX parser
-        const coursesData = await parsePHYSDOCXFile(req.file.path);
-        // Update the Course collection with these courses (similar to XLSX processing)
+        // Use the updated PHYS DOCX parser, now passing termFromBody.
+        const coursesData = await parsePHYSDOCXFile(req.file.path, termFromBody);
         await Promise.all(
           coursesData.map((course) =>
             Course.findOneAndUpdate(
@@ -258,7 +291,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
           message: "PHYS DOCX file processed and saved successfully",
         });
       } else {
-        // Use the existing DOCX parser for other curriculum types
+        // Existing DOCX parser for other curriculum types
         const catalogData = await parseDOCXFile(req.file.path);
         await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
         await Catalog.create(catalogData);
@@ -269,7 +302,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
         });
       }
     }
-    // XLSX file branch
+    // XLSX branch remains unchanged.
     else if (req.file.originalname.toLowerCase().endsWith(".xlsx")) {
       const transformedData = await parseXLSXFile(req.file.path);
       const termSuffix = termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
@@ -311,6 +344,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     });
   }
 });
+
 
 // =============================================================================
 // GET Endpoints (unchanged)
