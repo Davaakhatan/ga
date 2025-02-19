@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // =============================================================================
-// DOCX Parsing Function
+// DOCX Parsing Function for CS, Cybersecurity, Software Engineering
 // =============================================================================
 async function parseDOCXFile(filePath) {
   try {
@@ -143,17 +143,60 @@ async function parseDOCXFile(filePath) {
 }
 
 // =============================================================================
+// New PHYS DOCX Parsing Function
+// =============================================================================
+async function parsePHYSDOCXFile(filePath) {
+  try {
+    const { value } = await mammoth.extractRawText({ path: filePath });
+    // Split lines and filter empty lines
+    const lines = value.split("\n").map(line => line.trim()).filter(line => line !== "");
+    
+    // Expecting blocks of 4 lines per course
+    if (lines.length % 4 !== 0) {
+      console.warn("Unexpected number of lines in PHYS DOCX file. Some courses may be incomplete.");
+    }
+    
+    const courses = [];
+    for (let i = 0; i < lines.length; i += 4) {
+      const courseCode = lines[i];      // e.g., "PHYS 101"
+      const section = lines[i + 1];       // e.g., "01"
+      const title = lines[i + 2];         // e.g., "Concepts in Physics"
+      const meetingLine = lines[i + 3];   // e.g., "TTh 9:30-10:50"
+      
+      // Split the meeting line into days and time range
+      const meetingParts = meetingLine.split(" ");
+      const meetingDays = meetingParts[0] || "";
+      const timeRange = meetingParts[1] || "";
+      const timeParts = timeRange.split("-");
+      const startTime = timeParts[0] ? timeParts[0].trim() : "";
+      const endTime = timeParts[1] ? timeParts[1].trim() : "";
+      
+      // Create a course object. Combine course code and section to create a unique COURSE_NUMBER.
+      courses.push({
+        COURSE_NUMBER: `${courseCode}_${section}`,
+        TITLE_START_DATE: title,
+        START_TIME: startTime,    // You may need to append AM/PM if required
+        END_TIME: endTime,        // Likewise, adjust if needed
+        MEETING_DAYS: meetingDays,
+        ROOM: "",                 // Room not provided in the DOCX
+        TERM: "PHYS",             // Use a default term value for PHYS courses
+      });
+    }
+    console.log("Parsed PHYS courses:", courses);
+    return courses;
+  } catch (error) {
+    throw new Error("Error parsing PHYS DOCX file: " + error.message);
+  }
+}
+
+// =============================================================================
 // XLSX Parsing Function
 // =============================================================================
 async function parseXLSXFile(filePath) {
   try {
-    // Read the XLSX file
     const workbook = xlsx.readFile(filePath);
-    // Get the first sheet of the workbook
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    // Convert the sheet data to JSON
     const jsonData = xlsx.utils.sheet_to_json(sheet);
-    // Transform the JSON data 
     const transformedData = jsonData.map((item) => ({
       COURSE_NUMBER: item["COURSE #"],
       TITLE_START_DATE: item["TITLE/START DATE"],
@@ -186,52 +229,62 @@ async function parseXLSXFile(filePath) {
 // File Upload Endpoint
 // =============================================================================
 app.post("/api/upload", upload.single("file"), async (req, res) => {
-  // Read term from the request body (sent via FormData)
   const termFromBody = req.body.term; // expected to be 'fall' or 'spring'
   console.log("Received term:", termFromBody);
 
   try {
     if (!req.file) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No file uploaded" });
+      return res.status(400).json({ success: false, message: "No file uploaded" });
     }
 
-    // If the file is DOCX
-    if (req.file.originalname.endsWith(".docx")) {
-      const catalogData = await parseDOCXFile(req.file.path);
-      // Remove existing catalog for that curriculum type
-      await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
-      await Catalog.create(catalogData);
-      fs.unlinkSync(req.file.path);
-      return res.status(200).json({
-        success: true,
-        message: "DOCX file processed and saved successfully",
-      });
+    // For DOCX files, check if it's a PHYS file based on the filename (or you could inspect its content)
+    if (req.file.originalname.toLowerCase().endsWith(".docx")) {
+      if (req.file.originalname.toLowerCase().includes("phys")) {
+        // Use the PHYS DOCX parser
+        const coursesData = await parsePHYSDOCXFile(req.file.path);
+        // Update the Course collection with these courses (similar to XLSX processing)
+        await Promise.all(
+          coursesData.map((course) =>
+            Course.findOneAndUpdate(
+              { COURSE_NUMBER: course.COURSE_NUMBER, TERM: course.TERM },
+              course,
+              { upsert: true, new: true }
+            )
+          )
+        );
+        fs.unlinkSync(req.file.path);
+        return res.status(200).json({
+          success: true,
+          message: "PHYS DOCX file processed and saved successfully",
+        });
+      } else {
+        // Use the existing DOCX parser for other curriculum types
+        const catalogData = await parseDOCXFile(req.file.path);
+        await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
+        await Catalog.create(catalogData);
+        fs.unlinkSync(req.file.path);
+        return res.status(200).json({
+          success: true,
+          message: "DOCX file processed and saved successfully",
+        });
+      }
     }
-    // If the file is XLSX
-    else if (req.file.originalname.endsWith(".xlsx")) {
+    // XLSX file branch
+    else if (req.file.originalname.toLowerCase().endsWith(".xlsx")) {
       const transformedData = await parseXLSXFile(req.file.path);
-      // Determine the term suffix based on the provided term
-      const termSuffix =
-        termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
-
-      // Update the TERM field for each course so that it ends with the proper suffix.
+      const termSuffix = termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
       const updatedData = transformedData.map((course) => {
         if (course.TERM) {
-          // If TERM already contains a slash, replace the suffix with the new one
           if (course.TERM.includes("/")) {
             const parts = course.TERM.split("/");
             return { ...course, TERM: `${parts[0]}/${termSuffix}` };
           } else {
-            // Otherwise, append the suffix
             return { ...course, TERM: `${course.TERM}/${termSuffix}` };
           }
         } else {
           return { ...course, TERM: termSuffix };
         }
       });
-
       await Promise.all(
         updatedData.map((course) =>
           Course.findOneAndUpdate(
@@ -247,9 +300,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
         message: "XLSX file processed and saved successfully",
       });
     } else {
-      return res
-        .status(400)
-        .json({ success: false, message: "Unsupported file type" });
+      return res.status(400).json({ success: false, message: "Unsupported file type" });
     }
   } catch (error) {
     console.error("Error processing file:", error);
@@ -262,19 +313,14 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 });
 
 // =============================================================================
-// GET Endpoints
+// GET Endpoints (unchanged)
 // =============================================================================
-
-// Retrieve filtered courses based on course number prefix, year, and term
 app.get("/api/courses", async (req, res) => {
   try {
     const { year, semester, course, room } = req.query;
     let courseFilter = {};
-
-    // Filter TERM based on semester
     courseFilter.TERM = semester === "fall" ? { $regex: /\/FA$/ } : { $regex: /\/SP$/ };
 
-    // Add room filter if provided
     if (room && room.trim() !== "") {
       courseFilter.ROOM = room;
     }
@@ -349,6 +395,43 @@ app.get("/api/courses", async (req, res) => {
             message: "Invalid year selected",
           });
       }
+    } else if (course === "software-engineering") {
+      // New branch for software engineering courses.
+      // Adjust the regex patterns based on your actual software-engineering course numbering.
+      switch (year) {
+        case "freshman":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(SOFT_101|SOFT_102)/i }
+              : { $regex: /^(SOFT_103|SOFT_104)/i };
+          break;
+        case "sophomore":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(SOFT_201|SOFT_202)/i }
+              : { $regex: /^(SOFT_203|SOFT_204)/i };
+          break;
+        case "junior":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(SOFT_301|SOFT_302)/i }
+              : { $regex: /^(SOFT_303|SOFT_304)/i };
+          break;
+        case "senior":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(SOFT_401|SOFT_402)/i }
+              : { $regex: /^(SOFT_403|SOFT_404)/i };
+          break;
+        case "graduate":
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ };
+          break;
+        default:
+          return res.status(400).json({
+            success: false,
+            message: "Invalid year selected",
+          });
+      }
     } else {
       return res.status(400).json({
         success: false,
@@ -369,8 +452,6 @@ app.get("/api/courses", async (req, res) => {
 });
 
 
-
-// Retrieve catalog data by curriculum type
 app.get("/api/catalog/:curriculumType", async (req, res) => {
   try {
     const catalog = await Catalog.findOne({
@@ -391,7 +472,6 @@ app.get("/api/catalog/:curriculumType", async (req, res) => {
   }
 });
 
-// Retrieve course by ID
 app.get("/api/courses/:id", async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -410,7 +490,9 @@ app.get("/api/courses/:id", async (req, res) => {
   }
 });
 
-// Update course details
+// =============================================================================
+// PUT Endpoint (unchanged if not using duplicate check for updates)
+// =============================================================================
 app.put("/api/courses/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -437,7 +519,9 @@ app.put("/api/courses/:id", async (req, res) => {
   }
 });
 
-// Delete a course by ID
+// =============================================================================
+// DELETE Endpoint
+// =============================================================================
 app.delete("/api/courses/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -469,7 +553,6 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/coursesDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
