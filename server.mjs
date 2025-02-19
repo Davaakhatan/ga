@@ -147,21 +147,32 @@ async function parseDOCXFile(filePath) {
 // =============================================================================
 async function parsePHYSDOCXFile(filePath, termFromBody, academicYear) {
   try {
-    const { value } = await mammoth.extractRawText({ path: filePath });
-    // Split and clean up the lines from the DOCX file
-    const lines = value
-      .split("\n")
-      .map(line => line.trim())
-      .filter(line => line !== "");
-
-    if (lines.length % 4 !== 0) {
-      console.warn("Unexpected number of lines in PHYS DOCX file. Some courses may be incomplete.");
+    // If academicYear is not provided, try to extract it from the file name.
+    if (!academicYear) {
+      const baseName = path.basename(filePath, path.extname(filePath)); // e.g. "24FA_PHYS" or "PHYS"
+      const match = baseName.match(/(\d{2})(FA|SP)/i);
+      if (match) {
+        academicYear = match[1]; // e.g. "24"
+      } else {
+        // Fallback: use current year's last two digits
+        academicYear = new Date().getFullYear().toString().substr(2, 2);
+      }
     }
     
     // Determine term suffix based on termFromBody (e.g., "fall" or "spring")
     const termSuffix = termFromBody && termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
     // Construct TERM as "<academicYear>/<termSuffix>" (e.g., "24/FA")
     const TERM = `${academicYear}/${termSuffix}`;
+    
+    const { value } = await mammoth.extractRawText({ path: filePath });
+    const lines = value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line !== "");
+      
+    if (lines.length % 4 !== 0) {
+      console.warn("Unexpected number of lines in PHYS DOCX file. Some courses may be incomplete.");
+    }
     
     const courses = [];
     for (let i = 0; i < lines.length; i += 4) {
@@ -172,14 +183,14 @@ async function parsePHYSDOCXFile(filePath, termFromBody, academicYear) {
       
       // Normalize course code (e.g., "PHYS 101" becomes "PHYS_101")
       courseCode = courseCode.replace(/\s+/g, '_');
-      // Build COURSE_NUMBER as "PHYS_101_01"
+      // Construct COURSE_NUMBER as "PHYS_101_01"
       const COURSE_NUMBER = `${courseCode}_${section}`;
       
       // Parse meeting details
       const meetingParts = meetingLine.split(" ");
       const meetingDaysRaw = meetingParts[0] || "";
-      // Optionally normalize days (e.g., "TTh" becomes "T TH")
-      const meetingDays = meetingDaysRaw.replace(/TTh/, "T TH");
+      // Optionally, normalize days (e.g., "TTh" to "T TH")
+      const meetingDays = meetingDaysRaw.replace(/TTh/i, "T TH");
       
       const timeRange = meetingParts[1] || "";
       const timeParts = timeRange.split("-");
@@ -264,9 +275,8 @@ async function parseXLSXFile(filePath) {
 // File Upload Endpoint
 // =============================================================================
 app.post("/api/upload", upload.single("file"), async (req, res) => {
-  const termFromBody = req.body.term; // e.g., 'fall' or 'spring'
-  console.log("Received term:", termFromBody);
-
+  const termFromBody = req.body.term; // e.g., "fall" or "spring"
+  // Notice: we are no longer explicitly passing academicYear if it isn’t provided.
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: "No file uploaded" });
@@ -274,7 +284,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
     if (req.file.originalname.toLowerCase().endsWith(".docx")) {
       if (req.file.originalname.toLowerCase().includes("phys")) {
-        // Use the updated PHYS DOCX parser, now passing termFromBody.
+        // academicYear parameter is omitted; the parser will handle it.
         const coursesData = await parsePHYSDOCXFile(req.file.path, termFromBody);
         await Promise.all(
           coursesData.map((course) =>
@@ -291,7 +301,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
           message: "PHYS DOCX file processed and saved successfully",
         });
       } else {
-        // Existing DOCX parser for other curriculum types
+        // Existing logic for other DOCX files
         const catalogData = await parseDOCXFile(req.file.path);
         await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
         await Catalog.create(catalogData);
@@ -344,6 +354,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     });
   }
 });
+
 
 
 // =============================================================================
