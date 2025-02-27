@@ -95,6 +95,21 @@
             Upload
           </button>
         </div>
+        <!-- File Upload + Export Button -->
+        <div class="d-flex align-items-end">
+          <input
+            type="file"
+            class="form-control w-auto"
+            id="file-input"
+            required
+          />
+          <button class="btn btn-primary ms-2" onclick="handleUpload()">
+            Upload
+          </button>
+          <button class="btn btn-success ms-2" onclick="exportCourses()">
+            Export
+          </button>
+        </div>
       </div>
 
       <!-- Calendar Table -->
