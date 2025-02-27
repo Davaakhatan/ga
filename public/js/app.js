@@ -6,7 +6,9 @@ console.log("app.js loaded");
 
 const fetchCourses = async () => {
   try {
-    const selectedCourse = document.getElementById("course-catalog-dropdown").value;
+    const selectedCourse = document.getElementById(
+      "course-catalog-dropdown"
+    ).value;
     const selectedYear = document.getElementById("student-year-dropdown").value;
     const selectedSemester = document.getElementById("semester-dropdown").value;
     const selectedRoom = document.getElementById("room-dropdown").value; // Get selected room
@@ -15,7 +17,7 @@ const fetchCourses = async () => {
     uniqueRooms.clear();
 
     let url = `/api/courses?year=${selectedYear}&semester=${selectedSemester}&course=${selectedCourse}`;
-    
+
     // Apply room filter only if a specific room is selected
     if (selectedRoom && selectedRoom !== "") {
       url += `&room=${selectedRoom}`;
@@ -38,8 +40,6 @@ const fetchCourses = async () => {
     console.error("Error fetching data:", error);
   }
 };
-
-
 
 // Populate Room dropdown
 const populateRoomDropdown = () => {
@@ -77,7 +77,6 @@ const populateRoomDropdown = () => {
   }
 };
 
-
 // Clear calendar
 const clearCalendar = () => {
   document.querySelectorAll("td.day-column").forEach((cell) => {
@@ -109,7 +108,13 @@ const calculateRowspan = (startMinutes, endMinutes) => {
 
 // Parse meeting days
 const parseMeetingDays = (days) => {
-  const validDays = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Friday" };
+  const validDays = {
+    M: "Monday",
+    T: "Tuesday",
+    W: "Wednesday",
+    TH: "Thursday",
+    F: "Friday",
+  };
   const dayRegex = /\b(M|T|W|TH|F)\b/g;
   return (days.match(dayRegex) || []).map((day) => validDays[day]);
 };
@@ -129,7 +134,9 @@ const displayCourses = (courses) => {
 
     // If any critical field is missing, log a warning and skip the course.
     if (!START_TIME || !END_TIME || !MEETING_DAYS) {
-      console.warn(`Incomplete course data for ${COURSE_NUMBER}: ${JSON.stringify(course)}`);
+      console.warn(
+        `Incomplete course data for ${COURSE_NUMBER}: ${JSON.stringify(course)}`
+      );
       return;
     }
 
@@ -140,20 +147,24 @@ const displayCourses = (courses) => {
     const days = parseMeetingDays(MEETING_DAYS);
     const start = parseTime(START_TIME);
     const end = parseTime(END_TIME);
-    
+
     // If time parsing fails, log a warning and skip the course.
     if (!start || !end) {
       console.warn(`Time parsing failed for course: ${COURSE_NUMBER}`);
       return;
     }
-    
+
     const startMinutes = start.hour * 60 + start.minute;
     const endMinutes = end.hour * 60 + end.minute;
     const rowSpan = calculateRowspan(startMinutes, endMinutes);
-    const startHour = `${start.hour % 12 === 0 ? 12 : start.hour % 12}:00 ${start.hour >= 12 ? "PM" : "AM"}`;
+    const startHour = `${start.hour % 12 === 0 ? 12 : start.hour % 12}:00 ${
+      start.hour >= 12 ? "PM" : "AM"
+    }`;
 
     days.forEach((day) => {
-      const cell = document.querySelector(`td[data-day="${day}"][data-time="${startHour}"]`);
+      const cell = document.querySelector(
+        `td[data-day="${day}"][data-time="${startHour}"]`
+      );
       if (!cell) return;
 
       // Determine background color based on course subject
@@ -199,7 +210,6 @@ const displayCourses = (courses) => {
     });
   });
 };
-
 
 const editCourse = (courseId) => {
   const course = coursesData.find((c) => c._id === courseId);
@@ -255,7 +265,10 @@ const saveEditedCourse = async () => {
     if (result.success) {
       alert("Course updated successfully!");
       fetchCourses(); // Refresh the calendar
-      document.getElementById("editCourseModal").querySelector(".btn-close").click(); // Close modal
+      document
+        .getElementById("editCourseModal")
+        .querySelector(".btn-close")
+        .click(); // Close modal
     } else {
       alert("Failed to update the course.");
     }
@@ -265,12 +278,13 @@ const saveEditedCourse = async () => {
   }
 };
 
-
 // Fix Delete Course
 const deleteCourse = async (courseId) => {
   if (!confirm("Are you sure you want to delete this course?")) return;
   try {
-    const response = await fetch(`/api/courses/${courseId}`, { method: "DELETE" });
+    const response = await fetch(`/api/courses/${courseId}`, {
+      method: "DELETE",
+    });
     const result = await response.json();
     if (result.success) {
       alert(result.message);
@@ -283,12 +297,65 @@ const deleteCourse = async (courseId) => {
   }
 };
 
+const exportCourses = () => {
+  if (coursesData.length === 0) {
+    alert("No courses available to export.");
+    return;
+  }
+
+  const worksheetData = [
+    [
+      "COURSE NUMBER",
+      "TITLE",
+      "START TIME",
+      "END TIME",
+      "MEETING DAYS",
+      "ROOM",
+      "INSTRUCTOR",
+      "TERM",
+      "STATUS",
+    ],
+  ];
+
+  coursesData.forEach((course) => {
+    worksheetData.push([
+      course.COURSE_NUMBER,
+      course.TITLE_START_DATE,
+      course.START_TIME,
+      course.END_TIME,
+      course.MEETING_DAYS,
+      course.ROOM || "N/A",
+      course.INSTRUCTOR || "Unknown",
+      course.TERM || "Unknown",
+      course.STATUS || "Open",
+    ]);
+  });
+
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Courses");
+
+  // Generate the Excel file and trigger download
+  XLSX.writeFile(
+    workbook,
+    `Courses_${new Date().toISOString().slice(0, 10)}.xlsx`
+  );
+};
+
 // Load courses on startup
 window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("course-catalog-dropdown").addEventListener("change", fetchCourses);
-  document.getElementById("student-year-dropdown").addEventListener("change", fetchCourses);
-  document.getElementById("semester-dropdown").addEventListener("change", fetchCourses);
-  document.getElementById("room-dropdown").addEventListener("change", fetchCourses);
+  document
+    .getElementById("course-catalog-dropdown")
+    .addEventListener("change", fetchCourses);
+  document
+    .getElementById("student-year-dropdown")
+    .addEventListener("change", fetchCourses);
+  document
+    .getElementById("semester-dropdown")
+    .addEventListener("change", fetchCourses);
+  document
+    .getElementById("room-dropdown")
+    .addEventListener("change", fetchCourses);
 
   fetchCourses();
 });
