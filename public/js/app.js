@@ -129,6 +129,7 @@ const displayCourses = (courses) => {
       END_TIME,
       MEETING_DAYS,
       ROOM,
+      BUILDING,
       _id,
     } = course;
 
@@ -180,7 +181,8 @@ const displayCourses = (courses) => {
           <strong>${COURSE_NUMBER}</strong><br />
           ${TITLE_START_DATE}<br />
           ${START_TIME} - ${END_TIME}<br />
-          Room: ${ROOM || "N/A"}<br />
+          <strong>Building:</strong> ${BUILDING || "N/A"}<br />
+          <strong>Room:</strong> ${ROOM || "N/A"}<br />
           <span class="icon-buttons">
             <i class="material-icons edit-icon" onclick="editCourse('${_id}')">edit</i>
             <i class="material-icons delete-icon" onclick="deleteCourse('${_id}')">delete</i>
@@ -225,6 +227,8 @@ const editCourse = (courseId) => {
   document.getElementById("startTime").value = course.START_TIME;
   document.getElementById("endTime").value = course.END_TIME;
   document.getElementById("roomInput").value = course.ROOM || ""; // Ensure Room field is an input
+  document.getElementById("meetingDays").value = course.MEETING_DAYS || "";
+  document.getElementById("buildingInput").value = course.BUILDING || "";
 
   const modalElement = document.getElementById("editCourseModal");
   if (!modalElement) {
@@ -239,19 +243,67 @@ const editCourse = (courseId) => {
   document.getElementById("saveCourseChanges").onclick = saveEditedCourse;
 };
 
+// const saveEditedCourse = async () => {
+//   if (!currentEditingCourseId) {
+//     alert("No course selected for editing.");
+//     return;
+//   }
+
+//   // Gather updated course details
+//   const updatedCourse = {
+//     COURSE_NUMBER: document.getElementById("courseNumber").value,
+//     TITLE_START_DATE: document.getElementById("courseTitle").value,
+//     START_TIME: document.getElementById("startTime").value,
+//     END_TIME: document.getElementById("endTime").value,
+//     ROOM: document.getElementById("roomInput").value,
+//   };
+
+//   try {
+//     const response = await fetch(`/api/courses/${currentEditingCourseId}`, {
+//       method: "PUT",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(updatedCourse),
+//     });
+
+//     const result = await response.json();
+//     if (result.success) {
+//       alert("Course updated successfully!");
+//       fetchCourses(); // Refresh the calendar
+//       document
+//         .getElementById("editCourseModal")
+//         .querySelector(".btn-close")
+//         .click(); // Close modal
+//     } else {
+//       alert("Failed to update the course.");
+//     }
+//   } catch (error) {
+//     console.error("Error updating course:", error);
+//     alert("An error occurred while updating the course.");
+//   }
+// };
+
 const saveEditedCourse = async () => {
   if (!currentEditingCourseId) {
     alert("No course selected for editing.");
     return;
   }
 
-  // Gather updated course details
+  const startTime = document.getElementById("startTime").value.trim();
+  const endTime = document.getElementById("endTime").value.trim();
+
+  if (!validateTimeRange(startTime, endTime)) {
+    alert("Start time must be before end time!");
+    return;
+  }
+
   const updatedCourse = {
     COURSE_NUMBER: document.getElementById("courseNumber").value,
     TITLE_START_DATE: document.getElementById("courseTitle").value,
-    START_TIME: document.getElementById("startTime").value,
-    END_TIME: document.getElementById("endTime").value,
+    START_TIME: startTime,
+    END_TIME: endTime,
     ROOM: document.getElementById("roomInput").value,
+    BUILDING: document.getElementById("buildingInput").value,
+    MEETING_DAYS: document.getElementById("meetingDays").value,
   };
 
   try {
@@ -264,11 +316,11 @@ const saveEditedCourse = async () => {
     const result = await response.json();
     if (result.success) {
       alert("Course updated successfully!");
-      fetchCourses(); // Refresh the calendar
+      fetchCourses();
       document
         .getElementById("editCourseModal")
         .querySelector(".btn-close")
-        .click(); // Close modal
+        .click();
     } else {
       alert("Failed to update the course.");
     }
@@ -276,6 +328,33 @@ const saveEditedCourse = async () => {
     console.error("Error updating course:", error);
     alert("An error occurred while updating the course.");
   }
+};
+
+// Time Validation Helper
+const parseTimeToMinutes = (time) => {
+  const match = time.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+  if (!match) return null;
+
+  let [_, hour, minute, period] = match;
+  hour = parseInt(hour, 10);
+  minute = parseInt(minute, 10);
+
+  if (period.toUpperCase() === "PM" && hour !== 12) hour += 12;
+  if (period.toUpperCase() === "AM" && hour === 12) hour = 0;
+
+  return hour * 60 + minute; // Total minutes since midnight
+};
+
+const validateTimeRange = (startTime, endTime) => {
+  const startMinutes = parseTimeToMinutes(startTime);
+  const endMinutes = parseTimeToMinutes(endTime);
+
+  if (startMinutes === null || endMinutes === null) {
+    alert("Invalid time format. Please use hh:mm AM/PM format.");
+    return false;
+  }
+
+  return startMinutes < endMinutes;
 };
 
 // Fix Delete Course

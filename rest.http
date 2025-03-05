@@ -1,6 +1,8 @@
 https://qiita.com/____easy/items/4dcda6cc4f5e7de13d36
 
 
+ "https://gannon.edutrack.lol/api/upload"
+
 sudo mongod --dbpath=/Users/davaakhatanzorigtbaatar/data/db
 sudo mongod --dbpath /var/lib/mongodb --logpath /var/log/mongodb.log
 
