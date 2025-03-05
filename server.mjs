@@ -363,6 +363,13 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 app.get("/api/courses", async (req, res) => {
   try {
     const { year, semester, course, room } = req.query;
+
+  // If no filters are provided, return ALL courses (for "Export All")
+  if (!year && !semester && !course && !room) {
+    const allCourses = await Course.find();
+    return res.json(allCourses);
+  }
+
     let courseFilter = {};
     courseFilter.TERM = semester === "fall" ? { $regex: /\/FA$/ } : { $regex: /\/SP$/ };
 

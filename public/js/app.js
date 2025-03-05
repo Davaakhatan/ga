@@ -302,8 +302,8 @@ const saveEditedCourse = async () => {
     START_TIME: startTime,
     END_TIME: endTime,
     ROOM: document.getElementById("roomInput").value,
-    BUILDING: document.getElementById("buildingInput").value,
-    MEETING_DAYS: document.getElementById("meetingDays").value,
+      BUILDING: document.getElementById("buildingInput").value,
+  MEETING_DAYS: document.getElementById("meetingDays").value,
   };
 
   try {
@@ -376,33 +376,82 @@ const deleteCourse = async (courseId) => {
   }
 };
 
-const exportCourses = () => {
-  if (coursesData.length === 0) {
+// const exportCourses = () => {
+//   if (coursesData.length === 0) {
+//     alert("No courses available to export.");
+//     return;
+//   }
+
+//   const worksheetData = [
+//     [
+//       "COURSE NUMBER",
+//       "TITLE",
+//       "START TIME",
+//       "END TIME",
+//       "MEETING DAYS",
+//       "ROOM",
+//       "INSTRUCTOR",
+//       "TERM",
+//       "STATUS",
+//     ],
+//   ];
+
+//   coursesData.forEach((course) => {
+//     worksheetData.push([
+//       course.COURSE_NUMBER,
+//       course.TITLE_START_DATE,
+//       course.START_TIME,
+//       course.END_TIME,
+//       course.MEETING_DAYS,
+//       course.ROOM || "N/A",
+//       course.INSTRUCTOR || "Unknown",
+//       course.TERM || "Unknown",
+//       course.STATUS || "Open",
+//     ]);
+//   });
+
+//   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Courses");
+
+//   // Generate the Excel file and trigger download
+//   XLSX.writeFile(
+//     workbook,
+//     `Courses_${new Date().toISOString().slice(0, 10)}.xlsx`
+//   );
+// };
+
+const exportCourses = async (mode = "displayed") => {
+  let dataToExport = [];
+
+  if (mode === "all") {
+    const response = await fetch("/api/courses");
+    if (!response.ok) {
+      alert("Failed to fetch all courses");
+      return;
+    }
+    dataToExport = await response.json();
+  } else {
+    dataToExport = coursesData; // Current filtered data (already loaded on page)
+  }
+
+  if (dataToExport.length === 0) {
     alert("No courses available to export.");
     return;
   }
 
   const worksheetData = [
-    [
-      "COURSE NUMBER",
-      "TITLE",
-      "START TIME",
-      "END TIME",
-      "MEETING DAYS",
-      "ROOM",
-      "INSTRUCTOR",
-      "TERM",
-      "STATUS",
-    ],
+    ["COURSE NUMBER", "TITLE", "START TIME", "END TIME", "MEETING DAYS", "BUILDING", "ROOM", "INSTRUCTOR", "TERM", "STATUS"],
   ];
 
-  coursesData.forEach((course) => {
+  dataToExport.forEach((course) => {
     worksheetData.push([
       course.COURSE_NUMBER,
       course.TITLE_START_DATE,
       course.START_TIME,
       course.END_TIME,
       course.MEETING_DAYS,
+      course.BUILDING || "N/A",
       course.ROOM || "N/A",
       course.INSTRUCTOR || "Unknown",
       course.TERM || "Unknown",
@@ -410,16 +459,14 @@ const exportCourses = () => {
     ]);
   });
 
-  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
   const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
   XLSX.utils.book_append_sheet(workbook, worksheet, "Courses");
 
-  // Generate the Excel file and trigger download
-  XLSX.writeFile(
-    workbook,
-    `Courses_${new Date().toISOString().slice(0, 10)}.xlsx`
-  );
+  const fileName = mode === "all" ? "All_Courses" : "Filtered_Courses";
+  XLSX.writeFile(workbook, `${fileName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
 };
+
 
 // Load courses on startup
 window.addEventListener("DOMContentLoaded", () => {

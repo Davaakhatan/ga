@@ -106,9 +106,17 @@
           <button class="btn btn-primary ms-2" onclick="handleUpload()">
             Upload
           </button>
-          <button class="btn btn-success ms-2" onclick="exportCourses()">
-            Export
-          </button>
+          <!-- Export Displayed Button -->
+          <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Export
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" onclick="exportCourses('displayed')">Export Displayed</a></li>
+              <li><a class="dropdown-item" href="#" onclick="exportCourses('all')">Export All</a></li>
+            </ul>
+          </div>
+          
         </div>
       </div>
 
