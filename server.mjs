@@ -145,73 +145,76 @@ async function parseDOCXFile(filePath) {
 // =============================================================================
 // New PHYS DOCX Parsing Function
 // =============================================================================
+
 async function parsePHYSDOCXFile(filePath, termFromBody, academicYear) {
   try {
-    // If academicYear is not provided, try to extract it from the file name.
     if (!academicYear) {
       const baseName = path.basename(filePath, path.extname(filePath)); // e.g. "24FA_PHYS" or "PHYS"
       const match = baseName.match(/(\d{2})(FA|SP)/i);
       if (match) {
-        academicYear = match[1]; // e.g. "24"
+        academicYear = match[1]; // e.g., "24"
       } else {
-        // Fallback: use current year's last two digits
-        academicYear = new Date().getFullYear().toString().substr(2, 2);
+        academicYear = new Date().getFullYear().toString().substr(2, 2); // Fallback to current year
       }
     }
-    
-    // Determine term suffix based on termFromBody (e.g., "fall" or "spring")
+
     const termSuffix = termFromBody && termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
-    // Construct TERM as "<academicYear>/<termSuffix>" (e.g., "24/FA")
     const TERM = `${academicYear}/${termSuffix}`;
-    
+
     const { value } = await mammoth.extractRawText({ path: filePath });
     const lines = value
       .split("\n")
       .map(line => line.trim())
       .filter(line => line !== "");
-      
+
     if (lines.length % 4 !== 0) {
       console.warn("Unexpected number of lines in PHYS DOCX file. Some courses may be incomplete.");
     }
-    
+
+    const applyDefaultAMPM = (time, isStart = true) => {
+      const [hour, minute] = time.split(":").map(Number);
+      if (hour < 8) {
+        return time + "AM"; // Early morning class
+      } else if (hour < 12) {
+        return time + "AM"; // Regular morning class
+      } else {
+        return time + "PM"; // Afternoon or evening class
+      }
+    };
+
     const courses = [];
     for (let i = 0; i < lines.length; i += 4) {
       let courseCode = lines[i];         // e.g., "PHYS 101"
       const section = lines[i + 1];        // e.g., "01"
       const title = lines[i + 2];          // e.g., "Concepts in Physics"
       const meetingLine = lines[i + 3];    // e.g., "TTh 9:30-10:50"
-      
-      // Normalize course code (e.g., "PHYS 101" becomes "PHYS_101")
+
+      // Normalize course code (PHYS 101 -> PHYS_101)
       courseCode = courseCode.replace(/\s+/g, '_');
-      // Construct COURSE_NUMBER as "PHYS_101_01"
       const COURSE_NUMBER = `${courseCode}_${section}`;
-      
+
       // Parse meeting details
       const meetingParts = meetingLine.split(" ");
       const meetingDaysRaw = meetingParts[0] || "";
-      // Optionally, normalize days (e.g., "TTh" to "T TH")
-      const meetingDays = meetingDaysRaw.replace(/TTh/i, "T TH");
-      
+      const meetingDays = meetingDaysRaw.replace(/TTh/i, "T TH");  // Normalize "TTh"
+
       const timeRange = meetingParts[1] || "";
       const timeParts = timeRange.split("-");
       let startTime = timeParts[0] ? timeParts[0].trim() : "";
       let endTime = timeParts[1] ? timeParts[1].trim() : "";
-      
-      // Append "AM" if missing so it matches your time parser
-      if (startTime && !/AM|PM/i.test(startTime)) {
-        startTime = startTime + "AM";
-      }
-      if (endTime && !/AM|PM/i.test(endTime)) {
-        endTime = endTime + "AM";
-      }
-      
+
+      // Automatically append smart AM/PM
+      startTime = applyDefaultAMPM(startTime, true);
+      endTime = applyDefaultAMPM(endTime, false);
+
       courses.push({
         COURSE_NUMBER,
         TITLE_START_DATE: title,
         START_TIME: startTime,
         END_TIME: endTime,
         MEETING_DAYS: meetingDays,
-        ROOM: "",
+        ROOM: "TBD",          // Placeholder to avoid empty issues in display
+        BUILDING: "TBD",      // Placeholder to avoid empty issues in display
         TERM,
         ACADEMIC_LEVEL: "UG",
         ACADEMIC_LEVEL_1: "GR",
@@ -226,7 +229,8 @@ async function parsePHYSDOCXFile(filePath, termFromBody, academicYear) {
         STATUS: "Open"
       });
     }
-    console.log("Parsed PHYS courses:", courses);
+
+    console.log("✅ Final Parsed PHYS DOCX courses:", JSON.stringify(courses, null, 2));
     return courses;
   } catch (error) {
     throw new Error("Error parsing PHYS DOCX file: " + error.message);
