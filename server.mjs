@@ -418,25 +418,25 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER =
             semester === "fall"
               ? { $regex: /^(CIS_180|CIS_181|CIS_290|CIS_240|MATH_112|MATH_140)/i }
-              : { $regex: /^(CYB_103|CYB_104)/i };
+              : { $regex: /^(CIS_182|CIS_183|CIS_255|PHYS_105|CYSEC_101)/i };
           break;
         case "sophomore":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CYB_201|CYB_202)/i }
-              : { $regex: /^(CYB_203|CYB_204)/i };
+              ? { $regex: /^(MATH_222|CSC_220|CIS_355|CYSEC_210)/i }
+              : { $regex: /^(CIS_182|CIS_183|CIS_255|PHYS_105|CYSEC_101)/i };
           break;
         case "junior":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CYB_301|CYB_302)/i }
-              : { $regex: /^(CYB_303|CYB_304)/i };
+              ? { $regex: /^(CYSEC_301|CYSEC_306|CRJS_241|MATH_213)/i }
+              : { $regex: /^(MATH_310|CYSEC_302|CYSEC_307)/i };
           break;
         case "senior":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CYB_401|CYB_402)/i }
-              : { $regex: /^(CYB_403|CYB_404)/i };
+              ? { $regex: /^(CYSEC_308|CIS_457|CRJS_345)/i }
+              : { $regex: /^(CYSEC_303|CIS_458)/i };
           break;
         case "graduate":
           courseFilter.COURSE_NUMBER = { $regex: /^$/ };
@@ -454,26 +454,26 @@ app.get("/api/courses", async (req, res) => {
         case "freshman":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(SOFT_101|SOFT_102)/i }
-              : { $regex: /^(SOFT_103|SOFT_104)/i };
+              ? { $regex: /^(CIS_181|CIS_181|MATH_140|CIS_290)/i }
+              : { $regex: /^(CIS_182|CIS_183|MATH_141)/i };
           break;
         case "sophomore":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(SOFT_201|SOFT_202)/i }
-              : { $regex: /^(SOFT_203|SOFT_204)/i };
+              ? { $regex: /^(CSC_220|CIS_239|MATH_213|MATH_312|CIS_277|CIS_287)/i }
+              : { $regex: /^(CIS_255|CSC_223|MATH_223|CIS_377|MATH_314)/i };
           break;
         case "junior":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(SOFT_301|SOFT_302)/i }
-              : { $regex: /^(SOFT_303|SOFT_304)/i };
+              ? { $regex: /^(CIS_326|CIS_350|CIS_219|SOFT_310)/i }
+              : { $regex: /^(SOFT_320|ECE_337|ENG_380)/i };
           break;
         case "senior":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(SOFT_401|SOFT_402)/i }
-              : { $regex: /^(SOFT_403|SOFT_404)/i };
+              ? { $regex: /^(CIS_457|CSC_330|SOFT_410|CIS_387)/i }
+              : { $regex: /^(CIS_458|CIS_390|MATH_310)/i };
           break;
         case "graduate":
           courseFilter.COURSE_NUMBER = { $regex: /^$/ };
