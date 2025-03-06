@@ -243,45 +243,6 @@ const editCourse = (courseId) => {
   document.getElementById("saveCourseChanges").onclick = saveEditedCourse;
 };
 
-// const saveEditedCourse = async () => {
-//   if (!currentEditingCourseId) {
-//     alert("No course selected for editing.");
-//     return;
-//   }
-
-//   // Gather updated course details
-//   const updatedCourse = {
-//     COURSE_NUMBER: document.getElementById("courseNumber").value,
-//     TITLE_START_DATE: document.getElementById("courseTitle").value,
-//     START_TIME: document.getElementById("startTime").value,
-//     END_TIME: document.getElementById("endTime").value,
-//     ROOM: document.getElementById("roomInput").value,
-//   };
-
-//   try {
-//     const response = await fetch(`/api/courses/${currentEditingCourseId}`, {
-//       method: "PUT",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(updatedCourse),
-//     });
-
-//     const result = await response.json();
-//     if (result.success) {
-//       alert("Course updated successfully!");
-//       fetchCourses(); // Refresh the calendar
-//       document
-//         .getElementById("editCourseModal")
-//         .querySelector(".btn-close")
-//         .click(); // Close modal
-//     } else {
-//       alert("Failed to update the course.");
-//     }
-//   } catch (error) {
-//     console.error("Error updating course:", error);
-//     alert("An error occurred while updating the course.");
-//   }
-// };
-
 const saveEditedCourse = async () => {
   if (!currentEditingCourseId) {
     alert("No course selected for editing.");
@@ -375,51 +336,6 @@ const deleteCourse = async (courseId) => {
     console.error("Error deleting course:", error);
   }
 };
-
-// const exportCourses = () => {
-//   if (coursesData.length === 0) {
-//     alert("No courses available to export.");
-//     return;
-//   }
-
-//   const worksheetData = [
-//     [
-//       "COURSE NUMBER",
-//       "TITLE",
-//       "START TIME",
-//       "END TIME",
-//       "MEETING DAYS",
-//       "ROOM",
-//       "INSTRUCTOR",
-//       "TERM",
-//       "STATUS",
-//     ],
-//   ];
-
-//   coursesData.forEach((course) => {
-//     worksheetData.push([
-//       course.COURSE_NUMBER,
-//       course.TITLE_START_DATE,
-//       course.START_TIME,
-//       course.END_TIME,
-//       course.MEETING_DAYS,
-//       course.ROOM || "N/A",
-//       course.INSTRUCTOR || "Unknown",
-//       course.TERM || "Unknown",
-//       course.STATUS || "Open",
-//     ]);
-//   });
-
-//   const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Courses");
-
-//   // Generate the Excel file and trigger download
-//   XLSX.writeFile(
-//     workbook,
-//     `Courses_${new Date().toISOString().slice(0, 10)}.xlsx`
-//   );
-// };
 
 const exportCourses = async (mode = "displayed") => {
   let dataToExport = [];
