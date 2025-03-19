@@ -193,45 +193,43 @@
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
-            </div>
-            <div class="modal-body">
-              <form id="editCourseForm">
-                <div class="mb-3">
-                  <label for="courseNumber" class="form-label"
-                    >Course Number</label
-                  >
-                  <input type="text" class="form-control" id="courseNumber" />
-                </div>
-                <div class="mb-3">
-                  <label for="courseTitle" class="form-label"
-                    >Course Title</label
-                  >
-                  <input type="text" class="form-control" id="courseTitle" />
-                </div>
-                <div class="mb-3">
-                  <label for="startTime" class="form-label">Start Time</label>
-                  <input type="text" class="form-control" id="startTime" />
-                </div>
-                <div class="mb-3">
-                  <label for="endTime" class="form-label">End Time</label>
-                  <input type="text" class="form-control" id="endTime" />
-                </div>
-                <div class="mb-3">
-                  <label for="roomInput" class="form-label">Room</label>
-                  <input type="text" class="form-control" id="roomInput" />
-                </div>
-                <div class="mb-3">
-                  <label for="meetingDays" class="form-label"
-                    >Meeting Days</label
-                  >
-                  <input type="text" class="form-control" id="meetingDays" />
-                </div>
-                <div class="mb-3">
-                  <label for="buildingInput" class="form-label">Building</label>
-                  <input type="text" class="form-control" id="buildingInput" />
-                </div>
-              </form>
-            </div>
+              </div>
+              <div class="modal-body">
+                <form id="editCourseForm">
+                  <div class="mb-3">
+                    <label for="courseNumber" class="form-label">Course Number</label>
+                    <input type="text" class="form-control" id="courseNumber" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="courseTitle" class="form-label">Course Title</label>
+                    <input type="text" class="form-control" id="courseTitle" />
+                  </div>
+                  <!-- Move Meeting Days above Start Time -->
+                  <div class="mb-3">
+                    <label for="meetingDays" class="form-label">Meeting Days</label>
+                    <input type="text" class="form-control" id="meetingDays" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="startTime" class="form-label">Start Time</label>
+                    <input type="text" class="form-control" id="startTime" />
+                  </div>
+                  <div class="mb-3">
+                    <label for="endTime" class="form-label">End Time</label>
+                    <input type="text" class="form-control" id="endTime" />
+                  </div>
+                  <!-- Building and Room side by side -->
+                  <div class="row mb-3">
+                    <div class="col">
+                      <label for="buildingInput" class="form-label">Building</label>
+                      <input type="text" class="form-control" id="buildingInput" />
+                    </div>
+                    <div class="col">
+                      <label for="roomInput" class="form-label">Room</label>
+                      <input type="text" class="form-control" id="roomInput" />
+                    </div>
+                  </div>
+                </form>
+              </div>
             <div class="modal-footer">
               <button
                 type="button"
