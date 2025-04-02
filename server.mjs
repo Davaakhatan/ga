@@ -358,6 +358,19 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     });
   }
 });
+// =============================================================================
+// POST Endpoint (for adding new courses)
+// =============================================================================
+app.post("/api/courses", async (req, res) => {
+  try {
+    const newCourse = req.body;
+    const created = await Course.create(newCourse);
+    res.json({ success: true, message: "Course added", data: created });
+  } catch (err) {
+    console.error("Error creating course:", err);
+    res.status(500).json({ success: false, message: "Failed to add course" });
+  }
+});
 
 
 
@@ -458,7 +471,7 @@ app.get("/api/courses", async (req, res) => {
         case "freshman":
           courseFilter.COURSE_NUMBER =
             semester === "fall"
-              ? { $regex: /^(CIS_181|CIS_181|MATH_140|CIS_290)/i }
+              ? { $regex: /^(CIS_180|CIS_181|MATH_140|CIS_290)/i }
               : { $regex: /^(CIS_182|CIS_183|MATH_141)/i };
           break;
         case "sophomore":
@@ -477,6 +490,43 @@ app.get("/api/courses", async (req, res) => {
           courseFilter.COURSE_NUMBER =
             semester === "fall"
               ? { $regex: /^(CIS_457|CSC_330|SOFT_410|CIS_387)/i }
+              : { $regex: /^(CIS_458|CIS_390|MATH_310)/i };
+          break;
+        case "graduate":
+          courseFilter.COURSE_NUMBER = { $regex: /^$/ };
+          break;
+        default:
+          return res.status(400).json({
+            success: false,
+            message: "Invalid year selected",
+          });
+      }
+    } else if (course === "software-engineering-dual-degree") {
+        // New branch for software engineering courses.
+      // Adjust the regex patterns based on your actual software-engineering course numbering.
+      switch (year) {
+        case "freshman":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(CIS_180|CIS_181|MATH_140|CIS_290)/i }
+              : { $regex: /^(CIS_182|CIS_183|MATH_141|PHYS_210(_\d+)|PHYS_211(_\d+))/i };
+          break;
+        case "sophomore":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(CSC_220|CIS_239|MATH_222|CIS_277|CIS_287)/i }
+              : { $regex: /^(CIS_255|CSC_223|MATH_223|CIS_377|MATH_314|SOFT_210|MATH_213|MATH_312|CIS_377)/i };
+          break;
+        case "junior":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(CIS_355|CIS_350|CIS_219|SOFT_310)/i }
+              : { $regex: /^(SOFT_320|ECE_337|ENG_380|PHYS_212(_\d+)|PHYS_213(_\d+)|PHYS_215(_\d+))/i };
+          break;
+        case "senior":
+          courseFilter.COURSE_NUMBER =
+            semester === "fall"
+              ? { $regex: /^(CIS_457|CSC_330|SOFT_410|CSC_360|CIS_326|CIS_387)/i }
               : { $regex: /^(CIS_458|CIS_390|MATH_310)/i };
           break;
         case "graduate":
@@ -545,6 +595,8 @@ app.get("/api/courses/:id", async (req, res) => {
     });
   }
 });
+
+
 
 // =============================================================================
 // PUT Endpoint (unchanged if not using duplicate check for updates)

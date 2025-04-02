@@ -384,6 +384,64 @@ const exportCourses = async (mode = "displayed") => {
 };
 
 
+function openAddCourseModal() {
+  const modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+  modal.show();
+}
+
+async function saveNewCourse() {
+  const COURSE_NUMBER = document.getElementById("newCourseNumber").value.trim();
+  const TITLE_START_DATE = document.getElementById("newCourseTitle").value.trim();
+  const MEETING_DAYS = document.getElementById("newMeetingDays").value.trim();
+  const START_TIME = document.getElementById("newStartTime").value.trim();
+  const END_TIME = document.getElementById("newEndTime").value.trim();
+  const BUILDING = document.getElementById("newBuilding").value.trim();
+  const ROOM = document.getElementById("newRoom").value.trim();
+
+  if (!COURSE_NUMBER || !TITLE_START_DATE || !MEETING_DAYS || !START_TIME || !END_TIME) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  // Automatically build TERM from dropdown
+  const selectedTerm = document.getElementById("semester-dropdown").value;
+  const termSuffix = selectedTerm === "fall" ? "FA" : "SP";
+  const year = new Date().getFullYear().toString().slice(-2); // e.g., "25"
+  const TERM = `${year}/${termSuffix}`;
+
+  const newCourse = {
+    COURSE_NUMBER,
+    TITLE_START_DATE,
+    MEETING_DAYS,
+    START_TIME,
+    END_TIME,
+    BUILDING,
+    ROOM,
+    TERM,
+    STATUS: "Open"
+  };
+
+  try {
+    const response = await fetch("/api/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCourse),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      alert("Course added successfully!");
+      fetchCourses(); // Refresh the calendar
+      document.querySelector("#addCourseModal .btn-close").click(); // Close modal
+    } else {
+      alert("Failed to add course.");
+    }
+  } catch (error) {
+    console.error("Error adding course:", error);
+    alert("An error occurred while adding the course.");
+  }
+}
+
 // Load courses on startup
 window.addEventListener("DOMContentLoaded", () => {
   document
