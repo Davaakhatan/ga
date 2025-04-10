@@ -157,6 +157,12 @@ const fetchCourses = async () => {
 const displayCourses = (courses) => {
   courses.forEach(course => {
     // Use defaults if fields are missing.
+
+    // Skip courses that are closed
+    if (course.STATUS && course.STATUS.toLowerCase() === "clsd" || course.STATUS.toLowerCase() === "cncl") {
+      console.warn(`Skipping closed course ${course.COURSE_NUMBER}`);
+      return;
+    }
     const { START_TIME, END_TIME, MEETING_DAYS } = getCourseDefaults(course);
     const displayStart = START_TIME;
     const displayEnd = END_TIME;

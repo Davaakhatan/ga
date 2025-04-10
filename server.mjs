@@ -173,8 +173,15 @@ async function parseXLSXFile(filePath) {
   try {
     const workbook = xlsx.readFile(filePath);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = xlsx.utils.sheet_to_json(sheet);
-    return jsonData.map(item => ({
+    let jsonData = xlsx.utils.sheet_to_json(sheet);
+
+    // Filter out courses where the STATUS column is "clsd" (case insensitive)
+    jsonData = jsonData.filter(item => {
+      return item["STATUS"] && item["STATUS"].toLowerCase() !== "clsd" || item["STATUS"].toLowerCase() !== "cncl";
+    });
+
+    // Transform the remaining data
+    const transformedData = jsonData.map((item) => ({
       COURSE_NUMBER: item["COURSE #"],
       TITLE_START_DATE: item["TITLE/START DATE"],
       ACADEMIC_LEVEL: item["Acad Level"],
@@ -196,6 +203,8 @@ async function parseXLSXFile(filePath) {
       SCHOOLS: item["Schools"],
       ACADEMIC_LEVEL_1: item["Acad Level_1"],
     }));
+
+    return transformedData;
   } catch (error) {
     throw new Error("Error parsing XLSX file: " + error.message);
   }
