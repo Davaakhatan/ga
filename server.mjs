@@ -12,6 +12,8 @@ import mammoth from "mammoth";
 // Import your Mongoose models
 import { Course } from "./models/course.js";
 import { Catalog } from "./models/catalog.js";
+import curriculumRoutes from "./routes/curriculum.js";
+
 
 // Import configuration values
 import { curriculumConfig, courseRegexMapping } from "./config.js";
@@ -23,6 +25,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
+app.use("/api/curriculum", curriculumRoutes);
 
 // =============================================================================
 // Setup Multer Storage
@@ -274,6 +277,18 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       message: "An error occurred during upload",
       error: error.message,
     });
+  }
+});
+
+
+app.post("/api/courses", async (req, res) => {
+  try {
+    const newCourse = req.body;
+    const created = await Course.create(newCourse); // Mongoose create
+    res.json({ success: true, message: "Course added", data: created });
+  } catch (err) {
+    console.error("Error creating course:", err);
+    res.status(500).json({ success: false, message: "Failed to add course" });
   }
 });
 
