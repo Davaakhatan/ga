@@ -9,7 +9,11 @@ const uniqueRooms = new Set();
 const $ = id => document.getElementById(id);
 console.log("app.js loaded");
 
-
+const YEARS = ["freshman","sophomore","junior","senior","graduate"];
+function previousYear(year) {
+  const idx = YEARS.indexOf(year);
+  return idx > 0 ? YEARS[idx - 1] : null;
+}
 
 // -------------------------
 // Helper Functions
@@ -193,12 +197,28 @@ function displayCourses(courses) {
 
     // Determine color & conflict
     let bg = "#F3F4F6";
-    if (course.COURSE_NUMBER.includes("MATH")) bg = "#FFD700";
-    if (course.COURSE_NUMBER.includes("PHYS")) bg = "#ADD8E6";
+    // If this is a carry-over course, use a much lighter tint
+    if (course._carryOver) bg = "#E6FCF5";
+    else if (course.COURSE_NUMBER.includes("MATH")) bg = "#FFD700";
+    else if (course.COURSE_NUMBER.includes("PHYS")) bg = "#ADD8E6";
+
+    // —— badge for carry‑over courses ——
+    const badge = course._carryOver
+      ? `<div style="
+            font-weight:bold;
+            font-size:0.85em;
+            margin-bottom:4px;
+            color:#444;
+          ">
+            ${course._carryYear.charAt(0).toUpperCase()}${course._carryYear.slice(1)}
+         </div>`
+      : "";
 
     // Build HTML once
     const courseHTML = `
       <div class="course-box" style="background:${bg};padding:5px;border-radius:5px;">
+      
+        ${badge}
         <strong>${course.COURSE_NUMBER}</strong><br>
         ${course.TITLE_START_DATE||""}<br>
         ${START_TIME} – ${END_TIME}<br>
@@ -265,15 +285,37 @@ async function fetchCourses() {
     const yr   = $("student-year-dropdown").value;
     const sem  = $("semester-dropdown").value;
     const rm   = $("room-dropdown").value;
+
+    // 1) Fetch the main set
     let url = `/api/courses?year=${yr}&semester=${sem}&course=${prog}`;
     if (rm) url += `&room=${rm}`;
-    const res = await fetch(url);
-    coursesData = await res.json();
-    displayCourses(coursesData);
+    const res1 = await fetch(url);
+    let data = await res1.json();
+
+    // 2) If not freshman, fetch previous year's MATH/PHYS
+    const prev = previousYear(yr);
+    if (prev) {
+      let url2 = `/api/courses?year=${prev}&semester=${sem}&course=${prog}`;
+      if (rm) url2 += `&room=${rm}`;
+      const res2 = await fetch(url2);
+      const prevData = await res2.json();
+
+      const carry = prevData
+        .filter(c => /^MATH_|^PHYS_/i.test(c.COURSE_NUMBER))
+        .map(c => ({ ...c, _carryOver: true, _carryYear: prev }));
+
+      data = data.concat(carry);
+    }
+
+    // 3) Store it globally (for edit/delete) and render
+    coursesData = data;
+    displayCourses(data);
+
   } catch (e) {
     console.error("Fetch failed:", e);
   }
 }
+
 
 window.addEventListener("DOMContentLoaded", () => {
   ["course-catalog-dropdown","student-year-dropdown","semester-dropdown","room-dropdown"]
