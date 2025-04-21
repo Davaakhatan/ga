@@ -9,6 +9,8 @@ const uniqueRooms = new Set();
 const $ = id => document.getElementById(id);
 console.log("app.js loaded");
 
+
+
 // -------------------------
 // Helper Functions
 // -------------------------
@@ -76,97 +78,97 @@ function populateRoomDropdown() {
 // displayCourses()
 // -------------------------
 
-function displayCourses(courses) {
-  clearCalendar();
-  uniqueRooms.clear();
-  const occupied = {}; // key = "Day-blockStartMin"
+// function displayCourses(courses) {
+//   clearCalendar();
+//   uniqueRooms.clear();
+//   const occupied = {}; // key = "Day-blockStartMin"
 
-  courses.forEach(course => {
-    if (course.STATUS?.toLowerCase() === "cncl") return;
+//   courses.forEach(course => {
+//     if (course.STATUS?.toLowerCase() === "cncl") return;
 
-    const { START_TIME, END_TIME, MEETING_DAYS } = getCourseDefaults(course);
-    const st = parseTime(START_TIME), et = parseTime(END_TIME);
-    if (!st || !et) {
-      console.warn(`Invalid time for ${course.COURSE_NUMBER}`);
-      return;
-    }
+//     const { START_TIME, END_TIME, MEETING_DAYS } = getCourseDefaults(course);
+//     const st = parseTime(START_TIME), et = parseTime(END_TIME);
+//     if (!st || !et) {
+//       console.warn(`Invalid time for ${course.COURSE_NUMBER}`);
+//       return;
+//     }
 
-    // Convert to minutes
-    const startMin = st.hour * 60 + st.minute;
-    const endMin   = et.hour * 60 + et.minute;
+//     // Convert to minutes
+//     const startMin = st.hour * 60 + st.minute;
+//     const endMin   = et.hour * 60 + et.minute;
 
-    // Determine grid-aligned blocks
-    const blockStart = Math.floor(startMin / 30) * 30;
-    const blockEnd   = Math.ceil(endMin / 30) * 30;
-    const blocks = [];
-    for (let b = blockStart; b < blockEnd; b += 30) blocks.push(b);
-    const rowSpan = blocks.length;
-    const cellTime = formatTo30(Math.floor(blockStart / 60), blockStart % 60);
+//     // Determine grid-aligned blocks
+//     const blockStart = Math.floor(startMin / 30) * 30;
+//     const blockEnd   = Math.ceil(endMin / 30) * 30;
+//     const blocks = [];
+//     for (let b = blockStart; b < blockEnd; b += 30) blocks.push(b);
+//     const rowSpan = blocks.length;
+//     const cellTime = formatTo30(Math.floor(blockStart / 60), blockStart % 60);
 
-    console.log(`🧩 Placing ${course.COURSE_NUMBER} from ${cellTime} spanning ${rowSpan} blocks`);
+//     console.log(`🧩 Placing ${course.COURSE_NUMBER} from ${cellTime} spanning ${rowSpan} blocks`);
 
-    uniqueRooms.add(course.ROOM);
+//     uniqueRooms.add(course.ROOM);
 
-    let bg = "#F3F4F6";
-    if (course.COURSE_NUMBER.includes("MATH")) bg = "#FFD700";
-    if (course.COURSE_NUMBER.includes("PHYS")) bg = "#ADD8E6";
+//     let bg = "#F3F4F6";
+//     if (course.COURSE_NUMBER.includes("MATH")) bg = "#FFD700";
+//     if (course.COURSE_NUMBER.includes("PHYS")) bg = "#ADD8E6";
 
-    const courseHTML = `
-      <div class="course-box" style="background:${bg};padding:5px;border-radius:5px;height:100%;box-sizing:border-box;">
-        <strong>${course.COURSE_NUMBER}</strong><br>
-        ${course.TITLE_START_DATE || ""}<br>
-        ${START_TIME} – ${END_TIME}<br>
-        <strong>Building:</strong> ${course.BUILDING || "N/A"}<br>
-        <strong>Room:</strong> ${course.ROOM || "N/A"}<br>
-        <span class="icon-buttons">
-          <i class="material-icons edit-icon" onclick="editCourse('${course._id}')">edit</i>
-          <i class="material-icons delete-icon" onclick="deleteCourse('${course._id}')">delete</i>
-        </span>
-      </div>
-    `;
+//     const courseHTML = `
+//       <div class="course-box" style="background:${bg};padding:5px;border-radius:5px;height:100%;box-sizing:border-box;">
+//         <strong>${course.COURSE_NUMBER}</strong><br>
+//         ${course.TITLE_START_DATE || ""}<br>
+//         ${START_TIME} – ${END_TIME}<br>
+//         <strong>Building:</strong> ${course.BUILDING || "N/A"}<br>
+//         <strong>Room:</strong> ${course.ROOM || "N/A"}<br>
+//         <span class="icon-buttons">
+//           <i class="material-icons edit-icon" onclick="editCourse('${course._id}')">edit</i>
+//           <i class="material-icons delete-icon" onclick="deleteCourse('${course._id}')">delete</i>
+//         </span>
+//       </div>
+//     `;
 
-    const days = parseMeetingDays(MEETING_DAYS);
-    days.forEach(day => {
-      // Find first block this course occupies that is already taken
-      const conflictBlock = blocks.find(b => occupied[`${day}-${b}`]);
-      const placeBlock = conflictBlock !== undefined ? conflictBlock : blockStart;
-      const placeKey = `${day}-${placeBlock}`;
-      const placeTime = formatTo30(Math.floor(placeBlock / 60), placeBlock % 60);
+//     const days = parseMeetingDays(MEETING_DAYS);
+//     days.forEach(day => {
+//       // Find first block this course occupies that is already taken
+//       const conflictBlock = blocks.find(b => occupied[`${day}-${b}`]);
+//       const placeBlock = conflictBlock !== undefined ? conflictBlock : blockStart;
+//       const placeKey = `${day}-${placeBlock}`;
+//       const placeTime = formatTo30(Math.floor(placeBlock / 60), placeBlock % 60);
 
-      const cell = document.querySelector(`td[data-day="${day}"][data-time="${placeTime}"]`);
-      if (!cell) {
-        console.warn(`❌ No cell for ${course.COURSE_NUMBER} on ${day} ${placeTime}`);
-        return;
-      }
+//       const cell = document.querySelector(`td[data-day="${day}"][data-time="${placeTime}"]`);
+//       if (!cell) {
+//         console.warn(`❌ No cell for ${course.COURSE_NUMBER} on ${day} ${placeTime}`);
+//         return;
+//       }
 
-      // Remove default cell padding
-      cell.style.padding = "0";
+//       // Remove default cell padding
+//       cell.style.padding = "0";
 
-      if (occupied[placeKey]) {
-        // Conflict stacking: append into same cell
-        cell.innerHTML = `
-          <div class="conflict-container" style="display:flex;gap:4px;background:#FFB6C1;padding:4px;border-radius:4px;">
-            ${cell.innerHTML}${courseHTML}
-          </div>`;
-      } else {
-        // Normal place
-        cell.innerHTML = `<div style="height:100%;width:100%;">${courseHTML}</div>`;
-        cell.rowSpan = rowSpan;
-        // Mark all blocks as occupied
-        blocks.forEach(b => { occupied[`${day}-${b}`] = true; });
+//       if (occupied[placeKey]) {
+//         // Conflict stacking: append into same cell
+//         cell.innerHTML = `
+//           <div class="conflict-container" style="display:flex;gap:4px;background:#FFB6C1;padding:4px;border-radius:4px;">
+//             ${cell.innerHTML}${courseHTML}
+//           </div>`;
+//       } else {
+//         // Normal place
+//         cell.innerHTML = `<div style="height:100%;width:100%;">${courseHTML}</div>`;
+//         cell.rowSpan = rowSpan;
+//         // Mark all blocks as occupied
+//         blocks.forEach(b => { occupied[`${day}-${b}`] = true; });
         
-        // Hide underlying <td> cells for spanned rows
-        let nextRow = cell.parentElement.nextElementSibling;
-        for (let i = 1; i < rowSpan; i++) {
-          nextRow?.querySelector(`td[data-day="${day}"]`)?.style.setProperty("display","none");
-          nextRow = nextRow?.nextElementSibling;
-        }
-      }
-    });
-  });
+//         // Hide underlying <td> cells for spanned rows
+//         let nextRow = cell.parentElement.nextElementSibling;
+//         for (let i = 1; i < rowSpan; i++) {
+//           nextRow?.querySelector(`td[data-day="${day}"]`)?.style.setProperty("display","none");
+//           nextRow = nextRow?.nextElementSibling;
+//         }
+//       }
+//     });
+//   });
 
-  populateRoomDropdown();
-}
+//   populateRoomDropdown();
+// }
 // -------------------------
 
 function displayCourses(courses) {
