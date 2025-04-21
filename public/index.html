@@ -120,42 +120,39 @@
       </thead>
       <tbody id="calendar-body">
         <script>
-          const startHour = 8; // 8:00 AM
-          const endHour = 21; // 9:00 PM
-          const days = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-          ];
+          const startHour = 8 * 60; // 8:00 AM in minutes
+          const endHour = 21 * 60; // 9:00 PM in minutes
+          const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
           const calendarBody = document.getElementById("calendar-body");
-
-          for (let hour = startHour; hour < endHour; hour++) {
+        
+          for (let minutes = startHour; minutes < endHour; minutes += 30) {
             const row = document.createElement("tr");
+        
+            // Time formatting
+            const hour = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+            const ampm = hour < 12 ? "AM" : "PM";
+            const timeLabel = `${hour12}:${mins.toString().padStart(2, "0")} ${ampm}`;
+        
             // Time cell
             const timeCell = document.createElement("th");
-            timeCell.textContent = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 ? "AM" : "PM"
-              }`;
+            timeCell.textContent = timeLabel;
             timeCell.classList.add("time-column");
             row.appendChild(timeCell);
-
+        
             // Day cells
             days.forEach((day) => {
               const dayCell = document.createElement("td");
               dayCell.classList.add("day-column");
               dayCell.setAttribute("data-day", day);
-              dayCell.setAttribute(
-                "data-time",
-                `${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 ? "AM" : "PM"
-                }`
-              );
+              dayCell.setAttribute("data-time", timeLabel);
               row.appendChild(dayCell);
             });
-
+        
             calendarBody.appendChild(row);
           }
-        </script>
+        </script>        
       </tbody>
     </table>
 

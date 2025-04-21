@@ -177,7 +177,7 @@ async function parseXLSXFile(filePath) {
 
     // Filter out courses where the STATUS column is "clsd" (case insensitive)
     jsonData = jsonData.filter(item => {
-      return item["STATUS"] && item["STATUS"].toLowerCase() !== "clsd" || item["STATUS"].toLowerCase() !== "cncl";
+      return item["STATUS"] && item["STATUS"].toLowerCase() !== "cncl";
     });
 
     // Transform the remaining data
@@ -307,37 +307,55 @@ app.post("/api/courses", async (req, res) => {
 app.get("/api/courses", async (req, res) => {
   try {
     const { year, semester, course, room } = req.query;
+
     if (!year && !semester && !course && !room) {
       const allCourses = await Course.find();
       return res.json(allCourses);
     }
-    let courseFilter = {};
-    courseFilter.TERM =
-      semester.toLowerCase() === "fall"
-        ? { $regex: /\/FA$/ }
-        : { $regex: /\/SP$/ };
 
+    const courseFilter = {};
+
+    // TERM regex
+    courseFilter.TERM = semester.toLowerCase() === "fall"
+      ? { $regex: /\/FA$/ }
+      : { $regex: /\/SP$/ };
+
+    // ROOM optional
     if (room && room.trim() !== "") {
       courseFilter.ROOM = room;
     }
 
+    // Build course number regex
     if (course && courseRegexMapping[course.toLowerCase()]) {
       const yearKey = year.toLowerCase();
       const semesterKey = semester.toLowerCase();
       const mapping = courseRegexMapping[course.toLowerCase()];
+
       if (!mapping[yearKey] || !mapping[yearKey][semesterKey]) {
         return res.status(400).json({ success: false, message: "Invalid year selected" });
       }
-      courseFilter.COURSE_NUMBER = { $regex: mapping[yearKey][semesterKey] };
+
+      const regex = mapping[yearKey][semesterKey];
+      courseFilter.COURSE_NUMBER = { $regex: regex };
+
+      console.log("📘 Regex being used:", regex);
     } else {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid course type selected",
-      });
+      return res.status(400).json({ success: false, message: "Invalid course type selected" });
     }
 
-    const courses = await Course.find(courseFilter);
-    res.json(courses);
+    const filteredCourses = await Course.find(courseFilter);
+
+    // Debug CIS_277 specifically
+    const debug277 = await Course.find({ COURSE_NUMBER: /CIS_277/i });
+    console.log("\n🔎 DEBUG: All CIS_277 in DB:");
+    debug277.forEach(course => {
+      console.log(`- ${course.COURSE_NUMBER} | TERM=${course.TERM} | STATUS=${course.STATUS}`);
+    });
+
+    console.log("\n✅ Matched courses from query:");
+    filteredCourses.forEach(c => console.log(`→ ${c.COURSE_NUMBER}`));
+
+    return res.json(filteredCourses);
   } catch (error) {
     console.error("Error retrieving courses:", error);
     res.status(500).json({
@@ -346,6 +364,7 @@ app.get("/api/courses", async (req, res) => {
     });
   }
 });
+
 
 // =============================================================================
 // Other Endpoints (Catalog, GET by ID, PUT, DELETE)
