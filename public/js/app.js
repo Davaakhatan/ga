@@ -9,7 +9,7 @@ const uniqueRooms = new Set();
 const $ = id => document.getElementById(id);
 console.log("app.js loaded");
 
-const YEARS = ["freshman","sophomore","junior","senior","graduate"];
+const YEARS = ["freshman", "sophomore", "junior", "senior", "graduate"];
 function previousYear(year) {
   const idx = YEARS.indexOf(year);
   return idx > 0 ? YEARS[idx - 1] : null;
@@ -21,29 +21,47 @@ function previousYear(year) {
 
 function getCourseDefaults(course) {
   return {
-    START_TIME:   course.START_TIME   || "08:00 AM",
-    END_TIME:     course.END_TIME     || "09:00 AM",
+    START_TIME: course.START_TIME || "08:00 AM",
+    END_TIME: course.END_TIME || "09:00 AM",
     MEETING_DAYS: course.MEETING_DAYS || "M",
   };
 }
 
 function parseTime(ts) {
-  const m = ts.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  // if there’s no AM/PM suffix, assume AM
+  let input = ts.trim();
+  if (!/[AP]M$/i.test(input)) {
+    input = input + " AM";
+  }
+  const m = input.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
   if (!m) return null;
-  let [_, h, min, p] = m;
-  let hour = parseInt(h,10), minute = parseInt(min,10);
-  if (p.toUpperCase() === "PM" && hour < 12) hour += 12;
-  if (p.toUpperCase() === "AM" && hour === 12) hour = 0;
+  let [, h, min, p] = m;
+  let hour = parseInt(h, 10);
+  let minute = parseInt(min, 10);
+  const period = p.toUpperCase();
+  if (period === "PM" && hour < 12) hour += 12;
+  if (period === "AM" && hour === 12) hour = 0;
   return { hour, minute };
 }
+
 
 function formatTo30(hour24, minute) {
   const m = minute < 30 ? 0 : 30;
   const h = hour24;
   const hour12 = (h % 12) === 0 ? 12 : (h % 12);
   const ampm = h >= 12 ? "PM" : "AM";
-  return `${hour12}:${m.toString().padStart(2,'0')} ${ampm}`;
+  return `${hour12}:${m.toString().padStart(2, '0')} ${ampm}`;
 }
+
+// -------------------------
+// Helper: validate start/end ordering
+function isValidRange(startStr, endStr) {
+  const s = parseTime(startStr);
+  const e = parseTime(endStr);
+  // both must parse and start < end
+  return s && e && (s.hour * 60 + s.minute) < (e.hour * 60 + e.minute);
+}
+
 
 function parseMeetingDays(str) {
   const map = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Friday" };
@@ -160,7 +178,7 @@ function populateRoomDropdown() {
 //         cell.rowSpan = rowSpan;
 //         // Mark all blocks as occupied
 //         blocks.forEach(b => { occupied[`${day}-${b}`] = true; });
-        
+
 //         // Hide underlying <td> cells for spanned rows
 //         let nextRow = cell.parentElement.nextElementSibling;
 //         for (let i = 1; i < rowSpan; i++) {
@@ -188,10 +206,10 @@ function displayCourses(courses) {
       console.warn(`Invalid time for ${course.COURSE_NUMBER}`);
       return;
     }
-    const days     = parseMeetingDays(MEETING_DAYS);
+    const days = parseMeetingDays(MEETING_DAYS);
     const startMin = st.hour * 60 + st.minute;
-    const endMin   = et.hour * 60 + et.minute;
-    const rowSpan  = calcRowspan(startMin, endMin);
+    const endMin = et.hour * 60 + et.minute;
+    const rowSpan = calcRowspan(startMin, endMin);
 
     uniqueRooms.add(course.ROOM);
 
@@ -220,10 +238,10 @@ function displayCourses(courses) {
       
         ${badge}
         <strong>${course.COURSE_NUMBER}</strong><br>
-        ${course.TITLE_START_DATE||""}<br>
+        ${course.TITLE_START_DATE || ""}<br>
         ${START_TIME} – ${END_TIME}<br>
-        <strong>Building:</strong> ${course.BUILDING||"N/A"}<br>
-        <strong>Room:</strong> ${course.ROOM||"N/A"}<br>
+        <strong>Building:</strong> ${course.BUILDING || "N/A"}<br>
+        <strong>Room:</strong> ${course.ROOM || "N/A"}<br>
         <span class="icon-buttons">
           <i class="material-icons edit-icon" onclick="editCourse('${course._id}')">edit</i>
           <i class="material-icons delete-icon" onclick="deleteCourse('${course._id}')">delete</i>
@@ -241,7 +259,7 @@ function displayCourses(courses) {
           break;
         }
       }
-      const cellTime = formatTo30(Math.floor(placeMin/60), placeMin%60);
+      const cellTime = formatTo30(Math.floor(placeMin / 60), placeMin % 60);
       console.log(`🧩 Placing ${course.COURSE_NUMBER} at ${d} ${cellTime}`);
 
       const cell = document.querySelector(`td[data-day="${d}"][data-time="${cellTime}"]`);
@@ -260,12 +278,12 @@ function displayCourses(courses) {
       } else {
         // Normal place
         cell.innerHTML = courseHTML;
-        cell.rowSpan   = rowSpan;
+        cell.rowSpan = rowSpan;
         occupied[key] = true;
         // hide overlapped rows
         let nr = cell.parentElement.nextElementSibling;
         for (let i = 1; i < rowSpan; i++) {
-          nr?.querySelector(`td[data-day="${d}"]`)?.style.setProperty("display","none");
+          nr?.querySelector(`td[data-day="${d}"]`)?.style.setProperty("display", "none");
           nr = nr?.nextElementSibling;
         }
       }
@@ -282,9 +300,9 @@ function displayCourses(courses) {
 async function fetchCourses() {
   try {
     const prog = $("course-catalog-dropdown").value;
-    const yr   = $("student-year-dropdown").value;
-    const sem  = $("semester-dropdown").value;
-    const rm   = $("room-dropdown").value;
+    const yr = $("student-year-dropdown").value;
+    const sem = $("semester-dropdown").value;
+    const rm = $("room-dropdown").value;
 
     // 1) Fetch the main set
     let url = `/api/courses?year=${yr}&semester=${sem}&course=${prog}`;
@@ -318,9 +336,21 @@ async function fetchCourses() {
 
 
 window.addEventListener("DOMContentLoaded", () => {
-  ["course-catalog-dropdown","student-year-dropdown","semester-dropdown","room-dropdown"]
-    .forEach(id=>$(id).addEventListener("change", fetchCourses));
+  ["course-catalog-dropdown", "student-year-dropdown", "semester-dropdown", "room-dropdown"]
+    .forEach(id => $(id).addEventListener("change", fetchCourses));
   fetchCourses();
+  // ── new: auto‑append " AM" in Add‑Course modal fields ──
+  ["newStartTime", "newEndTime"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("blur", () => {
+      const v = el.value.trim();
+      // if they only typed "H:MM" or "HH:MM"
+      if (/^\d{1,2}:\d{2}$/.test(v)) {
+        el.value = v + " AM";
+      }
+    });
+  });
 });
 
 // -------------------------
@@ -328,62 +358,167 @@ window.addEventListener("DOMContentLoaded", () => {
 // -------------------------
 
 function editCourse(id) {
-  const c = coursesData.find(x=>x._id===id);
+  const c = coursesData.find(x => x._id === id);
   if (!c) return alert("Course not found.");
   currentEditingCourseId = id;
-  $("courseNumber").value  = c.COURSE_NUMBER;
-  $("courseTitle").value   = c.TITLE_START_DATE;
-  $("meetingDays").value   = c.MEETING_DAYS;
-  $("startTime").value     = c.START_TIME;
-  $("endTime").value       = c.END_TIME;
-  $("buildingInput").value = c.BUILDING||"";
-  $("roomInput").value     = c.ROOM||"";
+  $("courseNumber").value = c.COURSE_NUMBER;
+  $("courseTitle").value = c.TITLE_START_DATE;
+  $("meetingDays").value = c.MEETING_DAYS;
+  $("startTime").value = c.START_TIME;
+  $("endTime").value = c.END_TIME;
+  $("buildingInput").value = c.BUILDING || "";
+  $("roomInput").value = c.ROOM || "";
   new bootstrap.Modal($("editCourseModal")).show();
 }
 
 async function saveEditedCourse() {
   if (!currentEditingCourseId) return;
+
+  // 1) grab and trim inputs
+  const COURSE_NUMBER    = $("courseNumber").value.trim();
+  const TITLE_START_DATE = $("courseTitle").value.trim();
+  const MEETING_DAYS     = $("meetingDays").value.trim();
+  const START_TIME       = $("startTime").value.trim();
+  const END_TIME         = $("endTime").value.trim();
+  const BUILDING         = $("buildingInput").value.trim();
+  const ROOM             = $("roomInput").value.trim();
+
+  // 2) required‑field validation
+  if (!COURSE_NUMBER || !MEETING_DAYS || !START_TIME || !END_TIME) {
+    return alert("Please fill in all required fields.");
+  }
+
+  // 3) time‐range validation (uses the isValidRange helper)
+  if (!isValidRange(START_TIME, END_TIME)) {
+    return alert("End Time must be later than Start Time.");
+  }
+
+  // 4) build the payload
   const updated = {
-    COURSE_NUMBER: $("courseNumber").value.trim(),
-    TITLE_START_DATE: $("courseTitle").value.trim(),
-    MEETING_DAYS: $("meetingDays").value.trim(),
-    START_TIME: $("startTime").value.trim(),
-    END_TIME: $("endTime").value.trim(),
-    BUILDING: $("buildingInput").value.trim(),
-    ROOM: $("roomInput").value.trim(),
+    COURSE_NUMBER,
+    TITLE_START_DATE,
+    MEETING_DAYS,
+    START_TIME,
+    END_TIME,
+    BUILDING,
+    ROOM,
   };
+
+  // 5) send to server
   const res = await fetch(`/api/courses/${currentEditingCourseId}`, {
-    method:"PUT",
-    headers:{"Content-Type":"application/json"},
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updated)
   });
   const js = await res.json();
-  if (js.success) { fetchCourses(); bootstrap.Modal.getInstance($("editCourseModal")).hide(); }
-  else alert("Update failed.");
+
+  // 6) handle response
+  if (js.success) {
+    fetchCourses();
+    bootstrap.Modal.getInstance($("editCourseModal")).hide();
+  } else {
+    alert("Update failed: " + (js.message || ""));
+  }
 }
+
 
 document.querySelector("#saveCourseChanges").addEventListener("click", saveEditedCourse);
 
 async function deleteCourse(id) {
   if (!confirm("Delete this course?")) return;
-  const res = await fetch(`/api/courses/${id}`, {method:"DELETE"});
+  const res = await fetch(`/api/courses/${id}`, { method: "DELETE" });
   const js = await res.json();
   if (js.success) fetchCourses(); else alert(js.message);
 }
 
-async function exportCourses(mode="displayed") {
+async function exportCourses(mode = "displayed") {
   let data = [];
-  if (mode==="all") {
+  if (mode === "all") {
     const r = await fetch("/api/courses"); data = await r.json();
   } else data = coursesData;
   if (!data.length) return alert("No courses to export.");
-  const aoa = [["COURSE#","TITLE","START","END","DAYS","BUILDING","ROOM","INSTR","TERM","STATUS"]];
-  data.forEach(c=> aoa.push([c.COURSE_NUMBER,c.TITLE_START_DATE,c.START_TIME,c.END_TIME,c.MEETING_DAYS,c.BUILDING||"",c.ROOM||"",c.INSTRUCTOR||"",c.TERM||"",c.STATUS||""]));
+  const aoa = [["COURSE#", "TITLE", "START", "END", "DAYS", "BUILDING", "ROOM", "INSTR", "TERM", "STATUS"]];
+  data.forEach(c => aoa.push([c.COURSE_NUMBER, c.TITLE_START_DATE, c.START_TIME, c.END_TIME, c.MEETING_DAYS, c.BUILDING || "", c.ROOM || "", c.INSTRUCTOR || "", c.TERM || "", c.STATUS || ""]));
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(aoa);
-  XLSX.utils.book_append_sheet(wb,ws,"Courses");
-  XLSX.writeFile(wb,`${mode}Courses_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.utils.book_append_sheet(wb, ws, "Courses");
+  XLSX.writeFile(wb, `${mode}Courses_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
+
+// -------------------------
+// Add Course Modal Logic
+// -------------------------
+
+// 1) show the modal when the navbar "+ Add Course" button is clicked
+function openAddCourseModal() {
+  const modalEl = document.getElementById("addCourseModal");
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+}
+
+// 2) save the new course when the modal's "Add Course" button is clicked
+async function saveNewCourse() {
+  // 1) grab your inputs
+  const COURSE_NUMBER = $("newCourseNumber").value.trim();
+  const TITLE_START_DATE = $("newCourseTitle").value.trim();
+  const MEETING_DAYS = $("newMeetingDays").value.trim();
+  const START_TIME = $("newStartTime").value.trim();
+  const END_TIME = $("newEndTime").value.trim();
+  const BUILDING = $("newBuilding").value.trim();
+  const ROOM = $("newRoom").value.trim();
+
+  // 2) validate required
+  if (!COURSE_NUMBER || !MEETING_DAYS || !START_TIME || !END_TIME) {
+    return alert("Please fill in all required fields.");
+  }
+
+
+  // 3) time‐range validation (requires isValidRange helper)
+  if (!isValidRange(START_TIME, END_TIME)) {
+    return alert("End Time must be later than Start Time.");
+  }
+
+  // 4) construct TERM from your semester‑dropdown
+  const sem = $("semester-dropdown").value;
+  const yearSuffix = new Date().getFullYear().toString().slice(-2);
+  const TERM = sem === "fall" ? `${yearSuffix}/FA` : `${yearSuffix}/SP`;
+
+  //  5) construct INSTRUCTOR from your instructor‑dropdown
+  const newCourse = {
+    COURSE_NUMBER,
+    TITLE_START_DATE,
+    MEETING_DAYS,
+    START_TIME,
+    END_TIME,
+    BUILDING,
+    ROOM,
+    TERM,
+    STATUS: "Open"
+  };
+  // 6) send it to the server
+  const res = await fetch("/api/courses", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newCourse)
+  });
+  const js = await res.json();
+  // 7) handle the response
+  if (js.success) {
+    // reload the calendar
+    fetchCourses();
+    // hide the modal
+    bootstrap.Modal.getInstance(
+      document.getElementById("addCourseModal")
+    ).hide();
+  } else {
+    alert("Failed to add course: " + (js.message || ""));
+  }
+}
+
+// expose them globally if you’re using defer’d script
+window.openAddCourseModal = openAddCourseModal;
+window.saveNewCourse = saveNewCourse;
+
 
 // -------------------------
 // End of app.js
