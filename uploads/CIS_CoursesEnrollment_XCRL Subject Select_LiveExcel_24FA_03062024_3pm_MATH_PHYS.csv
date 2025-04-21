@@ -1,0 +1,252 @@
+﻿COURSE #,TITLE/START DATE,Acad Level,CAPACITY,# OF STUDENTS,STATUS,INSTRUCTOR,Start Time,End Time,Meeting Days,Bldg,Room,XLIST CRS,FEE,Min Cred,Max Cred,COREQ CRS,Section,Term,Seq No,Schools,,,,,,,,,,,,,,Acad Level
+CIS_150_01,Business Technology 1,UG,25,0,Open,Mr R Lamb,08:00AM,08:55AM,M W F,Z,355,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_02,Business Technology 1,UG,25,0,Open,Mr D Marino,10:10AM,11:05AM,M W F,Z,355,,$70,3.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_03,Business Technology 1,UG,25,0,Open,Mr D Marino,09:05AM,10:00AM,M W F,Z,355,,$70,3.00,0.00,,03,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_04,Business Technology 1,UG,25,0,Open,Mr R Lamb,11:15AM,12:10PM,M W F,Z,355,,$70,3.00,0.00,,04,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_1E,Business Technology 1,UG,25,0,Open,Staff,04:30PM,05:50PM,M W,Z,130,,$70,3.00,0.00,,1E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_N1,Business Technology 1 08/19 - 11/30,UG,25,0,Open,Mr J Kwashnak,,,,ON,ONLINE,,$70,3.00,0.00,,N1,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_150_N2,Business Technology 1 08/19 - 11/30,UG,25,0,Open,Mr J Kwashnak,,,,ON,ONLINE,,$70,3.00,0.00,,N2,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_170_01,PC OS/Internet 08/21 - 09/19,UG,25,0,Open,Mr D Marino,01:25PM,02:45PM,M W,Z,130,,$20,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_171_01,Word Processing 09/24 - 10/24,UG,25,0,Open,Mr D Marino,01:25PM,02:45PM,M W,Z,130,,$20,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_172_01,Electronic Spreadsht 10/29 - 12/13,UG,25,0,Open,Mr D Marino,01:25PM,02:45PM,M W,Z,130,,$20,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_180_01,Prob Solv & Comp Prog,UG,24,0,Open,Dr H Perez-Gonzalez,11:15AM,12:10PM,M W,Z,335,,,2.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_180_02,Prob Solv & Comp Prog,UG,24,0,Open,Dr H Perez-Gonzalez,08:00AM,08:55AM,M W,Z,335,,,2.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_180_03,Prob Solv & Comp Prog,UG,24,0,Open,Ms Q Zhang,03:00PM,03:55PM,M W,Z,335,,,2.00,0.00,,03,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_181_01,Prob Solv&ComPg Lab,UG,24,0,Open,Dr H Perez-Gonzalez,12:20PM,01:15PM,M W,Z,335,,$70,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_181_02,Prob Solv&ComPg Lab,UG,24,0,Open,Dr H Perez-Gonzalez,09:05AM,10:00AM,M W,Z,335,,$70,1.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_181_03,Prob Solv&ComPg Lab,UG,24,0,Open,Ms Q Zhang,04:05PM,05:00PM,M W,Z,335,,$70,1.00,0.00,,03,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_182_01,Object Orient Prog,UG,25,0,Open,Dr K Wang,11:15AM,12:10PM,M W,Z,336,,,2.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_182_02,Object Orient Prog,UG,25,0,Open,Dr K Wang,03:00PM,03:55PM,M W,Z,336,,,2.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_183_01,Object Orient Prog Lab,UG,25,0,Open,Dr K Wang,12:20PM,01:15PM,M W,Z,336,,$70,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_183_02,Object Orient Prog Lab,UG,25,0,Open,Dr K Wang,04:05PM,05:00PM,M W,Z,336,,$70,1.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_195_01,Prin of Systems,UG,25,0,Open,Dr B McIntyre,09:30AM,10:50AM,T TH,Z,130,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_195_02,Prin of Systems,UG,25,0,Open,Dr B McIntyre,12:00PM,01:20PM,T TH,Z,130,,$70,3.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_219_01,Linux Programming,UG,24,0,Open,Dr R Matovu,12:00PM,01:20PM,T TH,IHK,205,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_239_1E,The User Experience,UG,24,0,Open,Staff,04:30PM,05:50PM,M W,Z,355,,$70,3.00,0.00,,1E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_240_01,Web Mgt Design,UG,24,0,Open,Mr J Cannell,12:00PM,01:20PM,T TH,Z,355,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_240_02,Web Mgt Design,UG,24,0,Open,Mr J Cannell,01:25PM,02:45PM,M W,Z,355,,$115,3.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_277_01,Mobile Appl Devlp 1,UG,25,0,Open,Dr J Tong,01:25PM,02:45PM,M W,Z,335,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+CIS_287_01,Obj-Orient Dsgn Lab,UG,25,0,Open,Dr H Perez-Gonzalez,01:30PM,02:50PM,T TH,Z,335,,$70,1.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_290_01,Intro to Networks,UG,25,0,Open,Dr R Khan,03:00PM,04:20PM,T TH,IHK,204,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_290_02,Intro to Networks,UG,25,0,Open,Mr P Capelli,01:25PM,02:45PM,M W,IHK,203,,$115,3.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_290_1E,Intro to Networks,UG,24,0,Open,Dr S Tweneboah Koduah,04:30PM,05:50PM,T TH,IHK,205,,$115,3.00,0.00,,1E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_326_01,Frml Meth Sftw Dev,UG,25,0,Open,Dr J Tong,10:10AM,11:05AM,M W F,Z,335,,,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_350_01,Rqmts & Project Mgmt,UG,25,0,Open,Ms M Obaid,01:30PM,02:50PM,T TH,Z,355,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_355_1E,Web Progm/Implemnt,UG,25,0,Open,Mr N Carlin,06:00PM,07:20PM,M W,Z,339,"CIS_355_1E,GCIS_555_0A",$70,3.00,0.00,,1E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_387_01,System & Network Secur,UG,24,0,Open,Dr R Bazan-Antequera,01:25PM,02:45PM,M W,IHK,205,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+CIS_400_01,Internship,UG,5,0,Open,Dr M Tang,,,,BY-,ARR,,,1.00,3.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CIS_457_01,Senior Design 1,UG,20,0,Open,Dr M Tang,12:00PM,01:20PM,T TH,Z,335,,,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+CSC_220_01,Data Struct & Algorithms,UG,25,0,Open,Dr K Wang,03:00PM,04:20PM,T TH,IHK,205,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CSC_220_02,Data Struct & Algorithms,UG,25,0,Open,Dr K Wang,09:30AM,10:50AM,T TH,IHK,205,,$70,3.00,0.00,,02,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CSC_330_01,Operating Systems,UG,25,0,Open,Dr S Manakkadu,01:30PM,02:50PM,T TH,Z,339,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CSC_360_01,Comparative Language,UG,25,0,Open,Staff,12:20PM,01:15PM,M W F,Z,339,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CYSEC_210_01,IT Security,UG,25,0,Open,Dr F Mak,12:00PM,01:20PM,T TH,IHK,203,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+CYSEC_301_01,Ethical Hacking,UG,25,0,Open,Dr R Matovu,01:25PM,02:45PM,M W,IHK,204,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+CYSEC_306_01,Info Assurance,UG,25,0,Open,Dr Y Liu,01:30PM,02:50PM,T TH,IHK,204,,$115,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+CYSEC_308_1E,Cybr Def/Cld Sec,UG,25,0,Open,Dr J Tong,04:30PM,05:50PM,T TH,IHK,203,,$115,3.00,0.00,,1E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_506_0A,Obj Orient Prog Java,GR,25,0,Open,Ms M Obaid,09:30AM,10:50AM,T TH,Z,101,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_506_0B,Obj Orient Prog Java,GR,25,0,Open,Ms Q Zhang,12:00PM,01:20PM,T TH,Z,101,,$70,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_514_0A,Rqmts & Project Mgmt,GR,25,0,Open,Staff,06:00PM,07:20PM,T TH,Z,336,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_514_0B,Rqmts & Project Mgmt,GR,25,0,Open,Mr P Shah,04:30PM,05:50PM,M W,Z,101,,$70,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_514_0C,Rqmts & Project Mgmt,GR,25,0,Open,Mr R Lamb,03:00PM,04:20PM,M W,Z,355,,$70,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_515_0A,Sftwr Testing & QA,GR,24,0,Open,Dr M Rahman,09:30AM,10:50AM,T TH,Z,336,"SOFT_310_01,GCIS_515_0A",$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_516_0A,Data Centric Cncpt&Meth,GR,25,0,Open,Dr Y Liu,04:30PM,05:50PM,M W,IHK,204,,$115,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_516_0B,Data Centric Cncpt&Meth,GR,25,0,Open,Dr Y Liu,04:30PM,05:50PM,T TH,IHK,204,,$115,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_522_0A,Adv Prog: Java Mobile,GR,25,0,Open,Staff,06:00PM,07:20PM,M W,Z,355,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_523_0A,Statistical Computing,GR,25,0,Open,Ms M Obaid,04:30PM,05:50PM,T TH,Z,101,,$115,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_523_0B,Statistical Computing,GR,25,0,Open,Ms M Obaid,01:25PM,02:45PM,M W,Z,101,,$115,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_523_0C,Statistical Computing,GR,25,0,Open,Ms Q Zhang,03:00PM,04:20PM,T TH,Z,101,,$115,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_523_0D,Statistical Computing,GR,25,0,Open,Ms Q Zhang,12:00PM,01:20PM,M W,Z,101,,$115,3.00,0.00,,0D,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_555_0A,Dynamic Web Development,GR,25,0,Open,Mr N Carlin,06:00PM,07:20PM,M W,Z,339,"CIS_355_1E,GCIS_555_0A",$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_580_0A,Programming in Unix,GR,25,0,Open,Dr R Bazan-Antequera,01:30PM,02:50PM,T TH,Z,336,,$115,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_581_0A,Intro to Networks,GR,24,0,Open,Staff,04:30PM,05:50PM,T TH,Z,355,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_583_0A,Intro to Cloud Architecture,GR,25,0,Open,Dr R Bazan-Antequera,06:00PM,07:20PM,T TH,Z,335,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_583_0B,Intro to Cloud Architecture,GR,25,0,Open,Mr J Severance,04:30PM,05:50PM,T TH,Z,335,,$70,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_583_0C,Intro to Cloud Architecture,GR,25,0,Open,Dr R Bazan-Antequera,06:00PM,07:20PM,M W,Z,335,,$70,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_605_0A,Scholarship Seminar,GR,25,0,Open,Dr S Tweneboah Koduah,01:30PM,02:50PM,T TH,Z,101,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_605_0B,Scholarship Seminar,GR,25,0,Open,Dr S Tweneboah Koduah,09:30AM,10:50AM,T TH,Z,339,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_605_0C,Scholarship Seminar,GR,25,0,Open,Dr M Rahman,01:25PM,02:45PM,M W,Z,336,,,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_634_0A,Software Maint & Deplymt,GR,24,0,Open,Dr M Rahman,03:00PM,04:20PM,T TH,Z,336,"GCIS_634_0A,SOFT_410_01",$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_655_0A,Data Mining Techn,GR,25,0,Open,Dr S Manakkadu,12:00PM,01:20PM,T TH,Z,339,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_656_0A,Text Mining,GR,25,0,Open,Dr S Manakkadu,09:30AM,10:50AM,T TH,Z,335,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_666_0A,Cybersecrty/Eth Hack,GR,25,0,Open,Dr R Matovu,09:30AM,10:50AM,T TH,IHK,204,,$115,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_666_0B,Cybersecrty/Eth Hack,GR,25,0,Open,Dr R Matovu,12:00PM,01:20PM,M W,IHK,204,,$115,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_667_0A,Cloud Ntwks,GR,25,0,Open,Mr J Cannell,03:00PM,04:20PM,M W,IHK,203,,$70,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_667_0B,Cloud Ntwks,GR,25,0,Open,Mr J Cannell,03:00PM,04:20PM,T TH,IHK,203,,$70,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_698_0A,Directed Research,GR,10,0,Open,Dr Y Liu,,,,BY-,ARR,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCIS_698_0B,Directed Research,GR,10,0,Open,Dr S Manakkadu,,,,BY-,ARR,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0C,Directed Research,GR,10,0,Open,Dr R Matovu,,,,BY-,ARR,,,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0D,Directed Research,GR,10,0,Open,Dr J Nwokeji,,,,BY-,ARR,,,3.00,0.00,,0D,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0E,Directed Research,GR,10,0,Open,Dr M Rahman,,,,BY-,ARR,,,3.00,0.00,,0E,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0F,Directed Research,GR,10,0,Open,Dr M Tang,,,,BY-,ARR,,,3.00,0.00,,0F,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0G,Directed Research,GR,10,0,Open,Dr J Tong,,,,BY-,ARR,,,3.00,0.00,,0G,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0H,Directed Research,GR,10,0,Open,Dr K Wang,,,,BY-,ARR,,,3.00,0.00,,0H,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0I,Directed Research,GR,10,0,Open,Dr R Bazan-Antequera,,,,BY-,ARR,,,3.00,0.00,,0I,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0J,Directed Research,GR,10,0,Open,Dr R Khan,,,,BY-,ARR,,,3.00,0.00,,0J,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0K,Directed Research,GR,10,0,Open,Dr S Tweneboah Koduah,,,,BY-,ARR,,,3.00,0.00,,0K,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0L,Directed Research,GR,10,0,Open,Mr P Capelli,,,,BY-,ARR,,,3.00,0.00,,0L,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0M,Directed Research,GR,10,0,Open,Ms M Obaid,,,,BY-,ARR,,,3.00,0.00,,0M,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCIS_698_0N,Directed Research,GR,10,0,Open,Ms Q Zhang,,,,BY-,ARR,,,3.00,0.00,,0N,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_501_0A,Networking Fundmntl,GR,25,0,Open,Dr R Khan,09:00AM,10:20AM,W F,IHK,203,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_501_0C,Networking Fundmntl,GR,25,0,Open,Dr R Khan,10:30AM,11:50AM,W F,IHK,203,,,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,UG
+GCYSEC_502_0A,Cybersec Foundtn,GR,25,0,Open,Mr P Capelli,04:30PM,05:50PM,M W,IHK,203,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_502_0B,Cybersec Foundtn,GR,25,0,Open,Mr P Capelli,06:00PM,07:20PM,T TH,IHK,205,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCYSEC_502_OC,Cybersec Foundtn,GR,24,0,Open,Mr P Capelli,01:30PM,02:50PM,T TH,IHK,205,,,3.00,0.00,,OC,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_503_NB,Security Ldrshp 08/19 - 11/30,GR,25,0,Open,Staff,,,,ON,ONLINE,,,3.00,0.00,,NB,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_503_NC,Security Ldrshp 08/19 - 11/30,GR,25,0,Open,Staff,,,,ON,ONLINE,,,3.00,0.00,,NC,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_504_0A,Cybersec Mgmt,GR,25,0,Open,Dr S Tweneboah Koduah,03:00PM,04:20PM,M W,IHK,205,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_504_0B,Cybersec Mgmt,GR,25,0,Open,Dr S Tweneboah Koduah,06:00PM,07:20PM,M W,IHK,205,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCYSEC_605_0A,Asset Secrty & Risk Mangmt 10/14 - 11/30,GR,25,0,Open,Staff,,,,ON,ONLINE,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_605_NA,Asset Secrty & Risk Mangmt 10/14 - 11/30,GR,25,0,Open,Staff,,,,ON,ONLINE,,,3.00,0.00,,NA,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_606_0A,Security Arch Info Comm Netwrk,GR,20,0,Open,Mr J Coffman,01:25PM,02:45PM,M W,IHK,206,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_606_0B,Security Arch Info Comm Netwrk,GR,20,0,Open,Mr J Coffman,04:30PM,05:50PM,T TH,IHK,206,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_607_0A,Assessment Identity Access Mgm 08/19 - 10/05,GR,30,0,Open,Mr J Stogner,,,,ON,ONLINE,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_607_NA,Assessment Identity Access Mgm 08/19 - 10/05,GR,30,0,Open,Mr J Stogner,,,,ON,ONLINE,,,3.00,0.00,,NA,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_691_0A,Penetration Testing,GR,30,0,Open,Dr R Khan,12:00PM,01:20PM,T TH,IHK,204,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_691_0B,Penetration Testing,GR,25,0,Open,Dr R Khan,06:00PM,07:20PM,T TH,IHK,203,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0A,Directed Project,GR,10,0,Open,Dr Y Liu,,,,BY-,ARR,,,3.00,0.00,,0A,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0B,Directed Project,GR,10,0,Open,Dr S Manakkadu,,,,BY-,ARR,,,3.00,0.00,,0B,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0C,Directed Project,GR,10,0,Open,Dr R Matovu,,,,BY-,ARR,,,3.00,0.00,,0C,24/FA,1,ASSEC,,,,,,,,,,,,,,
+GCYSEC_698_0D,Directed Project,GR,10,0,Open,Dr J Nwokeji,,,,BY-,ARR,,,3.00,0.00,,0D,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0E,Directed Project,GR,10,0,Open,Dr M Rahman,,,,BY-,ARR,,,3.00,0.00,,0E,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0F,Directed Project,GR,10,0,Open,Dr M Tang,,,,BY-,ARR,,,3.00,0.00,,0F,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0G,Directed Project,GR,10,0,Open,Dr J Tong,,,,BY-,ARR,,,3.00,0.00,,0G,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0H,Directed Project,GR,10,0,Open,Dr K Wang,,,,BY-,ARR,,,3.00,0.00,,0H,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0I,Directed Project,GR,10,0,Open,Dr R Bazan-Antequera,,,,BY-,ARR,,,3.00,0.00,,0I,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0J,Directed Project,GR,10,0,Open,Dr R Khan,,,,BY-,ARR,,,3.00,0.00,,0J,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0K,Directed Project,GR,10,0,Open,Dr S Tweneboah Koduah,,,,BY-,ARR,,,3.00,0.00,,0K,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0L,Directed Project,GR,10,0,Open,Mr P Capelli,,,,BY-,ARR,,,3.00,0.00,,0L,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0M,Directed Project,GR,10,0,Open,Ms M Obaid,,,,BY-,ARR,,,3.00,0.00,,0M,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+GCYSEC_698_0N,Directed Project,GR,10,0,Open,Ms Q Zhang,,,,BY-,ARR,,,3.00,0.00,,0N,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+IS_340_01,Manage IS Infra Cloud,UG,25,0,Open,Dr J Nwokeji,12:20PM,01:15PM,M W F,Z,355,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+IS_365_01,Adv Database Syst,UG,25,0,Open,Dr J Nwokeji,09:30AM,10:50AM,T TH,Z,355,,$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+MATH_103_01,Quantitative Literacy,UG,30,0,Open,Mr J Komorek,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_111_01,College Algebra,UG,30,0,Open,Mr J Komorek,08:00AM,09:20AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_111_EE,College Algebra 08/19 - 11/30,UG,0,0,Clsd,Dr A Nogaj,,,,ON,ONLINE,"MATH_111_NU,MATH_111_EE,MATH_111_GN",,3.00,0.00,,EE,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_111_GN,College Algebra 08/19 - 11/30,UG,10,0,Open,Dr A Nogaj,,,,ON,ONLINE,"MATH_111_NU,MATH_111_EE,MATH_111_GN",,3.00,0.00,,GN,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_111_NU,College Algebra 08/19 - 11/30,UG,25,0,Open,Dr A Nogaj,,,,ON,ONLINE,"MATH_111_NU,MATH_111_EE,MATH_111_GN",,3.00,0.00,,NU,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_112_01,Trigonometry,UG,30,0,Open,Ms C Cedzo,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_112_02,Trigonometry,UG,30,0,Open,Ms C Cedzo,12:20PM,01:15PM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_112_1E,Trigonometry,UG,30,0,Open,Mr K Beringer,04:30PM,05:50PM,M W,Z,129,,,3.00,0.00,,1E,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_115_01,Applied Math for Business,UG,30,0,Open,Dr K Holler,08:00AM,09:20AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_115_02,Applied Math for Business,UG,30,0,Open,Dr K Holler,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_115_03,Applied Math for Business,UG,30,0,Open,Dr R Ligo,12:00PM,01:20PM,T TH,,,,,3.00,0.00,,03,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_115_04,Applied Math for Business,UG,30,0,Open,Dr R Ligo,01:30PM,02:50PM,T TH,,,,,3.00,0.00,,04,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_115_1E,Applied Math for Business,UG,30,0,Open,Mr P Chadowski,04:30PM,05:50PM,M W,,,,,3.00,0.00,,1E,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_140_01,Calculus 1,UG,35,0,Open,Ms C Cedzo,09:05AM,10:00AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_140_02,Calculus 1,UG,30,0,Open,Dr D Prier,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_140_03,Calculus 1,UG,30,0,Open,Dr M Caulfield,12:20PM,01:15PM,M W F,,,,,3.00,0.00,,03,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_140_04,Calculus 1,UG,30,0,Open,Dr D Prier,01:25PM,02:20PM,M W F,,,,,3.00,0.00,,04,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_140_05,Calculus 1,UG,30,0,Open,Dr M Caulfield,01:25PM,02:20PM,M W F,,,,,3.00,0.00,,05,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_141_01,Calculus 2,UG,30,0,Open,Dr M Caulfield,09:05AM,10:00AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,
+MATH_141_02,Calculus 2,UG,30,0,Open,Ms C Cedzo,11:15AM,12:10PM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_213_01,Applied Statistics,UG,30,0,Open,Dr A Nogaj,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_213_02,Applied Statistics,UG,30,0,Open,Dr P Headley,12:00PM,01:20PM,T TH,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,
+MATH_213_03,Applied Statistics,UG,30,0,Open,Dr P Headley,01:25PM,02:45PM,M W,,,,,3.00,0.00,,03,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_222_01,Discrete Math 1,UG,30,0,Open,Dr D Prier,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_222_02,Discrete Math 1,UG,30,0,Open,Dr D Prier,12:00PM,01:20PM,T TH,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_226_01,Geometry,UG,20,0,Cncl,,,,,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_242_01,Calculus 3,UG,30,0,Open,Dr M Caulfield,08:00AM,08:55AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_242_02,Calculus 3,UG,30,0,Open,Dr R Ligo,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_243_01,Calculus 4,UG,30,0,Open,Dr P Headley,09:05AM,10:00AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_301_01,Math Analysis 1,UG,20,0,Open,Dr R Ligo,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_304_01,Diff Equations 1,UG,30,0,Open,Dr G Dietz,11:15AM,12:10PM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_309_01,Abstract Algebra 1,UG,20,0,Cncl,,,,,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_312_01,Probablty & Stats 1,UG,30,0,Open,Dr P Headley,08:00AM,09:20AM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_320_01,Math Modeling (SL),UG,20,0,Open,Dr G Dietz,09:05AM,10:00AM,M W F,Z,130,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_331_01,Financial Math 1,UG,20,0,Open,Dr G Dietz,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,
+MATH_341_01,Teach Sec Math,UG,20,0,Cncl,,,,,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_375_01,Internship,UG,10,0,Open,Dr G Dietz,,,,BY-,ARR,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_380_01,UG Math Research,UG,25,0,Open,Staff,,,,BY-,ARR,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+MATH_380_02,UG Math Research,UG,25,0,Cncl,,,,,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_101_99,Honors-Concepts in Physics,UG,35,0,Open,Dr N Conklin,09:30AM,10:50AM,T TH,,,,,3.00,0.00,,99,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_102_01,Intro to Astronomy,UG,35,0,Open,Dr D Horne,12:00PM,01:20PM,T TH,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_105_01,College Physics 1,UG,30,0,Open,Mr P Hilburn,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_105_02,College Physics 1,UG,30,0,Open,Mr P Hilburn,11:15AM,12:10PM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,
+PHYS_106_01,College Phys Lab 1,UG,24,0,Open,Dr N Conklin,02:30PM,04:30PM,M,Z,133,,$45,1.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_106_02,College Phys Lab 1,UG,24,0,Open,Dr N Conklin,12:20PM,02:20PM,T,Z,133,,$45,1.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_106_03,College Phys Lab 1,UG,24,0,Open,Dr N Conklin,02:30PM,04:30PM,T,Z,133,,$45,1.00,0.00,,03,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_108_01,College Physics 2,UG,30,0,Open,Dr D Horne,10:10AM,11:05AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_109_01,College Phys Lab 2,UG,18,0,Open,Mr P Hilburn,02:30PM,04:30PM,M,Z,135,,$54,1.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_210_01,Fund Phys 1: Mechanics,UG,30,0,Open,Mr P Hilburn,09:05AM,10:00AM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_211_01,Fund Phys 1 Lab,UG,24,0,Open,Mr P Hilburn,03:00PM,05:00PM,W,Z,133,,$45,1.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_212_01,Fund Phys 2: Fld/Therm,UG,30,0,Open,Dr D Horne,11:15AM,12:10PM,M W F,,,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_212_02,Fund Phys 2: Fld/Therm,UG,30,0,Open,Dr D Horne,12:20PM,01:15PM,M W F,,,,,3.00,0.00,,02,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_213_1E,Fund Phys 2 Lab,UG,18,0,Open,Ms M Hyldahl,05:00PM,07:00PM,W,Z,135,,$45,1.00,0.00,,1E,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_214_01,Fund Phys 3: Elec/Mag,UG,30,0,Open,Mr A Madura,12:20PM,01:15PM,M W F,Z,129,,,3.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+PHYS_218_01,Gen Phy Lab for Engr,UG,24,0,Open,Dr S Bailey,01:30PM,04:30PM,F,Z,135,,$45,1.00,0.00,,01,24/FA,1,ASSS,,,,,,,,,,,,,,GR
+SOFT_310_01,Sftw Test&Qlty Assur,UG,24,0,Open,Dr M Rahman,09:30AM,10:50AM,T TH,Z,336,"SOFT_310_01,GCIS_515_0A",$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,GR
+SOFT_410_01,Sftw Maintnce Deploymt,UG,24,0,Open,Dr M Rahman,03:00PM,04:20PM,T TH,Z,336,"GCIS_634_0A,SOFT_410_01",$70,3.00,0.00,,01,24/FA,1,ASSEC,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,GR
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,UG
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,UG
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,UG
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,UG
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,Mr P Capelli,,,,,,,,,,,,,,,,,,,,,,,,,,,,

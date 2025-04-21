@@ -220,6 +220,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
       return res.status(400).json({ success: false, message: "No file uploaded" });
     }
 
+    // === DOCX handling (unchanged) ===
     if (req.file.originalname.toLowerCase().endsWith(".docx")) {
       if (req.file.originalname.toLowerCase().includes("phys")) {
         const coursesData = await parsePHYSDOCXFile(req.file.path, termFromBody);
@@ -232,36 +233,40 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
             )
           )
         );
-        fs.unlinkSync(req.file.path);
-        return res.status(200).json({
-          success: true,
-          message: "PHYS DOCX file processed and saved successfully",
-        });
       } else {
         const catalogData = await parseDOCXFile(req.file.path);
         await Catalog.deleteMany({ curriculumType: catalogData.curriculumType });
         await Catalog.create(catalogData);
-        fs.unlinkSync(req.file.path);
-        return res.status(200).json({
-          success: true,
-          message: "DOCX file processed and saved successfully",
-        });
       }
-    } else if (req.file.originalname.toLowerCase().endsWith(".xlsx")) {
-      const transformedData = await parseXLSXFile(req.file.path);
-      const termSuffix = termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
-      const updatedData = transformedData.map(course => {
-        if (course.TERM) {
-          if (course.TERM.includes("/")) {
-            const parts = course.TERM.split("/");
-            return { ...course, TERM: `${parts[0]}/${termSuffix}` };
-          } else {
-            return { ...course, TERM: `${course.TERM}/${termSuffix}` };
-          }
-        } else {
-          return { ...course, TERM: termSuffix };
-        }
+      fs.unlinkSync(req.file.path);
+      return res.status(200).json({
+        success: true,
+        message: "DOCX file processed and saved successfully",
       });
+    }
+
+    // === XLSX handling (overwrite by suffix) ===
+    if (req.file.originalname.toLowerCase().endsWith(".xlsx")) {
+      // 1) parse the sheet into JSON
+      const rawData    = await parseXLSXFile(req.file.path);
+      const termSuffix = termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
+
+      // 2) normalize each row's TERM to "YY/FA" or "YY/SP"
+      const updatedData = rawData.map(course => {
+        // extract existing year or default to current year
+        const yearPart = course.TERM && course.TERM.includes("/")
+          ? course.TERM.split("/")[0]
+          : new Date().getFullYear().toString().slice(-2);
+        return {
+          ...course,
+          TERM: `${yearPart}/${termSuffix}`
+        };
+      });
+
+      // 3) delete **all** existing courses whose TERM ends in this suffix
+      await Course.deleteMany({ TERM: { $regex: `/${termSuffix}$` } });
+
+      // 4) upsert the new rows
       await Promise.all(
         updatedData.map(course =>
           Course.findOneAndUpdate(
@@ -271,23 +276,28 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
           )
         )
       );
+
       fs.unlinkSync(req.file.path);
       return res.status(200).json({
         success: true,
-        message: "XLSX file processed and saved successfully",
+        message: `XLSX file processed and saved successfully—replaced all */${termSuffix} entries.`,
       });
-    } else {
-      return res.status(400).json({ success: false, message: "Unsupported file type" });
     }
+
+    // === unsupported file type ===
+    return res.status(400).json({ success: false, message: "Unsupported file type" });
   } catch (error) {
     console.error("Error processing file:", error);
-    res.status(500).json({
+    if (req.file?.path) fs.unlinkSync(req.file.path);
+    return res.status(500).json({
       success: false,
       message: "An error occurred during upload",
       error: error.message,
     });
   }
 });
+// =============================================================================
+
 
 
 app.post("/api/courses", async (req, res) => {
