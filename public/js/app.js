@@ -9,10 +9,11 @@ const uniqueRooms = new Set();
 const $ = id => document.getElementById(id);
 console.log("app.js loaded");
 
-const YEARS = ["freshman", "sophomore", "junior", "senior", "graduate"];
-function previousYear(year) {
+const YEARS = ["freshman","sophomore","junior","senior","graduate"];
+function previousYears(year) {
   const idx = YEARS.indexOf(year);
-  return idx > 0 ? YEARS[idx - 1] : null;
+  // slice from 0 up to (but not including) the current year
+  return idx > 0 ? YEARS.slice(0, idx) : [];
 }
 
 // -------------------------
@@ -300,32 +301,37 @@ function displayCourses(courses) {
 async function fetchCourses() {
   try {
     const prog = $("course-catalog-dropdown").value;
-    const yr = $("student-year-dropdown").value;
-    const sem = $("semester-dropdown").value;
-    const rm = $("room-dropdown").value;
+    const yr   = $("student-year-dropdown").value;
+    const sem  = $("semester-dropdown").value;
+    const rm   = $("room-dropdown").value;
 
-    // 1) Fetch the main set
+    // 1) load the “main” courses for selected year
     let url = `/api/courses?year=${yr}&semester=${sem}&course=${prog}`;
     if (rm) url += `&room=${rm}`;
-    const res1 = await fetch(url);
-    let data = await res1.json();
+    const resMain = await fetch(url);
+    let data = await resMain.json();
 
-    // 2) If not freshman, fetch previous year's MATH/PHYS
-    const prev = previousYear(yr);
-    if (prev) {
-      let url2 = `/api/courses?year=${prev}&semester=${sem}&course=${prog}`;
-      if (rm) url2 += `&room=${rm}`;
-      const res2 = await fetch(url2);
-      const prevData = await res2.json();
-
-      const carry = prevData
-        .filter(c => /^MATH_|^PHYS_/i.test(c.COURSE_NUMBER))
-        .map(c => ({ ...c, _carryOver: true, _carryYear: prev }));
-
-      data = data.concat(carry);
+    // 2) for each prior year, fetch only MATH/PHYS and tag them
+    const priors = previousYears(yr);
+    if (priors.length) {
+      const carryArrays = await Promise.all(
+        priors.map(prevYear => {
+          let url2 = `/api/courses?year=${prevYear}&semester=${sem}&course=${prog}`;
+          if (rm) url2 += `&room=${rm}`;
+          return fetch(url2)
+            .then(r => r.json())
+            .then(prevData =>
+              prevData
+                .filter(c => /^MATH_|^PHYS_/i.test(c.COURSE_NUMBER))
+                .map(c => ({ ...c, _carryOver: true, _carryYear: prevYear }))
+            );
+        })
+      );
+      // flatten and append
+      data = data.concat(carryArrays.flat());
     }
 
-    // 3) Store it globally (for edit/delete) and render
+    // 3) store & render
     coursesData = data;
     displayCourses(data);
 
