@@ -2,31 +2,31 @@
 
 // Configuration for different curriculum types and their document structure
 export const curriculumConfig = {
-    computerScience: {
-      curriculumType: "Computer Science",
-      header: "Computer Science Curriculum",
-      footer: "Total Credits: 129",
-      offsetText:
-        "Computer Science Curriculum\n(Numerals in front of courses indicate credits)\n",
-    },
-    cybersecurity: {
-      curriculumType: "Cybersecurity",
-      header: "Cybersecurity Curriculum",
-      footer: "Total Credits: 126",
-      offsetText:
-        "Cybersecurity Curriculum\n(Numerals in front of courses indicate credits)\n",
-    },
-    softwareEngineering: {
-      curriculumType: "Software Engineering",
-      header: "Software Engineering Curriculum",
-      footer: "Total Credits: 129",
-      offsetText:
-        "Software Engineering Curriculum\n(Numerals in front of courses indicate credits)\n",
-    },
-  };
-  
-  // Mapping for course filtering based on program, year, and semester
-  // Utility function to generate a regex from course prefixes
+  computerScience: {
+    curriculumType: "Computer Science",
+    header: "Computer Science Curriculum",
+    footer: "Total Credits: 129",
+    offsetText:
+      "Computer Science Curriculum\n(Numerals in front of courses indicate credits)\n",
+  },
+  cybersecurity: {
+    curriculumType: "Cybersecurity",
+    header: "Cybersecurity Curriculum",
+    footer: "Total Credits: 126",
+    offsetText:
+      "Cybersecurity Curriculum\n(Numerals in front of courses indicate credits)\n",
+  },
+  softwareEngineering: {
+    curriculumType: "Software Engineering",
+    header: "Software Engineering Curriculum",
+    footer: "Total Credits: 129",
+    offsetText:
+      "Software Engineering Curriculum\n(Numerals in front of courses indicate credits)\n",
+  },
+};
+
+// Mapping for course filtering based on program, year, and semester
+// Utility function to generate a regex from course prefixes
 const generateRegex = (coursePrefixes) => {
   return new RegExp(coursePrefixes.map(prefix => `^${prefix}`).join("|"), "i");
 };
@@ -34,30 +34,30 @@ const generateRegex = (coursePrefixes) => {
 export const courseRegexMapping = {
   "computer-science": {
     freshman: {
-      fall: generateRegex(["ENG_102","CIS_180", "CIS_181", "CIS_290", "MATH_140"]),
+      fall: generateRegex(["ENG_102", "CIS_180", "CIS_181", "CIS_290", "MATH_140"]),
       spring: generateRegex(["CIS_182", "CIS_183", "MATH_141", "PHYS_210", "PHYS_211"]),
     },
     sophomore: {
       fall: generateRegex(["CSC_220", "CIS_239", "CIS_277", "CIS_287", "MATH_222"]),
-      spring: generateRegex(["CIS_255", "CSC_223", "MATH_223", "MATH_314", "PHYS_214", "PHYS_212", "PHYS_213", "PHYS_215"]),
+      spring: generateRegex(["CIS_255", "CSC_223", "MATH_223", "MATH_314", "SOFT_210", "PHYS_212", "PHYS_213", "PHYS_214", "PHYS_215"]),
     },
     junior: {
-      fall: generateRegex(["CIS_355", "CIS_326", "CIS_350","CIS_219", "MATH_213", "MATH_212", "SOFT_310"]),
-      spring: generateRegex(["ENG_380", "ECE_337", "SOFT_210"]),
+      fall: generateRegex(["CIS_355", "CIS_326", "CIS_219", "MATH_213", "MATH_212"]),
+      spring: generateRegex(["ENG_380", "ECE_337", "MATH_310"]),
     },
     senior: {
-      fall: generateRegex(["CIS_457", "CSC_360", "CIS_387", "CSC_330", "SOFT_410", "CIS_326"]),
-      spring: generateRegex(["CIS_458", "CIS_390", "MATH_310"]),
+      fall: generateRegex(["CIS_457", "CSC_360", "CIS_387", "CSC_330"]),
+      spring: generateRegex(["CIS_458", "CIS_390"]),
     },
     graduate: {
-      fall: generateRegex([]),
-      spring: generateRegex([]),
+      fall: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
+      spring: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
     },
   },
 
   cybersecurity: {
     freshman: {
-      fall: generateRegex(["ENG_102","CIS_180", "CIS_181", "CIS_290", "CIS_240", "MATH_112", "MATH_140"]),
+      fall: generateRegex(["ENG_102", "CIS_180", "CIS_181", "CIS_290", "CIS_240", "MATH_112", "MATH_140"]),
       spring: generateRegex(["CIS_182", "CIS_183", "CIS_255", "PHYS_105", "CYSEC_101"]),
     },
     sophomore: {
@@ -73,34 +73,34 @@ export const courseRegexMapping = {
       spring: generateRegex(["CYSEC_303", "CIS_458"]),
     },
     graduate: {
-      fall: generateRegex([]),
-      spring: generateRegex([]),
+      fall: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
+      spring: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
     },
   },
-
+  // page 241
   "software-engineering": {
     freshman: {
-      fall: generateRegex(["ENG_102","CIS_180", "CIS_181", "MATH_140", "CIS_290"]),
+      fall: generateRegex(["ENG_102", "CIS_180", "CIS_181", "MATH_140", "CIS_290"]),
       spring: generateRegex(["CIS_182", "CIS_183", "MATH_141"]),
     },
     sophomore: {
-      fall: generateRegex(["CSC_220", "CIS_239", "MATH_222", "CIS_277", "CIS_287"]),
+      fall: generateRegex(["CSC_220", "CIS_239", "MATH_213", "MATH_312", "MATH_222", "CIS_277", "CIS_287"]),
       spring: generateRegex(["CIS_255", "CSC_223", "MATH_223", "CIS_377", "MATH_314"]),
     },
     junior: {
-      fall: generateRegex(["CIS_355","CIS_326", "CIS_219", "SOFT_310", "MATH_213", "MATH_312"]),
+      fall: generateRegex(["CIS_326", "CIS_350", "CIS_219", "SOFT_310"]),
       spring: generateRegex(["SOFT_320", "ECE_337", "ENG_380"]),
     },
     senior: {
-      fall: generateRegex(["CIS_457", "CSC_360", "CIS_387", "CSC_330", "GCIS_516"]),
+      fall: generateRegex(["CIS_457", "SOFT_410", "CIS_387", "CSC_330"]),
       spring: generateRegex(["CIS_458", "CIS_390", "MATH_310"]),
     },
     graduate: {
       fall: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
-      spring: generateRegex([]),
+      spring: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
     },
   },
-
+  // page 159 
   "software-engineering-dual-degree": {
     freshman: {
       fall: generateRegex(["ENG_102", "CIS_180", "CIS_181", "MATH_140", "CIS_290"]),
@@ -112,15 +112,15 @@ export const courseRegexMapping = {
     },
     junior: {
       fall: generateRegex(["CIS_355", "CIS_350", "CIS_219", "SOFT_310"]),
-      spring: generateRegex(["ENG_380", "SOFT_320","ECE_337", "PHYS_213", "PHYS_212", "PHYS_215"]),
+      spring: generateRegex(["ENG_380", "SOFT_320", "ECE_337", "PHYS_212", "PHYS_213", "PHYS_215"]),
     },
     senior: {
       fall: generateRegex(["CIS_457", "CSC_330", "SOFT_410", "CSC_360", "CIS_326", "CIS_387"]),
       spring: generateRegex(["CIS_458", "CIS_390", "MATH_310"]),
     },
     graduate: {
-      fall: generateRegex([]),
-      spring: generateRegex([]),
+      fall: generateRegex(["GCIS_634", "GCIS_639", "GCIS_605"]),
+      spring: generateRegex(["GCIS_698"]),
     },
   },
 };
