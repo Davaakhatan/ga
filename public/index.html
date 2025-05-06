@@ -124,23 +124,23 @@
           const endHour = 21 * 60; // 9:00 PM in minutes
           const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
           const calendarBody = document.getElementById("calendar-body");
-        
+
           for (let minutes = startHour; minutes < endHour; minutes += 30) {
             const row = document.createElement("tr");
-        
+
             // Time formatting
             const hour = Math.floor(minutes / 60);
             const mins = minutes % 60;
             const hour12 = hour % 12 === 0 ? 12 : hour % 12;
             const ampm = hour < 12 ? "AM" : "PM";
             const timeLabel = `${hour12}:${mins.toString().padStart(2, "0")} ${ampm}`;
-        
+
             // Time cell
             const timeCell = document.createElement("th");
             timeCell.textContent = timeLabel;
             timeCell.classList.add("time-column");
             row.appendChild(timeCell);
-        
+
             // Day cells
             days.forEach((day) => {
               const dayCell = document.createElement("td");
@@ -149,10 +149,10 @@
               dayCell.setAttribute("data-time", timeLabel);
               row.appendChild(dayCell);
             });
-        
+
             calendarBody.appendChild(row);
           }
-        </script>        
+        </script>
       </tbody>
     </table>
 
@@ -292,37 +292,39 @@
       const formData = new FormData();
       formData.append("file", file);
 
-      // Append additional fields from the dropdowns
-      formData.append(
-        "curriculumType",
-        document.getElementById("course-catalog-dropdown").value
-      );
-      formData.append(
-        "term",
-        document.getElementById("semester-dropdown").value
-      );
+      // 1) pull “FA” or “SP” out of the filename, if present
+      const m = file.name.match(/(\d{2})(FA|SP)\b/i);
+      let uploadTerm;
+      if (m) {
+        const suffix = m[2].toUpperCase();   // "FA" or "SP"
+        uploadTerm = suffix === "SP" ? "spring" : "fall";
+        // sync the calendar dropdown to that term
+        document.getElementById("semester-dropdown").value = uploadTerm;
+      } else {
+        // fallback to whatever the user had selected
+        uploadTerm = document.getElementById("semester-dropdown").value;
+      }
+
+      formData.append("term", uploadTerm);
 
       try {
-        const response = await fetch("http://localhost:3000/api/upload", {
+        const response = await fetch("/api/upload", {
           method: "POST",
           body: formData,
         });
-
         if (!response.ok) {
-          const errorData = await response.json();
-          alert(`Upload failed: ${errorData.message}`);
-          return;
+          const err = await response.json();
+          return alert(`Upload failed: ${err.message}`);
         }
-
-        const result = await response.json();
         alert("Upload successful!");
-        console.log("Server response:", result);
-        window.location.reload();
-      } catch (error) {
-        console.error(error);
+        // now that the dropdown is set correctly, re-fetch & re-render
+        fetchCourses();
+      } catch (e) {
+        console.error(e);
         alert("An error occurred during upload.");
       }
     }
+
   </script>
 </body>
 
