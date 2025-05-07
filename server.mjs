@@ -247,42 +247,44 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
     // === XLSX handling (overwrite by suffix) ===
     if (req.file.originalname.toLowerCase().endsWith(".xlsx")) {
-      // 1) parse the sheet into JSON
-      const rawData    = await parseXLSXFile(req.file.path);
-      const termSuffix = termFromBody.toLowerCase() === "fall" ? "FA" : "SP";
-
-      // 2) normalize each row's TERM to "YY/FA" or "YY/SP"
-      const updatedData = rawData.map(course => {
-        // extract existing year or default to current year
-        const yearPart = course.TERM && course.TERM.includes("/")
-          ? course.TERM.split("/")[0]
-          : new Date().getFullYear().toString().slice(-2);
-        return {
-          ...course,
-          TERM: `${yearPart}/${termSuffix}`
-        };
-      });
-
-      // 3) delete **all** existing courses whose TERM ends in this suffix
-      await Course.deleteMany({ TERM: { $regex: `/${termSuffix}$` } });
-
-      // 4) upsert the new rows
+      const rawData = await parseXLSXFile(req.file.path);
+    
+      // ✅ Extract TERM from filename like "25SP" or "25FA"
+      const baseName = path.basename(req.file.originalname, path.extname(req.file.originalname));
+      const match = baseName.match(/(\d{2})(FA|SP)/i);
+      const yearPart = match ? match[1] : new Date().getFullYear().toString().slice(-2);
+      const suffix = match ? match[2].toUpperCase() : "FA"; // default to FA
+      const fullTERM = `${yearPart}/${suffix}`;
+    
+      console.log("📥 XLSX Upload Detected — TERM =", fullTERM);
+    
+      // Overwrite TERM for every course row
+      const updatedData = rawData.map(course => ({
+        ...course,
+        TERM: fullTERM,
+      }));
+    
+      // Remove existing courses with this TERM
+      await Course.deleteMany({ TERM: fullTERM });
+    
+      // Save new ones
       await Promise.all(
         updatedData.map(course =>
           Course.findOneAndUpdate(
-            { COURSE_NUMBER: course.COURSE_NUMBER, TERM: course.TERM },
+            { COURSE_NUMBER: course.COURSE_NUMBER, TERM: fullTERM },
             course,
             { upsert: true, new: true }
           )
         )
       );
-
+    
       fs.unlinkSync(req.file.path);
       return res.status(200).json({
         success: true,
-        message: `XLSX file processed and saved successfully—replaced all */${termSuffix} entries.`,
+        message: `Courses uploaded for TERM ${fullTERM}`,
       });
     }
+    
 
     // === unsupported file type ===
     return res.status(400).json({ success: false, message: "Unsupported file type" });
