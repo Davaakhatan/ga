@@ -9,7 +9,7 @@ const uniqueRooms = new Set();
 const $ = id => document.getElementById(id);
 console.log("app.js loaded");
 
-const YEARS = ["freshman","sophomore","junior","senior","graduate"];
+const YEARS = ["freshman", "sophomore", "junior", "senior", "graduate"];
 function previousYears(year) {
   const idx = YEARS.indexOf(year);
   // slice from 0 up to (but not including) the current year
@@ -215,40 +215,48 @@ function displayCourses(courses) {
     uniqueRooms.add(course.ROOM);
 
     // Determine color & conflict
-    let bg = "#F3F4F6";
-    // If this is a carry-over course, use a much lighter tint
-    if (course._carryOver) bg = "#E6FCF5";
-    else if (course.COURSE_NUMBER.includes("MATH")) bg = "#FFD700";
-    else if (course.COURSE_NUMBER.includes("PHYS")) bg = "#ADD8E6";
+    let bg = "#F3F4F6"; // default
+
+    if (course._carryOver) {
+      // 🔁 Previous-year courses → always gray
+      bg = "#D3D3D3";
+    } else {
+      // ✅ Current-year courses → colored by type
+      if (/^MATH_/i.test(course.COURSE_NUMBER)) {
+        bg = "#FFD700"; // yellow
+      } else if (/^PHYS_/i.test(course.COURSE_NUMBER)) {
+        bg = "#ADD8E6"; // light blue
+      } else {
+        bg = "#90EE90"; // light green for CIS, ENG, etc.
+      }
+    }
+
+
 
     // —— badge for carry‑over courses ——
     const badge = course._carryOver
-      ? `<div style="
-            font-weight:bold;
-            font-size:0.85em;
-            margin-bottom:4px;
-            color:#444;
-          ">
-            ${course._carryYear.charAt(0).toUpperCase()}${course._carryYear.slice(1)}
-         </div>`
+      ? `<div style="font-size:0.75em;color:#555;margin-bottom:3px;">
+         (${course._carryYear.charAt(0).toUpperCase() + course._carryYear.slice(1)}, ${course._carryTerm.charAt(0).toUpperCase() + course._carryTerm.slice(1)})
+       </div>`
       : "";
+
 
     // Build HTML once
     const courseHTML = `
-      <div class="course-box" style="background:${bg};padding:5px;border-radius:5px;">
-      
-        ${badge}
-        <strong>${course.COURSE_NUMBER}</strong><br>
-        ${course.TITLE_START_DATE || ""}<br>
-        ${START_TIME} – ${END_TIME}<br>
-        <strong>Building:</strong> ${course.BUILDING || "N/A"}<br>
-        <strong>Room:</strong> ${course.ROOM || "N/A"}<br>
-        <span class="icon-buttons">
-          <i class="material-icons edit-icon" onclick="editCourse('${course._id}')">edit</i>
-          <i class="material-icons delete-icon" onclick="deleteCourse('${course._id}')">delete</i>
-        </span>
-      </div>
-    `;
+    <div class="course-box" style="background:${bg};padding:5px;border-radius:5px;">
+      ${badge}
+      <strong>${course.COURSE_NUMBER}</strong><br>
+      ${course.TITLE_START_DATE || ""}<br>
+      ${START_TIME} – ${END_TIME}<br>
+      <strong>Building:</strong> ${course.BUILDING || "N/A"}<br>
+      <strong>Room:</strong> ${course.ROOM || "N/A"}<br>
+      <span class="icon-buttons">
+        <i class="material-icons edit-icon" onclick="editCourse('${course._id}')">edit</i>
+        <i class="material-icons delete-icon" onclick="deleteCourse('${course._id}')">delete</i>
+      </span>
+    </div>
+  `;
+
 
     // Place for each day
     days.forEach(d => {
@@ -301,44 +309,50 @@ function displayCourses(courses) {
 async function fetchCourses() {
   try {
     const prog = $("course-catalog-dropdown").value;
-    const yr   = $("student-year-dropdown").value;
-    const sem  = $("semester-dropdown").value;
-    const rm   = $("room-dropdown").value;
+    const yr = $("student-year-dropdown").value;
+    const sem = $("semester-dropdown").value;
+    const rm = $("room-dropdown").value;
 
-    // 1) load the “main” courses for selected year
+    // Fetch current year + selected term
     let url = `/api/courses?year=${yr}&semester=${sem}&course=${prog}`;
     if (rm) url += `&room=${rm}`;
     const resMain = await fetch(url);
     let data = await resMain.json();
 
-    // 2) for each prior year, fetch only MATH/PHYS and tag them
+    // Fetch all prior years' MATH/PHYS from BOTH Spring and Fall
     const priors = previousYears(yr);
-    if (priors.length) {
-      const carryArrays = await Promise.all(
-        priors.map(prevYear => {
-          let url2 = `/api/courses?year=${prevYear}&semester=${sem}&course=${prog}`;
+    const terms = ["fall", "spring"];
+
+    const carryArrays = await Promise.all(
+      priors.flatMap(prevYear =>
+        terms.map(prevTerm => {
+          let url2 = `/api/courses?year=${prevYear}&semester=${prevTerm}&course=${prog}`;
           if (rm) url2 += `&room=${rm}`;
           return fetch(url2)
             .then(r => r.json())
             .then(prevData =>
               prevData
                 .filter(c => /^MATH_|^PHYS_/i.test(c.COURSE_NUMBER))
-                .map(c => ({ ...c, _carryOver: true, _carryYear: prevYear }))
+                .map(c => ({
+                  ...c,
+                  _carryOver: true,
+                  _carryYear: prevYear,
+                  _carryTerm: prevTerm
+                }))
             );
         })
-      );
-      // flatten and append
-      data = data.concat(carryArrays.flat());
-    }
+      )
+    );
 
-    // 3) store & render
+    // Combine results
+    data = data.concat(carryArrays.flat());
     coursesData = data;
     displayCourses(data);
-
   } catch (e) {
     console.error("Fetch failed:", e);
   }
 }
+
 
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -381,13 +395,13 @@ async function saveEditedCourse() {
   if (!currentEditingCourseId) return;
 
   // 1) grab and trim inputs
-  const COURSE_NUMBER    = $("courseNumber").value.trim();
+  const COURSE_NUMBER = $("courseNumber").value.trim();
   const TITLE_START_DATE = $("courseTitle").value.trim();
-  const MEETING_DAYS     = $("meetingDays").value.trim();
-  const START_TIME       = $("startTime").value.trim();
-  const END_TIME         = $("endTime").value.trim();
-  const BUILDING         = $("buildingInput").value.trim();
-  const ROOM             = $("roomInput").value.trim();
+  const MEETING_DAYS = $("meetingDays").value.trim();
+  const START_TIME = $("startTime").value.trim();
+  const END_TIME = $("endTime").value.trim();
+  const BUILDING = $("buildingInput").value.trim();
+  const ROOM = $("roomInput").value.trim();
 
   // 2) required‑field validation
   if (!COURSE_NUMBER || !MEETING_DAYS || !START_TIME || !END_TIME) {
@@ -457,10 +471,25 @@ async function exportCourses(mode = "displayed") {
 
 // 1) show the modal when the navbar "+ Add Course" button is clicked
 function openAddCourseModal() {
-  const modalEl = document.getElementById("addCourseModal");
-  const modal = new bootstrap.Modal(modalEl);
+  const prog = $("course-catalog-dropdown").value;
+  const year = $("student-year-dropdown").value;
+  const term = $("semester-dropdown").value;
+
+  if (!prog || !year || !term) {
+    alert("Please select Program, Year, and Term before adding a course.");
+    return;
+  }
+
+  $("modalProgram").value = prog;
+  $("modalYear").value = year;
+  $("modalTerm").value = term;
+
+  const modal = new bootstrap.Modal(document.getElementById("addCourseModal"));
   modal.show();
 }
+
+
+
 
 // 2) save the new course when the modal's "Add Course" button is clicked
 async function saveNewCourse() {
@@ -484,23 +513,30 @@ async function saveNewCourse() {
     return alert("End Time must be later than Start Time.");
   }
 
-  // 4) construct TERM from your semester‑dropdown
-  const sem = $("semester-dropdown").value;
-  const yearSuffix = new Date().getFullYear().toString().slice(-2);
+  // 4) construct TERM from selected semester
+  const prog = $("modalProgram").value;
+  const year = $("modalYear").value;
+  const sem = $("modalTerm").value;
+  
+  const yearOffset = { freshman: 0, sophomore: 1, junior: 2, senior: 3, graduate: 4 }[year] || 0;
+  const fullYear = new Date().getFullYear() - yearOffset;
+  const yearSuffix = fullYear.toString().slice(-2);
   const TERM = sem === "fall" ? `${yearSuffix}/FA` : `${yearSuffix}/SP`;
-
+  
   //  5) construct INSTRUCTOR from your instructor‑dropdown
-  const newCourse = {
-    COURSE_NUMBER,
-    TITLE_START_DATE,
-    MEETING_DAYS,
-    START_TIME,
-    END_TIME,
-    BUILDING,
-    ROOM,
-    TERM,
-    STATUS: "Open"
-  };
+const newCourse = {
+  COURSE_NUMBER,
+  TITLE_START_DATE,
+  MEETING_DAYS,
+  START_TIME,
+  END_TIME,
+  BUILDING,
+  ROOM,
+  TERM,
+  PROGRAM: prog,
+  STATUS: "Open"
+};
+
   // 6) send it to the server
   const res = await fetch("/api/courses", {
     method: "POST",
@@ -525,6 +561,36 @@ async function saveNewCourse() {
 window.openAddCourseModal = openAddCourseModal;
 window.saveNewCourse = saveNewCourse;
 
+window.addEventListener("DOMContentLoaded", () => {
+  // existing fetchCourses + AM injection...
+  ["course-catalog-dropdown", "student-year-dropdown", "semester-dropdown", "room-dropdown"]
+    .forEach(id => $(id).addEventListener("change", fetchCourses));
+  fetchCourses();
+
+  ["newStartTime", "newEndTime"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("blur", () => {
+      const v = el.value.trim();
+      if (/^\d{1,2}:\d{2}$/.test(v)) el.value = v + " AM";
+    });
+  });
+
+  // ⛔ Disable Add Course button if required selections are missing
+  const addBtn = document.getElementById("addCourseBtn");
+  const dropdowns = ["course-catalog-dropdown", "student-year-dropdown", "semester-dropdown"];
+
+  function updateAddCourseButtonState() {
+    const allSelected = dropdowns.every(id => $(id).value !== "");
+    addBtn.disabled = !allSelected;
+    addBtn.classList.toggle("opacity-50", !allSelected);
+    addBtn.classList.toggle("cursor-not-allowed", !allSelected);
+  }
+
+  dropdowns.forEach(id => $(id).addEventListener("change", updateAddCourseButtonState));
+  updateAddCourseButtonState();
+
+});
 
 // -------------------------
 // End of app.js

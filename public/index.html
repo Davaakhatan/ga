@@ -18,7 +18,7 @@
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <button class="btn btn-warning btn-sm" onclick="openAddCourseModal()">+ Add Course</button>
+      <button class="btn btn-warning btn-sm" id="addCourseBtn" onclick="openAddCourseModal()">+ Add Course</button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <!-- Removed the Upload link -->
@@ -103,7 +103,30 @@
       </div>
 
     </div>
+  <div id="legend-container"></div>
 
+  <script>
+    document.getElementById("legend-container").innerHTML = `
+      <div class="color-legend" style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;background:#FFD700;border:1px solid #ccc;"></div>
+          <span>MATH (Current Year)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;background:#ADD8E6;border:1px solid #ccc;"></div>
+          <span>PHYS (Current Year)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;background:#90EE90;border:1px solid #ccc;"></div>
+          <span>CIS / CSC / SOFT / CYSEC / ENG (Current Year)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;background:#D3D3D3;border:1px solid #ccc;"></div>
+          <span>Previous Year (MATH PHYS)</span>
+        </div>
+      </div>
+    `;
+  </script>
 
 
     <!-- Calendar Table -->
@@ -223,7 +246,36 @@
           </div>
 
           <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col">
+                <label for="modalProgram" class="form-label">Program</label>
+                <select id="modalProgram" class="form-select">
+                  <option value="computer-science">Computer Science</option>
+                  <option value="cybersecurity">Cybersecurity</option>
+                  <option value="software-engineering">Software Engineering</option>
+                  <option value="software-engineering-dual-degree">Dual CSSE</option>
+                </select>
+              </div>
+              <div class="col">
+                <label for="modalYear" class="form-label">Year</label>
+                <select id="modalYear" class="form-select">
+                  <option value="freshman">Freshman</option>
+                  <option value="sophomore">Sophomore</option>
+                  <option value="junior">Junior</option>
+                  <option value="senior">Senior</option>
+                  <option value="graduate">Graduate</option>
+                </select>
+              </div>
+              <div class="col">
+                <label for="modalTerm" class="form-label">Term</label>
+                <select id="modalTerm" class="form-select">
+                  <option value="fall">Fall</option>
+                  <option value="spring">Spring</option>
+                </select>
+              </div>
+            </div>            
             <form id="addCourseForm">
+              
               <div class="mb-3">
                 <label for="newCourseNumber" class="form-label">Course Number</label>
                 <input type="text" class="form-control" id="newCourseNumber" placeholder="e.g., CIS_101_01" />
